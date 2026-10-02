@@ -4,60 +4,108 @@
 
 **Líder del Proyecto:** La Torre Párraga, Alvaro Andree
 
+## Estado del Sprint
+
+El **Sprint 1 — Gestión Core de Operaciones** presenta un avance real estimado del **70 %**.
+
+Según el cronograma establecido, a la fecha el Sprint debería encontrarse al **100 %**, debido a que la siguiente etapa del proyecto, correspondiente al Motor de Optimización y Despacho, tenía previsto iniciar el 22 de septiembre de 2026.
+
+Por lo tanto, se identifica una desviación aproximada del **-30 % respecto al cronograma**.
+
+| Indicador | Resultado |
+|---|---:|
+| Avance esperado | 100 % |
+| Avance real estimado | 70 % |
+| Desviación | -30 % |
+| Estado | En proceso de cierre |
+
 ## Historias de Usuario completadas en este Sprint
 
-El Sprint 1 — **Gestión Core de Operaciones** presenta un avance general estimado del **70 %** respecto al alcance planificado.
+Durante el Sprint se trabajó sobre las Historias de Usuario correspondientes a la gestión de vehículos, pedidos y conductores.
 
-Durante la iteración se avanzó principalmente sobre las Historias de Usuario relacionadas con vehículos, pedidos y conductores.
-
-| Historia | Descripción | Resultado de la revisión |
+| Historia | Descripción | Resultado |
 |---|---|---|
-| US-001 | Registrar vehículos de la flota | Avance satisfactorio |
-| US-002 | Gestionar parámetros operativos y ambientales | Avance satisfactorio |
-| US-003 | Validar información de vehículos | Avance satisfactorio |
-| US-004 | Registrar pedidos | Avance satisfactorio |
-| US-005 | Registrar direcciones no convencionales | Avance satisfactorio |
-| US-006 | Validar información de pedidos | Avance satisfactorio |
-| US-007 | Registrar conductores | Avance satisfactorio |
+| US-001 | Registrar vehículos de la flota | Avance alto / pendiente de cierre |
+| US-002 | Gestionar parámetros operativos y ambientales | Avance alto / pendiente de cierre |
+| US-003 | Validar información de vehículos | Avance alto / pendiente de cierre |
+| US-004 | Registrar pedidos | Avance alto / pendiente de cierre |
+| US-005 | Registrar direcciones no convencionales | Avance alto / pendiente de cierre |
+| US-006 | Validar información de pedidos | Avance alto / pendiente de cierre |
+| US-007 | Registrar conductores | Avance alto / pendiente de cierre |
 | US-008 | Gestionar disponibilidad de conductores | Pendiente de completar |
 | US-009 | Validar información de conductores | Pendiente de completar |
 
-El Enabler **EN-002 — Implementar controles de seguridad** permanece en proceso y debe completarse antes del cierre definitivo del Sprint.
+También permanece pendiente completar el Enabler:
+
+- **EN-002 — Implementar controles de seguridad.**
+
+El avance real del 70 % representa el trabajo acumulado realizado durante la iteración. Sin embargo, todavía deben completarse actividades técnicas y de validación antes de considerar formalmente cerrado el Sprint.
 
 ## Demostración del trabajo completado
 
-Durante la Sprint Review se presentan los avances correspondientes al núcleo operativo de EcoLogística Lima.
+Durante la revisión se presentan los avances relacionados con:
 
-El trabajo desarrollado permite demostrar la definición y avance de las siguientes capacidades:
+### Gestión de vehículos
 
-- Registro y administración de información de vehículos.
-- Gestión de parámetros como capacidad, consumo y factor de emisión.
-- Registro de información de pedidos.
-- Tratamiento de direcciones y coordenadas de entrega.
-- Validaciones aplicables a vehículos y pedidos.
-- Gestión básica de información de conductores.
+- estructura de la información de vehículos;
+- parámetros de capacidad;
+- información de consumo;
+- factores ambientales;
+- reglas de validación de los datos ingresados.
 
-Estas capacidades representan aproximadamente un **70 % del alcance planificado para el Sprint 1**.
+### Gestión de pedidos
 
-El equipo considera que existe una base suficiente para continuar con el cierre técnico del Sprint; sin embargo, todavía no corresponde declarar el incremento completamente finalizado hasta terminar la integración y las pruebas.
+- estructura de pedidos;
+- información de ubicación;
+- coordenadas de entrega;
+- tratamiento de direcciones no convencionales;
+- validación de datos necesarios para la planificación.
+
+### Gestión de conductores
+
+- estructura básica de información del conductor;
+- información necesaria para futuras asignaciones de rutas;
+- avance en el registro de conductores.
+
+Estas capacidades constituyen la base necesaria para el futuro funcionamiento del Motor de Optimización y Despacho.
+
+La demostración integral aún se encuentra limitada debido a que deben completarse la integración técnica, las pruebas y las funcionalidades pendientes.
+
+## Dificultades observadas durante el Sprint
+
+Durante el Sprint se identificaron las siguientes dificultades:
+
+- disponibilidad limitada de los integrantes por otras actividades académicas;
+- dificultad para coordinar horarios de trabajo;
+- tiempo de aprendizaje adicional requerido para algunas tecnologías;
+- integración del trabajo realizado por distintos integrantes;
+- necesidad de dedicar más tiempo a pruebas y corrección de errores;
+- actualización tardía de algunos estados y evidencias en Jira y GitHub;
+- necesidad de fortalecer el uso colaborativo del repositorio.
+
+Estas dificultades contribuyeron a la desviación del 30 % respecto al cronograma establecido.
 
 ## Pendientes
 
-El 30 % restante está compuesto principalmente por:
+Para completar el Sprint se requiere:
 
-1. Completar la gestión de disponibilidad de conductores.
-2. Completar las validaciones de información de conductores.
-3. Consolidar la implementación de frontend.
-4. Consolidar la implementación de backend.
-5. Integrar frontend, backend y base de datos.
-6. Completar los controles de seguridad de EN-002.
-7. Ejecutar las pruebas unitarias y de integración.
-8. Verificar los criterios de aceptación.
-9. Completar la evidencia asociada a la Definition of Done.
-10. Actualizar Jira y GitHub conforme al estado final del Sprint.
+1. Completar US-008.
+2. Completar US-009.
+3. Consolidar el frontend.
+4. Consolidar el backend.
+5. Integrar las distintas capas del sistema.
+6. Completar EN-002.
+7. Ejecutar pruebas unitarias.
+8. Ejecutar pruebas de integración.
+9. Corregir defectos encontrados.
+10. Validar criterios de aceptación.
+11. Verificar la Definition of Done.
+12. Actualizar Jira con el estado final.
+13. Incorporar las evidencias correspondientes en GitHub.
+14. Preparar la demostración definitiva a los stakeholders.
 
 ## Resultado de la Sprint Review
 
-El Sprint presenta un **70 % de avance**, por lo que el objetivo se encuentra mayoritariamente desarrollado, pero todavía no completamente alcanzado.
+El Sprint 1 presenta un **70 % de avance real frente al 100 % esperado**, por lo que el objetivo se encuentra mayoritariamente desarrollado, pero todavía no puede considerarse completamente alcanzado.
 
-El equipo priorizará durante el 30 % restante la integración, validación y cierre de las funcionalidades antes de continuar con las capacidades correspondientes al Motor de Optimización y Despacho.
+La principal prioridad será recuperar la desviación del 30 % mediante el cierre del trabajo actualmente iniciado antes de incrementar significativamente el alcance del siguiente Sprint.
