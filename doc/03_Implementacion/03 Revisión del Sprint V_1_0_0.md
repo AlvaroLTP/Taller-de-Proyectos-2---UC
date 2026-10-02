@@ -6,109 +6,58 @@
 
 ## Historias de Usuario completadas en este Sprint
 
-El Sprint 1, denominado **Gestión Core de Operaciones**, tiene como objetivo disponer de información básica y validada de vehículos, pedidos y conductores para utilizarla posteriormente en el proceso de generación de rutas optimizadas.
+El Sprint 1 — **Gestión Core de Operaciones** presenta un avance general estimado del **70 %** respecto al alcance planificado.
 
-Al momento de realizar la presente Sprint Review, **ninguna Historia de Usuario del Sprint 1 se encuentra registrada en estado Done / Finalizado en Jira**.
+Durante la iteración se avanzó principalmente sobre las Historias de Usuario relacionadas con vehículos, pedidos y conductores.
 
-El estado observado de las Historias de Usuario planificadas es el siguiente:
+| Historia | Descripción | Resultado de la revisión |
+|---|---|---|
+| US-001 | Registrar vehículos de la flota | Avance satisfactorio |
+| US-002 | Gestionar parámetros operativos y ambientales | Avance satisfactorio |
+| US-003 | Validar información de vehículos | Avance satisfactorio |
+| US-004 | Registrar pedidos | Avance satisfactorio |
+| US-005 | Registrar direcciones no convencionales | Avance satisfactorio |
+| US-006 | Validar información de pedidos | Avance satisfactorio |
+| US-007 | Registrar conductores | Avance satisfactorio |
+| US-008 | Gestionar disponibilidad de conductores | Pendiente de completar |
+| US-009 | Validar información de conductores | Pendiente de completar |
 
-| Historia | Jira | Descripción | Estado |
-|---|---|---|---|
-| US-001 | KAN-5 | Registrar vehículos de la flota | En curso |
-| US-002 | KAN-6 | Gestionar parámetros operativos y ambientales del vehículo | En curso |
-| US-003 | KAN-7 | Validar información de los vehículos registrados | En curso |
-| US-004 | KAN-8 | Registrar pedidos | En curso |
-| US-005 | KAN-9 | Registrar direcciones de entrega no convencionales | En curso |
-| US-006 | KAN-10 | Validar información de los pedidos | En curso |
-| US-007 | KAN-22 | Registrar conductores | En curso |
-| US-008 | KAN-23 | Gestionar disponibilidad de conductores | Tareas por hacer |
-| US-009 | KAN-24 | Validar información de conductores | Tareas por hacer |
-
-### Resumen del estado del Sprint
-
-- **Historias finalizadas:** 0
-- **Historias en curso:** 7
-- **Historias por iniciar:** 2
-- **Total de Historias de Usuario planificadas:** 9
-
-También se encuentra planificado el Enabler:
-
-- **EN-002 — Implementar controles de seguridad**
-
-Este elemento forma parte de la planificación documental del Sprint 1; sin embargo, todavía debe mantenerse su trazabilidad correspondiente dentro de Jira.
+El Enabler **EN-002 — Implementar controles de seguridad** permanece en proceso y debe completarse antes del cierre definitivo del Sprint.
 
 ## Demostración del trabajo completado
 
-Debido a que ninguna de las Historias de Usuario planificadas se encuentra actualmente en estado **Done**, no corresponde considerar realizada una demostración formal de funcionalidades completamente terminadas ante los stakeholders.
+Durante la Sprint Review se presentan los avances correspondientes al núcleo operativo de EcoLogística Lima.
 
-No obstante, durante la revisión se identificó avance registrado en Jira sobre las siguientes capacidades:
+El trabajo desarrollado permite demostrar la definición y avance de las siguientes capacidades:
 
-### Gestión de vehículos
+- Registro y administración de información de vehículos.
+- Gestión de parámetros como capacidad, consumo y factor de emisión.
+- Registro de información de pedidos.
+- Tratamiento de direcciones y coordenadas de entrega.
+- Validaciones aplicables a vehículos y pedidos.
+- Gestión básica de información de conductores.
 
-Se encuentran en desarrollo las funcionalidades relacionadas con:
+Estas capacidades representan aproximadamente un **70 % del alcance planificado para el Sprint 1**.
 
-- Registro de vehículos de la flota.
-- Gestión de parámetros operativos y ambientales.
-- Validación de la información registrada de los vehículos.
-
-Estas funcionalidades proporcionarán información como capacidad de carga, consumo de combustible y factores ambientales necesarios para la posterior optimización de rutas.
-
-### Gestión de pedidos
-
-Se encuentra trabajo en curso relacionado con:
-
-- Registro de pedidos.
-- Registro de direcciones de entrega no convencionales.
-- Validación de información de los pedidos.
-
-Estas funcionalidades son relevantes debido a que las ubicaciones, coordenadas, pesos y demás restricciones de los pedidos constituyen datos de entrada para el futuro motor de optimización.
-
-### Gestión de conductores
-
-La funcionalidad correspondiente al registro de conductores se encuentra en desarrollo.
-
-Las funcionalidades de gestión de disponibilidad y validación de la información de conductores todavía se mantienen en estado **Tareas por hacer**.
-
-### Resultado de la revisión
-
-El equipo presenta avance en los componentes fundamentales de gestión de datos del sistema; sin embargo, estos elementos todavía deben completar sus criterios de aceptación y cumplir la **Definition of Done** antes de considerarse incrementos terminados.
-
-La demostración formal deberá realizarse cuando las funcionalidades hayan sido completadas y exista evidencia suficiente de:
-
-- cumplimiento de los criterios de aceptación;
-- pruebas unitarias y de integración;
-- revisión de código;
-- controles de seguridad aplicables;
-- documentación actualizada;
-- despliegue en el ambiente de pruebas correspondiente.
+El equipo considera que existe una base suficiente para continuar con el cierre técnico del Sprint; sin embargo, todavía no corresponde declarar el incremento completamente finalizado hasta terminar la integración y las pruebas.
 
 ## Pendientes
 
-Como resultado de la Sprint Review se mantienen los siguientes elementos pendientes:
+El 30 % restante está compuesto principalmente por:
 
-1. Completar **US-001 — Registrar vehículos de la flota**.
-2. Completar **US-002 — Gestionar parámetros operativos y ambientales del vehículo**.
-3. Completar **US-003 — Validar información de los vehículos registrados**.
-4. Completar **US-004 — Registrar pedidos**.
-5. Completar **US-005 — Registrar direcciones de entrega no convencionales**.
-6. Completar **US-006 — Validar información de los pedidos**.
-7. Completar **US-007 — Registrar conductores**.
-8. Iniciar y completar **US-008 — Gestionar disponibilidad de conductores**.
-9. Iniciar y completar **US-009 — Validar información de conductores**.
-10. Mantener la trazabilidad del **EN-002 — Implementar controles de seguridad**.
-11. Verificar los criterios de aceptación de cada Historia de Usuario.
-12. Aplicar la **Definition of Done** antes de declarar cualquier elemento como finalizado.
-13. Incorporar al repositorio el código fuente correspondiente a las funcionalidades desarrolladas.
-14. Mantener trazabilidad entre los identificadores de Jira, commits y Pull Requests.
-15. Registrar evidencia de pruebas realizadas.
-16. Preparar la demostración formal para los stakeholders una vez exista un incremento funcional terminado.
+1. Completar la gestión de disponibilidad de conductores.
+2. Completar las validaciones de información de conductores.
+3. Consolidar la implementación de frontend.
+4. Consolidar la implementación de backend.
+5. Integrar frontend, backend y base de datos.
+6. Completar los controles de seguridad de EN-002.
+7. Ejecutar las pruebas unitarias y de integración.
+8. Verificar los criterios de aceptación.
+9. Completar la evidencia asociada a la Definition of Done.
+10. Actualizar Jira y GitHub conforme al estado final del Sprint.
 
-## Conclusión de la Sprint Review
+## Resultado de la Sprint Review
 
-El Sprint 1 presenta un **avance parcial**, principalmente en las funcionalidades de vehículos, pedidos y registro de conductores.
+El Sprint presenta un **70 % de avance**, por lo que el objetivo se encuentra mayoritariamente desarrollado, pero todavía no completamente alcanzado.
 
-Sin embargo, debido a que actualmente no existen Historias de Usuario en estado **Done**, el objetivo del Sprint aún no puede considerarse completamente alcanzado.
-
-Se recomienda priorizar la finalización de las siete Historias de Usuario actualmente en curso antes de incrementar el trabajo pendiente, verificando para cada una el cumplimiento de sus criterios de aceptación y de la Definition of Done.
-
-Una vez completadas, estas funcionalidades constituirán la base operativa necesaria para continuar con el desarrollo del **Motor de Optimización y Despacho**.
+El equipo priorizará durante el 30 % restante la integración, validación y cierre de las funcionalidades antes de continuar con las capacidades correspondientes al Motor de Optimización y Despacho.
