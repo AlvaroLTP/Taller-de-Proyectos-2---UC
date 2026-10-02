@@ -4,86 +4,131 @@
 
 **Líder del Proyecto:** La Torre Párraga, Alvaro Andree
 
+## Contexto de la retrospectiva
+
+El Sprint 1 alcanzó aproximadamente un **70 % de avance real**, mientras que según el cronograma debería encontrarse al **100 %**.
+
+Esto representa una desviación aproximada del **-30 %**, la cual fue analizada por el equipo para identificar aprendizajes y acciones de mejora.
+
 ## ¿Qué aprendimos?
 
-El Sprint 1 alcanzó aproximadamente un **70 % de avance**, permitiendo identificar aspectos positivos y oportunidades de mejora antes de completar el 30 % restante.
+Durante el desarrollo del Sprint 1 se identificaron los siguientes aprendizajes:
 
-El principal aprendizaje fue que avanzar en el análisis y desarrollo de funcionalidades no es suficiente si la integración, las pruebas y las evidencias técnicas se dejan para la parte final del Sprint.
-
-También se identificó que la Definition of Done debe aplicarse progresivamente y no solamente durante el cierre de la iteración.
-
-La integración entre Jira, GitHub y la documentación debe acompañar al desarrollo para mantener una trazabilidad verificable.
-
-Finalmente, el equipo identificó la importancia de limitar el trabajo simultáneo y priorizar la finalización de las Historias de Usuario iniciadas.
+- La planificación debe considerar la disponibilidad académica real de cada integrante.
+- Las estimaciones deben contemplar tiempo para investigación y aprendizaje de tecnologías.
+- No es conveniente dejar la integración de componentes para el final del Sprint.
+- Las pruebas deben ejecutarse progresivamente y no únicamente cuando termina el desarrollo.
+- Es necesario limitar la cantidad de trabajo abierto simultáneamente.
+- Jira debe reflejar con mayor frecuencia el estado real del trabajo.
+- GitHub debe utilizarse como evidencia del desarrollo desde el comienzo de cada funcionalidad.
+- La documentación debe actualizarse de forma paralela al desarrollo.
+- Los problemas pequeños de integración pueden convertirse en retrasos importantes cuando se acumulan.
+- La Definition of Done debe revisarse durante el desarrollo y no únicamente al final.
 
 ## ¿Qué estamos haciendo bien?
 
-- Se alcanzó aproximadamente el 70 % del objetivo previsto para el Sprint 1.
-- Existe una planificación clara de las funcionalidades principales.
-- Se avanzó en las capacidades relacionadas con vehículos, pedidos y conductores.
-- Los requisitos funcionales se encuentran asociados a Historias de Usuario.
-- Se cuenta con criterios de aceptación y una Definition of Done.
-- Existen documentos de arquitectura, base de datos, riesgos y presupuesto que sirven de soporte al desarrollo.
-- Los impedimentos del Sprint están siendo identificados antes del inicio del Motor de Optimización.
-- El equipo mantiene una orientación clara hacia el objetivo principal del proyecto.
+A pesar de la desviación identificada, se reconocen los siguientes aspectos positivos:
+
+- Se alcanzó aproximadamente el 70 % del alcance del Sprint 1.
+- El objetivo y las funcionalidades principales se encuentran claramente definidos.
+- El equipo cuenta con Historias de Usuario previamente organizadas.
+- Existe una arquitectura propuesta para el sistema.
+- Se cuenta con un modelo de datos definido.
+- Los requisitos funcionales y no funcionales se encuentran documentados.
+- El equipo utiliza Jira para organizar el trabajo.
+- GitHub se utiliza como repositorio del proyecto.
+- Se identificaron los principales impedimentos antes de continuar con fases más complejas.
+- Existe disposición del equipo para reorganizar el trabajo y recuperar la desviación.
 
 ## ¿Qué podemos hacer mejor?
 
 ### Personas
 
-El equipo debe concentrar sus esfuerzos en completar el trabajo iniciado antes de asumir nuevas funcionalidades.
+La principal dificultad es que los integrantes del equipo deben distribuir su tiempo entre distintas responsabilidades académicas.
 
-Se requiere mejorar la coordinación entre desarrollo y QA para que las pruebas se ejecuten de manera paralela al desarrollo.
+Esto reduce las horas continuas disponibles para el proyecto y puede provocar que una tarea iniciada tarde más tiempo del inicialmente estimado.
 
-También debe quedar claramente definido quién es responsable de implementar, revisar y validar cada Historia de Usuario.
+También se identificó que algunos integrantes necesitan mayor tiempo de familiarización con determinadas tecnologías.
+
+### Mejoras propuestas
+
+- Distribuir tareas considerando la disponibilidad real de cada integrante.
+- Asignar actividades técnicas según experiencia y conocimiento.
+- Trabajar en parejas cuando una tarea presente mayor dificultad.
+- Evitar sobrecargar a un único integrante con actividades críticas.
+- Definir responsables claros para desarrollo, revisión y pruebas.
 
 ### Relaciones
 
-Debe fortalecerse la comunicación entre los responsables de Jira, documentación y GitHub.
+La dificultad para coincidir en horarios puede afectar la comunicación y retrasar decisiones relacionadas con integración o solución de errores.
 
-Los cambios realizados en una Historia de Usuario deben reflejarse de manera consistente en las demás herramientas.
+También pueden existir diferencias entre el trabajo que un integrante considera terminado y lo que otro necesita para continuar su actividad.
 
-Es recomendable realizar revisiones internas breves para detectar bloqueos de integración antes del cierre del Sprint.
+### Mejoras propuestas
+
+- Realizar reuniones breves de seguimiento.
+- Utilizar Jira para registrar claramente el estado del trabajo.
+- Comunicar bloqueos inmediatamente.
+- Informar al equipo cuando una funcionalidad esté lista para integración.
+- Registrar decisiones importantes para evitar confusiones posteriores.
 
 ### Procesos
 
-La principal oportunidad de mejora consiste en no dejar para el final del Sprint la integración de frontend, backend, pruebas y seguridad.
+Durante el Sprint se concentró parte del esfuerzo en avanzar funcionalidades, mientras que integración, pruebas y documentación quedaron más cerca del cierre.
 
-La Definition of Done debe verificarse progresivamente.
+Esto produjo acumulación de actividades pendientes y contribuyó a la desviación del 30 %.
 
-También se debe reducir el trabajo en progreso y evitar iniciar funcionalidades del Sprint 2 hasta completar las actividades críticas del Sprint 1.
+### Mejoras propuestas
 
-Los impedimentos identificados deben revisarse periódicamente hasta su cierre.
+- Dividir las Historias en actividades más pequeñas.
+- Integrar continuamente el trabajo desarrollado.
+- Ejecutar pruebas desde etapas tempranas.
+- Revisar la Definition of Done durante toda la implementación.
+- Limitar la cantidad de Historias simultáneamente en desarrollo.
+- Priorizar terminar una Historia antes de comenzar otra cuando sea posible.
+- Mantener la documentación actualizada durante el Sprint.
 
 ### Herramientas
 
-Se requiere consolidar la estructura de implementación del repositorio mediante una separación clara entre frontend y backend.
+El equipo todavía debe mejorar el uso conjunto de Jira y GitHub.
 
-También debe incorporarse un `.gitignore` apropiado y utilizarse una nomenclatura uniforme para ramas y commits.
+También se requiere consolidar la estructura del código correspondiente al frontend y backend.
 
-GitHub deberá utilizarse como evidencia técnica del trabajo registrado en Jira.
+El trabajo colaborativo mediante Git puede generar dificultades iniciales relacionadas con ramas, commits, Pull Requests y conflictos de integración.
 
-Asimismo, se debe mejorar la trazabilidad entre Historia de Usuario, commit, Pull Request y documentación correspondiente.
+### Mejoras propuestas
+
+- Crear una estructura clara para frontend y backend.
+- Incorporar un `.gitignore` adecuado.
+- Utilizar ramas por Historia de Usuario.
+- Utilizar el identificador de Jira en ramas y commits.
+- Realizar Pull Requests antes de integrar cambios importantes.
+- Actualizar Jira luego de cada avance significativo.
+- Relacionar cada funcionalidad con su evidencia en el repositorio.
 
 ## Acciones a realizar
 
-| ID | Acción | Relación con impedimento | Responsable | Prioridad | Resultado esperado |
-|---|---|---|---|---|---|
-| ACT-01 | Consolidar la estructura frontend/backend del repositorio. | IMP-001 | Equipo de Desarrollo | Alta | Arquitectura de carpetas preparada y código organizado. |
-| ACT-02 | Completar US-008 y US-009. | IMP-002 | Equipo de Desarrollo | Alta | Gestión completa de información de conductores. |
-| ACT-03 | Completar EN-002 y sus controles de seguridad. | IMP-003 | Desarrollo / QA | Alta | Autenticación, autorización y controles básicos verificados. |
-| ACT-04 | Ejecutar y documentar pruebas de las funcionalidades desarrolladas. | IMP-004 | QA / Desarrollo | Alta | Evidencias de pruebas disponibles. |
-| ACT-05 | Relacionar Jira con ramas, commits y Pull Requests. | IMP-005 | Equipo del Proyecto | Media | Mayor trazabilidad entre planificación e implementación. |
-| ACT-06 | Evitar iniciar nuevas funcionalidades hasta completar las actividades críticas del Sprint 1. | IMP-006 | Líder del Proyecto | Alta | Reducción del trabajo pendiente y cierre del Sprint. |
-| ACT-07 | Revisar la Definition of Done antes de cerrar cada Historia. | IMP-003 / IMP-004 | Equipo del Proyecto | Alta | Historias finalizadas con evidencia verificable. |
-| ACT-08 | Actualizar los documentos una vez completado el Sprint. | Transversal | Responsable de Documentación | Media | Jira, GitHub y documentación sincronizados. |
+| ID | Acción | Problema identificado | Responsable | Prioridad | Fecha objetivo | Evidencia esperada |
+|---|---|---|---|---|---|---|
+| ACT-01 | Reorganizar el trabajo considerando disponibilidad académica de cada integrante. | IMP-001 | Líder y equipo | Alta | 2026-10-03 | Tareas redistribuidas y responsables definidos. |
+| ACT-02 | Establecer reuniones breves de coordinación durante el cierre del Sprint. | IMP-002 | Equipo del Proyecto | Media | Desde 2026-10-02 | Registro de acuerdos y bloqueos identificados. |
+| ACT-03 | Realizar sesiones de apoyo e investigación para tecnologías con mayor dificultad. | IMP-003 | Equipo de Desarrollo | Media | 2026-10-05 | Soluciones técnicas documentadas y aplicadas. |
+| ACT-04 | Consolidar la estructura frontend/backend. | IMP-004 | Equipo de Desarrollo | Alta | 2026-10-07 | Carpetas y código organizados en GitHub. |
+| ACT-05 | Ejecutar pruebas progresivamente antes del cierre definitivo. | IMP-005 | Desarrollo / QA | Alta | 2026-10-08 | Evidencias y resultados de pruebas. |
+| ACT-06 | Actualizar Jira y documentación después de cada avance importante. | IMP-006 | Equipo del Proyecto | Media | Aplicación inmediata | Estados consistentes con el trabajo realizado. |
+| ACT-07 | Utilizar ramas, commits y Pull Requests con una nomenclatura común. | IMP-007 | Equipo de Desarrollo | Media | 2026-10-06 | Historial Git trazable por Historia de Usuario. |
+| ACT-08 | Priorizar el cierre del Sprint 1 antes de asumir nuevo trabajo significativo. | IMP-008 | Equipo del Proyecto | Alta | Cierre del Sprint | Reducción del 30 % pendiente. |
+| ACT-09 | Completar US-008 y US-009. | Trabajo pendiente | Equipo de Desarrollo | Alta | Cierre del Sprint | Historias implementadas y verificadas. |
+| ACT-10 | Completar EN-002 y verificar la Definition of Done. | Seguridad y cierre | Desarrollo / QA | Alta | Cierre del Sprint | Controles implementados y evidencias disponibles. |
 
 ## Conclusión de la retrospectiva
 
-El Sprint 1 presenta un resultado positivo al alcanzar aproximadamente un **70 % de avance**, pero todavía requiere completar actividades de implementación, integración, pruebas y seguridad.
+El Sprint 1 presenta aproximadamente un **70 % de avance real frente al 100 % planificado**, generando una desviación aproximada del **30 %**.
 
-Los principales impedimentos se concentran en el cierre técnico del trabajo desarrollado y no en una modificación del alcance definido.
+Las causas principales están relacionadas con condiciones habituales en un proyecto académico: disponibilidad limitada, coordinación de horarios, aprendizaje de tecnologías, integración del trabajo y acumulación de pruebas hacia la etapa final.
 
-Por ello, la principal decisión resultante de esta retrospectiva consiste en utilizar el 30 % restante para **terminar, integrar, probar y documentar** las funcionalidades existentes antes de continuar con el siguiente Sprint.
+El equipo considera que estas dificultades son recuperables sin modificar el alcance principal del proyecto.
 
-Esta medida permitirá que el Sprint 1 finalice con mayor trazabilidad y con evidencias suficientes para demostrar el cumplimiento de los criterios establecidos.
+Por ello, la principal decisión de mejora consiste en concentrar el esfuerzo inmediato en **terminar, integrar, probar y documentar** el trabajo pendiente antes de continuar con funcionalidades de mayor complejidad.
+
+Las acciones definidas serán revisadas durante la siguiente iteración para verificar si permitieron mejorar la organización, trazabilidad y velocidad de desarrollo.
