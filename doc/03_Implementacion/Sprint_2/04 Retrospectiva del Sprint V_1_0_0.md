@@ -5,67 +5,62 @@
 **Líder del Proyecto:** La Torre Párraga, Alvaro Andree
 
 **Sprint:** 2 — Motor de Optimización y Despacho
-**Fecha de actualización / corte de Jira:** 2026-10-06
-**Versión:** 1.0.1
+
+**Inicio según Jira:** 2026-09-22. **Hito previsto H-04 del cronograma:** 2026-10-06. **Estado de la iteración:** cierre parcial con retraso breve reportado.
+
+**Fecha de revisión documental y consulta de Jira:** 2026-10-06. **Versión:** 1.0.2.
 
 [Volver al README principal](../../../README.md)
 
 ## Contexto
 
-Esta retrospectiva recoge conclusiones de la revisión de Jira, Git y el avance reportado por el equipo. Las acciones son propuestas para discutir en la reunión del equipo; no se inventa una reunión, votación ni acuerdos ya ejecutados. Desarrollo reportado: frontend y backend terminados; entrega completa en Git pendiente. Cierre en Jira: 2 de 6 historias finalizadas (33,3 %); 4 por hacer.
+Se completaron **US-010 / KAN-25** y **US-011 / KAN-26**, que figuran **Finalizadas** en Jira al corte del 6 de octubre de 2026. El Sprint 2 presenta un **cierre parcial con retraso breve**, porque KAN-11, KAN-12, KAN-13 y KAN-21 aún aparecen por hacer. El hito H-04 prevé para el 6 de octubre un prototipo funcional del motor de optimización y rutas multi-vehículo; el cierre registrado todavía no acredita ese resultado completo.
+
+Esta reflexión se basa en el trabajo confirmado por el equipo y los estados de Jira. Las acciones pendientes constituyen el plan propuesto de mejora; su ejecución se revisará por el equipo.
 
 ## ¿Qué aprendimos?
 
-Una ruta generada necesita evidencia de que respeta capacidad y horarios; mostrar una salida no demuestra por sí solo que el resultado es válido. Los datos simulados de tráfico deben diferenciarse de una fuente actualizada.
+Las preferencias de entrega y las restricciones configuradas no equivalen a un motor de optimización terminado: el cálculo debe demostrar que las respeta. Una salida de ruta requiere entradas, restricciones y resultado reproducibles, y los datos simulados de tráfico deben identificarse.
 
 ## ¿Qué estamos haciendo bien?
 
-El alcance se encuentra desglosado en historias identificables, el equipo cuenta con Jira y un repositorio común, y ha informado el avance técnico y la publicación pendiente. Las historias finalizadas consultadas son: US-010 / KAN-25 — Registrar preferencias de entrega; US-011 / KAN-26 — Gestionar preferencias según horarios y restricciones. Esto permite priorizar la entrega y revisar evidencias sin ampliar el alcance de la iteración.
+Se finalizaron KAN-25 y KAN-26 y se dispone del núcleo operativo del Sprint 1 completado. El alcance restante está identificado por claves Jira, lo que permite priorizar el cierre del motor y revisar las evidencias sin ampliar el alcance.
 
 ## ¿Qué podemos hacer mejor?
 
 ### Personas
 
-Planificar bloques de trabajo según los horarios de clases y evaluaciones de los cuatro integrantes. Proponer que cada responsable de Jira prepare la evidencia de sus historias y otro compañero revise la ejecución; el líder consolida la entrega, evitando concentrar todas las revisiones en una sola persona. Esta distribución es una mejora propuesta, no un bloqueo personal confirmado.
+Distribuir publicación y revisión entre los cuatro integrantes según sus horarios de clases y evaluaciones. El responsable de una historia prepara el resultado y otro compañero revisa su ejecución; el líder consolida la entrega. Así se evita que una sola persona acumule todo el trabajo de cierre.
 
 ### Relaciones
 
-Mantener un mensaje breve al terminar cada sesión: historia atendida, enlace al cambio y siguiente paso. Si no se coincide en horarios, dejar decisiones por escrito y reservar una revisión conjunta corta para dudas de integración. El aviso de “terminado” debe indicar si el código está local, publicado o aceptado.
+Dejar un mensaje breve al finalizar cada sesión con la clave Jira, el enlace al cambio y el siguiente paso. Registrar decisiones de configuración por escrito para que un compañero pueda continuar cuando los horarios no coincidan. Reservar una revisión conjunta corta para dudas que no puedan resolverse de forma asíncrona.
 
 ### Procesos
 
-Las preferencias de entrega están finalizadas en Jira, pero las historias del motor aún aparecen por hacer. El cierre debe reconciliar ese registro con el código que el equipo informa terminado, usando casos reproducibles por historia.
-
-Incluir publicación, validaciones y evidencia de demo en la lista de cierre. No es necesario volver a implementar lo que ya está terminado; corresponde entregar la versión correcta y comprobar su trazabilidad.
+Cerrar el hito H-04 mediante resultados verificables de generación de rutas, restricciones y datos insuficientes. Distinguir código desarrollado de historia finalizada y publicar cambios durante la sesión de trabajo para que el tablero no quede separado del avance técnico.
 
 ### Herramientas
 
-Usar el identificador KAN de la historia en commits y enlazarlo en Jira. El tablero actual no admite sprints, por lo que se mantiene explícito el mapeo académico en la documentación. La organización de carpetas distingue las dos iteraciones y el .gitignore raíz excluye dependencias, temporales y variables de entorno de futuras publicaciones.
+Usar las claves KAN en commits y enlazar evidencias en Jira. Mantener frontend y backend separados, el archivo .gitignore en la raíz y los documentos organizados por sprint. Los enlaces del README deben actualizarse junto con cada reorganización y los resultados de pruebas deben incluir el entorno utilizado.
 
 ### Acciones a realizar
 
-| ID | Acción propuesta | Relación | Responsable propuesto | Momento objetivo | Evidencia de cierre |
+| ID | Acción | Responsable | Momento objetivo | Estado | Evidencia de cierre |
 |---|---|---|---|---|---|
-| S2-ACT-01 | Repartir publicación y revisión en bloques compatibles con los horarios académicos. | Organización del equipo | Alvaro La Torre y los cuatro integrantes | Antes de consolidar la entrega | Responsables y bloques acordados por escrito |
-| S2-ACT-02 | Subir la versión completa y documentar instalación y configuración. | S2-IMP-01 | Equipo de desarrollo | Antes de la entrega académica | Commit con ambos componentes y ejecución reproducible |
-| S2-ACT-03 | Revisar cada historia con su caso de aceptación y conciliar Jira. | S2-IMP-02 | Responsable de cada historia y compañero revisor | Después de la publicación | Enlace al commit, resultado y estado coherente |
-| S2-ACT-04 | Registrar la demo, observaciones y decisiones del docente. | Evidencia de revisión | Líder y equipo | En la próxima revisión académica | Acta y capturas o grabación |
+| S2-ACT-01 | Publicar la versión completa y enlazar los cambios con Jira. | Equipo de desarrollo | Primera sesión de recuperación | Pendiente | Commit e instrucciones de ejecución |
+| S2-ACT-02 | Revisar generación, restricciones y datos insuficientes: KAN-11, KAN-12 y KAN-13. | Augusto Guevara y Marvin Caldas, responsables en Jira | Primera sesión de recuperación | Pendiente de cierre | Entradas, rutas, validaciones y estados coherentes |
+| S2-ACT-03 | Revisar tráfico de KAN-21 y adjuntar medición de EN-001. | Augusto Guevara, con apoyo del equipo | Segunda sesión de recuperación | Pendiente | Fuente de tráfico, entorno y tiempo de cálculo |
+| S2-ACT-04 | Consolidar resultados y evidencia de presentación. | Alvaro La Torre y equipo | Final de la segunda sesión y revisión académica | Pendiente | Resultados, capturas y observaciones registradas |
 
-## Verificación en la siguiente revisión
+## Seguimiento del plan de mejora
 
-Comprobar si ambos componentes están publicados, si cada historia tiene evidencia asociada y si Jira refleja lo validado. Revisar las acciones abiertas en una reunión breve; registrar fechas reales solo cuando se ejecuten. Entregar al siguiente sprint las rutas y sus resultados verificables para visualización y monitoreo. La reoptimización US-015 se conserva en el Sprint 4 según la planificación previa.
-
-## Avance y retraso breve del Sprint 2
-
-El Sprint 1 está completado al 2026-10-06 según el líder. El Sprint 2 permanece **en proceso de cierre, con un retraso breve de entrega reportado por el líder**. Jira confirma US-010/KAN-25 y US-011/KAN-26 finalizadas; US-012/KAN-11, US-013/KAN-12, US-014/KAN-13 y US-016/KAN-21 siguen por hacer. No se declaran estas cuatro historias cerradas mientras el tablero y sus evidencias no se concilien.
-
-El equipo informa el frontend y backend desarrollados. El pendiente inmediato es publicar la versión completa y revisar el cierre de generación de rutas, restricciones, datos insuficientes y tráfico. Las mediciones de EN-001 también deben adjuntarse. El 33,3 % expresa dos de seis historias cerradas en Jira, no el porcentaje del código desarrollado ni la duración del retraso.
-
-**Plan de recuperación propuesto:** consolidar publicación y revisión de evidencias durante las próximas dos sesiones de trabajo del equipo, compatibles con clases y evaluaciones. Priorizar KAN-11, KAN-12 y KAN-13, y después KAN-21 y la medición de rendimiento. El líder revisa el resultado al final de la segunda sesión y acuerda el cierre. Las dos sesiones son una meta de recuperación; no una duración histórica del retraso calculada desde Jira.
+El líder revisará publicación, evidencias y estados con los responsables de cada historia. Las acciones con fechas no confirmadas se programan por sesión o hito de entrega, sin atribuirles fechas históricas. Se registran **KAN-25 y KAN-26 finalizadas**. El Sprint 2 conserva cierre parcial y retraso breve de entrega respecto al hito previsto, con cuatro historias por revisar y cerrar. No se certifica el prototipo completo del motor solo por haber alcanzado la fecha del cronograma.
 
 ## Historial de versiones
 
-| Versión | Fecha | Cambio |
+| Versión | Fecha de edición | Cambio |
 |---|---|---|
-| 1.0.0 | 2026-10-06 | Creación del documento del Sprint 2 con alcance, estado de Jira y pendientes de entrega. |
-| 1.0.1 | 2026-10-06 | Sprint 1 completado y Sprint 2 con retraso breve de entrega reportado; plan de recuperación y estados Jira conservados. |
+| 1.0.0 | 2026-10-06 | Organización inicial y trazabilidad Jira. |
+| 1.0.1 | 2026-10-06 | Corrección del estado del Sprint 1 y seguimiento del Sprint 2. |
+| 1.0.2 | 2026-10-06 | Alineación con las plantillas, hitos del cronograma y estados actuales de Jira; fechas funcionales separadas de la edición documental. |

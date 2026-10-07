@@ -27,9 +27,11 @@ Optimizador de Rutas Sostenibles para DistriRápido S.A.C. — Taller de Proyect
 
 ## Estado de la entrega al 2026-10-06
 
-El Sprint 1 está completado al 6 de octubre de 2026: 100 % de su alcance funcional realizado según la actualización del líder. El frontend y backend están desarrollados, con publicación completa pendiente. Los estados abiertos del Sprint 1 en Jira deben sincronizarse con el cierre reportado. El Sprint 2 está en proceso de cierre, con un retraso breve de entrega informado por el líder: Jira muestra US-010 y US-011 finalizadas y cuatro historias pendientes de cierre. Se propone recuperar la entrega en dos sesiones de trabajo; ese plazo es una meta, no una duración medida del retraso.
+El **Sprint 1 culminó el 22 de septiembre de 2026**, según el cierre funcional reportado por el equipo para el hito H-03 del cronograma. Actualmente las nueve historias y la épica KAN-2 figuran finalizadas en Jira. La fecha de revisión de los documentos no reemplaza la fecha funcional reportada de cierre.
 
-El tablero KAN no admite sprints; la distribución académica se toma de la planificación previa. EN-002 (Sprint 1) y EN-001 (Sprint 2) están previstos en esa planificación, pero no se identificó su incidencia en Jira.
+En el **Sprint 2**, KAN-25 y KAN-26 están finalizadas. KAN-11, KAN-12, KAN-13 y KAN-21 siguen por hacer. El hito H-04 prevé un prototipo funcional del motor y rutas multi-vehículo para el 6 de octubre; el sprint mantiene cierre parcial y retraso breve reportado, con un plan propuesto de recuperación en dos sesiones de trabajo.
+
+El frontend y backend están desarrollados según el equipo; falta publicar la versión completa. El tablero KAN no admite sprints, por lo que la distribución académica se toma de la planificación previa. EN-002 y EN-001 se conservan en los respectivos alcances; no se identificaron incidencias independientes de esos enablers en Jira.
 
 ## Código fuente
 
@@ -42,4 +44,4 @@ La documentación inicial propone React, FastAPI y PostgreSQL/PostGIS. El fronte
 
 Los entregables están en `doc/03_Implementacion/Sprint_1` y `Sprint_2`, siguiendo la carpeta existente y la organización solicitada por el equipo. Las consignas usan literalmente `docs/03 Implementación`; esa diferencia de ruta debe conciliarse con el docente antes de la entrega. Se mantienen los cuatro nombres oficiales por sprint y enlaces de ida y vuelta al README principal.
 
-Cada documento incluye versión 1.0.0 e historial. El `.gitignore` raíz prepara futuras publicaciones para excluir dependencias, temporales y configuración privada; no elimina archivos que ya estén rastreados.
+Se conservan los nombres oficiales V_1_0_0 de las plantillas; cada documento registra la revisión 1.0.2 y su historial de versiones. El `.gitignore` raíz prepara futuras publicaciones para excluir dependencias, temporales y configuración privada; no elimina archivos que ya estén rastreados.

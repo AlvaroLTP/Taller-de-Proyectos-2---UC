@@ -5,24 +5,22 @@
 **Líder del Proyecto:** La Torre Párraga, Alvaro Andree
 
 **Sprint:** 2 — Motor de Optimización y Despacho
-**Fecha de actualización / corte de Jira:** 2026-10-06
-**Versión:** 1.0.1
+
+**Inicio según Jira:** 2026-09-22. **Hito previsto H-04 del cronograma:** 2026-10-06. **Estado de la iteración:** cierre parcial con retraso breve reportado.
+
+**Fecha de revisión documental y consulta de Jira:** 2026-10-06. **Versión:** 1.0.2.
 
 [Volver al README principal](../../../README.md)
 
-## Objetivo de la revisión
+## Estado del Sprint
 
-Generar rutas optimizadas considerando preferencias, horarios y restricciones operativas, y controlar la generación cuando los datos son insuficientes.
-
-El equipo informa que el frontend y el backend están desarrollados y que falta subir su versión completa a GitHub. Ese reporte se conserva como avance técnico declarado. El repositorio contiene un frontend del Sprint 1 en doc/Programa_Proyectos/Frontend/Programa_Sprint_1/project; la carpeta doc/Programa_Proyectos/backend contiene únicamente un README vacío al momento de esta revisión. Por tanto, el código completo pendiente de publicación no ha sido verificado desde Git.
-
-Jira utiliza el tablero **KAN board**, que no admite sprints. La asignación a Sprint 2 sigue el documento de planificación del proyecto, no un campo Sprint de Jira. La épica de referencia es [KAN-3](https://continental-team-lz4401n3.atlassian.net/browse/KAN-3), en estado **En curso**, con fecha de inicio registrada **2026-09-22**. Esa fecha es de la épica; no constituye una fecha de cierre confirmada del sprint.
+Se completaron **US-010 / KAN-25** y **US-011 / KAN-26**, que figuran **Finalizadas** en Jira al corte del 6 de octubre de 2026. El Sprint 2 presenta un **cierre parcial con retraso breve**, porque KAN-11, KAN-12, KAN-13 y KAN-21 aún aparecen por hacer. El hito H-04 prevé para el 6 de octubre un prototipo funcional del motor de optimización y rutas multi-vehículo; el cierre registrado todavía no acredita ese resultado completo.
 
 ## Historias de Usuario completadas en este Sprint
 
-**Finalizadas en Jira:** US-010 / KAN-25 — Registrar preferencias de entrega; US-011 / KAN-26 — Gestionar preferencias según horarios y restricciones.
+Se completaron el registro de preferencias de entrega y la gestión de preferencias por horarios y restricciones. La tabla separa las dos historias finalizadas de las cuatro que aún tienen cierre pendiente.
 
-| Historia de planificación | Incidencia Jira | Funcionalidad | Estado consultado el 2026-10-06 |
+| Historia | Jira | Funcionalidad | Estado actual en Jira |
 |---|---|---|---|
 | US-010 | [KAN-25](https://continental-team-lz4401n3.atlassian.net/browse/KAN-25) | Registrar preferencias de entrega | Finalizada |
 | US-011 | [KAN-26](https://continental-team-lz4401n3.atlassian.net/browse/KAN-26) | Gestionar preferencias según horarios y restricciones | Finalizada |
@@ -31,48 +29,42 @@ Jira utiliza el tablero **KAN board**, que no admite sprints. La asignación a S
 | US-014 | [KAN-13](https://continental-team-lz4401n3.atlassian.net/browse/KAN-13) | Controlar la generación de rutas con datos insuficientes | Tareas por hacer |
 | US-016 | [KAN-21](https://continental-team-lz4401n3.atlassian.net/browse/KAN-21) | Considerar información actualizada de tráfico | Tareas por hacer |
 
-**Enabler previsto:** EN-001 — Optimizar rendimiento. No se encontró una incidencia equivalente en el listado del proyecto KAN; su implementación no se considera verificada por Jira.
-
-**Resumen de cierre:** 2 de 6 historias finalizadas (33,3 %); 4 por hacer. Las historias aún abiertas requieren conciliación con el trabajo que el equipo reporta terminado; no se presentan como funcionalidades sin desarrollar por el solo estado del tablero.
+**EN-001 — Optimizar rendimiento:** previsto en la planificación; pendiente de adjuntar resultados de medición y confirmar su cierre. No se identificó una incidencia independiente de este enabler en Jira.
 
 ## Demostración del trabajo completado
 
-La revisión documental no permite confirmar una demostración ante el docente o representantes del caso DistriRápido S.A.C. La siguiente secuencia sirve como guion de presentación del trabajo reportado; sus resultados deberán adjuntarse al realizar o documentar la sesión.
+El trabajo finalizado de esta iteración se concentra en las preferencias de entrega:
 
-| Bloque | Demostración prevista | Evidencia que debe incorporarse |
-|---|---|---|
-| Preferencias (US-010 y US-011) | Registrar preferencias y horarios de entrega y consultar su persistencia. | Capturas y casos de aceptación vinculados a KAN-25 y KAN-26. |
-| Optimización (US-012 y US-013) | Generar una ruta con pedidos válidos y verificar capacidad y ventanas horarias. | Entradas, salida, restricciones verificadas y duración de ejecución. |
-| Datos insuficientes (US-014) | Intentar generar una ruta sin vehículos disponibles o con un pedido incompleto. | Mensaje de rechazo y respuesta del servicio, sin generar una ruta inválida. |
-| Tráfico (US-016) | Identificar la fuente y fecha de los datos de tráfico utilizados en el cálculo. | Registro de origen y actualización; si son simulados, indicarlo expresamente. |
-| Rendimiento (EN-001) | Medir el cálculo sobre un conjunto de pedidos definido. | Tamaño del conjunto, entorno y tiempo medido, comparado con el objetivo documentado de menos de 45 segundos. |
+| Historia completada | Funcionalidad terminada | Recorrido de presentación | Evidencia pendiente de adjuntar |
+|---|---|---|---|
+| US-010 / KAN-25 | Registro de preferencias de entrega. | Registrar una preferencia y consultar la información guardada. | Capturas del registro y resultado de validación. |
+| US-011 / KAN-26 | Gestión de preferencias según horarios y restricciones. | Configurar una ventana de atención y restricciones de entrega. | Capturas y caso de aceptación asociado a horarios y restricciones. |
 
-**Responsable de consolidar la evidencia:** La Torre Párraga, Alvaro Andree, con apoyo de los responsables de cada historia en Jira. **Aceptación y observaciones del docente:** pendientes de registro; no se atribuyen comentarios ni aprobación a stakeholders sin un acta.
+La generación de rutas, aplicación de restricciones en el motor, control de datos insuficientes y uso de tráfico actualizado no se presentan como historias finalizadas en esta revisión. Permanecen en la lista de cierre del Sprint 2.
+
+El contenido describe el trabajo terminado y el recorrido para presentarlo al docente y a los interesados del caso. No se aportó acta o grabación de una sesión: faltan registrar fecha, participantes, observaciones y evidencia de aceptación. No se atribuyen demostraciones ni aprobaciones no documentadas.
 
 ## Pendientes
 
-1. Publicar la versión completa del frontend y backend desarrollados, con instrucciones de instalación, configuración y ejecución; excluir dependencias y credenciales mediante .gitignore.
-2. Relacionar cada historia de este sprint con su commit y resultado de validación; conciliar con Jira las historias aún abiertas una vez revisada su evidencia.
-3. Adjuntar resultados de los criterios de aceptación y del enabler del sprint. La ausencia de resultados en las fuentes consultadas es un pendiente de evidencia; no demuestra que el equipo no haya ejecutado pruebas.
-4. Incorporar evidencia de la demostración: fecha, participantes, capturas o grabación y acuerdos. No se dispone de un acta que permita dar una demo por realizada o aceptada.
+1. **US-012 / KAN-11:** revisar y cerrar la generación de rutas optimizadas y multi-vehículo con un caso reproducible.
+2. **US-013 / KAN-12:** comprobar capacidad y ventanas horarias en el resultado generado.
+3. **US-014 / KAN-13:** comprobar el rechazo de datos insuficientes sin generar una ruta inválida.
+4. **US-016 / KAN-21:** identificar la fuente y actualización del tráfico; distinguir datos reales y simulados.
+5. **EN-001:** adjuntar tamaño del caso, entorno y duración del cálculo frente al objetivo de menos de 45 segundos del stack documentado.
+6. Publicar la versión completa del frontend y backend reportados como desarrollados y asociar sus commits a Jira.
 
-Entregar al siguiente sprint las rutas y sus resultados verificables para visualización y monitoreo. La reoptimización US-015 se conserva en el Sprint 4 según la planificación previa.
+Se propone recuperar el cierre en las próximas **dos sesiones de trabajo**: primero publicar y revisar KAN-11, KAN-12 y KAN-13; después revisar KAN-21 y rendimiento y consolidar evidencias. El líder verifica los resultados antes de cerrar las historias. Es una meta de recuperación, no una duración histórica del retraso inferida de Jira. La reoptimización US-015 se mantiene en el Sprint 4 según la planificación previa.
 
-## Resultado de la revisión documental
+## Resultado de la revisión
 
-El alcance está identificado y el equipo reporta la implementación del frontend y backend. La entrega del sprint queda pendiente de publicación completa, evidencia por historia y registro de aceptación. La revisión documental realizada el 2026-10-06 no equivale a una sesión de Sprint Review con stakeholders ni certifica resultados de ejecución.
+Se registran **KAN-25 y KAN-26 finalizadas**. El Sprint 2 conserva cierre parcial y retraso breve de entrega respecto al hito previsto, con cuatro historias por revisar y cerrar. No se certifica el prototipo completo del motor solo por haber alcanzado la fecha del cronograma.
 
-## Avance y retraso breve del Sprint 2
-
-El Sprint 1 está completado al 2026-10-06 según el líder. El Sprint 2 permanece **en proceso de cierre, con un retraso breve de entrega reportado por el líder**. Jira confirma US-010/KAN-25 y US-011/KAN-26 finalizadas; US-012/KAN-11, US-013/KAN-12, US-014/KAN-13 y US-016/KAN-21 siguen por hacer. No se declaran estas cuatro historias cerradas mientras el tablero y sus evidencias no se concilien.
-
-El equipo informa el frontend y backend desarrollados. El pendiente inmediato es publicar la versión completa y revisar el cierre de generación de rutas, restricciones, datos insuficientes y tráfico. Las mediciones de EN-001 también deben adjuntarse. El 33,3 % expresa dos de seis historias cerradas en Jira, no el porcentaje del código desarrollado ni la duración del retraso.
-
-**Plan de recuperación propuesto:** consolidar publicación y revisión de evidencias durante las próximas dos sesiones de trabajo del equipo, compatibles con clases y evaluaciones. Priorizar KAN-11, KAN-12 y KAN-13, y después KAN-21 y la medición de rendimiento. El líder revisa el resultado al final de la segunda sesión y acuerda el cierre. Las dos sesiones son una meta de recuperación; no una duración histórica del retraso calculada desde Jira.
+Las fechas de inicio proceden de la épica KAN-3 en Jira; el hito del 6 de octubre procede del cronograma del acta. KAN-25 y KAN-26 están finalizadas al corte. No se atribuyen fechas individuales anteriores de culminación no confirmadas ni se presenta todo el Sprint 2 como finalizado.
 
 ## Historial de versiones
 
-| Versión | Fecha | Cambio |
+| Versión | Fecha de edición | Cambio |
 |---|---|---|
-| 1.0.0 | 2026-10-06 | Creación del documento del Sprint 2 con alcance, estado de Jira y pendientes de entrega. |
-| 1.0.1 | 2026-10-06 | Sprint 1 completado y Sprint 2 con retraso breve de entrega reportado; plan de recuperación y estados Jira conservados. |
+| 1.0.0 | 2026-10-06 | Organización inicial y trazabilidad Jira. |
+| 1.0.1 | 2026-10-06 | Corrección del estado del Sprint 1 y seguimiento del Sprint 2. |
+| 1.0.2 | 2026-10-06 | Alineación con las plantillas, hitos del cronograma y estados actuales de Jira; fechas funcionales separadas de la edición documental. |

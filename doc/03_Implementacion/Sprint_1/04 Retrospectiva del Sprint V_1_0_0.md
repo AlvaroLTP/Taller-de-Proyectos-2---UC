@@ -6,57 +6,60 @@
 
 **Sprint:** 1 — Gestión Core de Operaciones
 
-**Fecha de actualización:** 2026-10-06
+**Inicio según Jira:** 2026-08-31. **Cierre funcional reportado por el equipo, según el hito H-03 del cronograma:** 2026-09-22.
 
-**Versión:** 1.0.1
+**Fecha de revisión documental y consulta de Jira:** 2026-10-06. **Versión:** 1.0.2.
 
 [Volver al README principal](../../../README.md)
 
 ## Contexto
 
-El Sprint 1 se registra como completado al 2026-10-06 según la actualización del líder, con el 100 % de su alcance funcional realizado. El frontend y backend están desarrollados y queda su publicación completa. La reflexión se basa en el estado reportado; las acciones siguientes son propuestas de mejora y no acuerdos de una reunión cuya acta no fue proporcionada.
+El Sprint 1 culminó el **22 de septiembre de 2026**, conforme al cierre funcional reportado por el equipo para el hito H-03. Su alcance funcional está **completado al 100 %**: nueve historias de usuario y el control de seguridad previsto. El frontend y backend están desarrollados; publicar la versión completa constituye una actividad de entrega del código y no una funcionalidad pendiente de este sprint.
+
+Esta reflexión se basa en el trabajo confirmado por el equipo y los estados de Jira. Las acciones pendientes constituyen el plan propuesto de mejora; su ejecución se revisará por el equipo.
 
 ## ¿Qué aprendimos?
 
-El cierre funcional y la publicación deben comunicarse por separado. Un tablero sin actualizar puede hacer parecer pendiente un trabajo que el equipo ya terminó. La gestión de vehículos, pedidos y conductores constituye la base del motor de rutas y debe conservar una trazabilidad clara hacia el Sprint 2.
+La gestión core debe consolidar registros y validaciones antes de utilizar los datos en el motor de rutas. Además, terminar una funcionalidad, publicarla y actualizar su estado son actividades diferentes: conviene completarlas en la misma sesión para evitar desfases en los informes.
 
 ## ¿Qué estamos haciendo bien?
 
-El equipo completó el alcance core reportado, cuenta con frontend y backend desarrollados y mantiene identificadas las nueve historias. Se dispone de un repositorio y de Jira para organizar la entrega. La actualización del líder permite corregir el informe y concentrar el esfuerzo en el Sprint 2.
+Se completaron las nueve historias de la Gestión Core, se dispone del frontend y backend desarrollados y el tablero ya refleja el cierre del alcance. El trabajo de vehículos, pedidos y conductores permite continuar con la optimización sin reabrir el Sprint 1.
 
 ## ¿Qué podemos hacer mejor?
 
 ### Personas
 
-Distribuir publicación y revisión entre los cuatro integrantes según sus horarios de clases y evaluaciones. Cada responsable prepara los cambios de sus historias y un compañero revisa la evidencia; el líder consolida la entrega sin asumir todas las tareas.
+Distribuir publicación y revisión entre los cuatro integrantes según sus horarios de clases y evaluaciones. El responsable de una historia prepara el resultado y otro compañero revisa su ejecución; el líder consolida la entrega. Así se evita que una sola persona acumule todo el trabajo de cierre.
 
 ### Relaciones
 
-Comunicar al equipo cuándo una funcionalidad está terminada y cuándo ya está subida. Registrar el enlace al cambio en un mensaje breve para que quienes tienen otro horario puedan revisarlo sin depender de una reunión extensa.
+Dejar un mensaje breve al finalizar cada sesión con la clave Jira, el enlace al cambio y el siguiente paso. Registrar decisiones de configuración por escrito para que un compañero pueda continuar cuando los horarios no coincidan. Reservar una revisión conjunta corta para dudas que no puedan resolverse de forma asíncrona.
 
 ### Procesos
 
-Agregar la actualización de Jira y la publicación del código a la rutina de entrega, evitando que queden concentradas al final. El seguimiento debe distinguir desarrollo finalizado, evidencia publicada y aceptación académica.
+Conservar el cierre funcional en el hito asignado y registrar por separado las actualizaciones administrativas. Incorporar publicación y evidencia a la lista de entrega para que un retraso al subir código no se confunda con funcionalidades sin terminar.
 
 ### Herramientas
 
-Relacionar commits con las claves KAN y conservar un .gitignore común. Usar las carpetas por sprint para evitar mezclar los entregables y mantener los enlaces de ida y vuelta al README.
+Usar las claves KAN en commits y enlazar evidencias en Jira. Mantener frontend y backend separados, el archivo .gitignore en la raíz y los documentos organizados por sprint. Los enlaces del README deben actualizarse junto con cada reorganización y los resultados de pruebas deben incluir el entorno utilizado.
 
 ### Acciones a realizar
 
-| ID | Acción propuesta | Responsable propuesto | Momento objetivo | Evidencia de cierre |
-|---|---|---|---|---|
-| S1-ACT-01 | Publicar la versión completa del frontend y backend desarrollados. | Equipo de desarrollo, coordinación de Alvaro La Torre | Antes de la entrega académica | Commit accesible e instrucciones de ejecución |
-| S1-ACT-02 | Actualizar Jira para reflejar el cierre funcional reportado. | Responsables de cada historia | Al consolidar sus evidencias | Estados y enlaces consistentes |
-| S1-ACT-03 | Adjuntar validaciones y registro de presentación. | Equipo y líder | En la revisión académica | Resultados, capturas y observaciones del docente |
+| ID | Acción | Responsable | Momento objetivo | Estado | Evidencia de cierre |
+|---|---|---|---|---|---|
+| S1-ACT-01 | Publicar ambos componentes desarrollados y documentar ejecución. | Equipo de desarrollo, coordinación de Alvaro La Torre | Antes de la entrega académica | Pendiente | Commit con frontend/backend y guía de ejecución |
+| S1-ACT-02 | Sincronizar Jira con el cierre de la Gestión Core. | Líder del proyecto | 2026-10-06 | Realizada | KAN-2 y nueve historias finalizadas |
+| S1-ACT-03 | Adjuntar validaciones y evidencia de presentación. | Responsables de las historias y líder | En la revisión académica | Pendiente de evidencia | Resultados, capturas y observaciones registradas |
 
-## Seguimiento de mejora
+## Seguimiento del plan de mejora
 
-El Sprint 1 no conserva pendientes funcionales reportados. Verificar las tres acciones de entrega y trasladar al Sprint 2 la práctica de actualizar código, evidencia y tablero en la misma sesión de trabajo.
+El líder revisará publicación, evidencias y estados con los responsables de cada historia. Las acciones con fechas no confirmadas se programan por sesión o hito de entrega, sin atribuirles fechas históricas. El Sprint 1 queda **finalizado**, con su culminación funcional reportada en el hito del **22 de septiembre de 2026**. Jira refleja las nueve historias y la épica finalizadas. La publicación completa y la evidencia de presentación se conservan como seguimiento de entrega.
 
 ## Historial de versiones
 
-| Versión | Fecha | Cambio |
+| Versión | Fecha de edición | Cambio |
 |---|---|---|
-| 1.0.0 | 2026-10-06 | Organización inicial y consulta de Jira. |
-| 1.0.1 | 2026-10-06 | Corrección solicitada por el líder: Sprint 1 completado al corte actual; publicación y sincronización separadas del desarrollo. |
+| 1.0.0 | 2026-10-06 | Organización inicial y trazabilidad Jira. |
+| 1.0.1 | 2026-10-06 | Corrección del estado del Sprint 1 y seguimiento del Sprint 2. |
+| 1.0.2 | 2026-10-06 | Alineación con las plantillas, hitos del cronograma y estados actuales de Jira; fechas funcionales separadas de la edición documental. |
