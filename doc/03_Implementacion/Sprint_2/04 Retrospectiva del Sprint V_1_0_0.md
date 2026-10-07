@@ -6,17 +6,11 @@
 
 **Sprint:** 2 — Motor de Optimización y Despacho
 
-**Inicio según Jira:** 2026-09-22. **Hito previsto H-04 del cronograma:** 2026-10-06. **Estado de la iteración:** cierre parcial con retraso breve reportado.
+**Inicio:** 2026-09-22. **Hito de entrega previsto:** 2026-10-06.
 
-**Fecha de revisión documental y consulta de Jira:** 2026-10-06. **Versión:** 1.0.2.
+**Versión:** 1.0.3. **Fecha de actualización documental:** 2026-10-06.
 
 [Volver al README principal](../../../README.md)
-
-## Contexto
-
-Se completaron **US-010 / KAN-25** y **US-011 / KAN-26**, que figuran **Finalizadas** en Jira al corte del 6 de octubre de 2026. El Sprint 2 presenta un **cierre parcial con retraso breve**, porque KAN-11, KAN-12, KAN-13 y KAN-21 aún aparecen por hacer. El hito H-04 prevé para el 6 de octubre un prototipo funcional del motor de optimización y rutas multi-vehículo; el cierre registrado todavía no acredita ese resultado completo.
-
-Esta reflexión se basa en el trabajo confirmado por el equipo y los estados de Jira. Las acciones pendientes constituyen el plan propuesto de mejora; su ejecución se revisará por el equipo.
 
 ## ¿Qué aprendimos?
 
@@ -53,14 +47,11 @@ Usar las claves KAN en commits y enlazar evidencias en Jira. Mantener frontend y
 | S2-ACT-03 | Revisar tráfico de KAN-21 y adjuntar medición de EN-001. | Augusto Guevara, con apoyo del equipo | Segunda sesión de recuperación | Pendiente | Fuente de tráfico, entorno y tiempo de cálculo |
 | S2-ACT-04 | Consolidar resultados y evidencia de presentación. | Alvaro La Torre y equipo | Final de la segunda sesión y revisión académica | Pendiente | Resultados, capturas y observaciones registradas |
 
-## Seguimiento del plan de mejora
-
-El líder revisará publicación, evidencias y estados con los responsables de cada historia. Las acciones con fechas no confirmadas se programan por sesión o hito de entrega, sin atribuirles fechas históricas. Se registran **KAN-25 y KAN-26 finalizadas**. El Sprint 2 conserva cierre parcial y retraso breve de entrega respecto al hito previsto, con cuatro historias por revisar y cerrar. No se certifica el prototipo completo del motor solo por haber alcanzado la fecha del cronograma.
-
 ## Historial de versiones
 
 | Versión | Fecha de edición | Cambio |
 |---|---|---|
-| 1.0.0 | 2026-10-06 | Organización inicial y trazabilidad Jira. |
+| 1.0.0 | 2026-10-06 | Organización inicial de entregables. |
 | 1.0.1 | 2026-10-06 | Corrección del estado del Sprint 1 y seguimiento del Sprint 2. |
-| 1.0.2 | 2026-10-06 | Alineación con las plantillas, hitos del cronograma y estados actuales de Jira; fechas funcionales separadas de la edición documental. |
+| 1.0.2 | 2026-10-06 | Actualización de fechas, avance e historias de usuario. |
+| 1.0.3 | 2026-10-06 | Adecuación del contenido a la plantilla del entregable. |

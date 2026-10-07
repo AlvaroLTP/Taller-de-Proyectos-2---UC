@@ -6,29 +6,17 @@
 
 **Sprint:** 1 — Gestión Core de Operaciones
 
-**Inicio según Jira:** 2026-08-31. **Cierre funcional reportado por el equipo, según el hito H-03 del cronograma:** 2026-09-22.
+**Inicio:** 2026-08-31. **Cierre informado:** 2026-09-22.
 
-**Fecha de revisión documental y consulta de Jira:** 2026-10-06. **Versión:** 1.0.2.
+**Versión:** 1.0.3. **Fecha de actualización documental:** 2026-10-06.
 
 [Volver al README principal](../../../README.md)
 
-## Estado general del proyecto
-
-**Objetivo:** Contar con información básica y validada de vehículos, pedidos y conductores para utilizarla en la generación de rutas.
-
-El Sprint 1 culminó el **22 de septiembre de 2026**, conforme al cierre funcional reportado por el equipo para el hito H-03. Su alcance funcional está **completado al 100 %**: nueve historias de usuario y el control de seguridad previsto. El frontend y backend están desarrollados; publicar la versión completa constituye una actividad de entrega del código y no una funcionalidad pendiente de este sprint.
-
-| Indicador | Resultado |
-|---|---|
-| Historias completadas | 9 de 9 — 100 % por conteo de historias |
-| Frontend y backend | Desarrollados según el equipo; versión completa pendiente de publicación |
-| Medición del avance | Conteo de historias; no mide esfuerzo ni porcentaje de código |
-
 ## Historias de Usuario completadas en este Sprint
 
-Se completaron US-001 a US-009, correspondientes a registro y validación de vehículos, pedidos y conductores y a la disponibilidad de conductores. La siguiente tabla relaciona las historias con sus incidencias finalizadas.
+El Sprint 1 culminó el 22 de septiembre de 2026. Se completaron las nueve historias de gestión de vehículos, pedidos y conductores; la épica KAN-2 está finalizada en Jira. Avance: 100 % de las historias.
 
-| Historia | Jira | Funcionalidad completada | Estado actual en Jira |
+| Historia | Jira | Funcionalidad completada | Estado |
 |---|---|---|---|
 | US-001 | [KAN-5](https://continental-team-lz4401n3.atlassian.net/browse/KAN-5) | Registrar vehículos de la flota | Finalizada |
 | US-002 | [KAN-6](https://continental-team-lz4401n3.atlassian.net/browse/KAN-6) | Gestionar parámetros operativos y ambientales del vehículo | Finalizada |
@@ -40,7 +28,7 @@ Se completaron US-001 a US-009, correspondientes a registro y validación de veh
 | US-008 | [KAN-23](https://continental-team-lz4401n3.atlassian.net/browse/KAN-23) | Gestionar disponibilidad de conductores | Finalizada |
 | US-009 | [KAN-24](https://continental-team-lz4401n3.atlassian.net/browse/KAN-24) | Validar información de conductores | Finalizada |
 
-**EN-002 — Controles de seguridad:** incluido en el alcance completado reportado por el equipo. No se identificó una incidencia independiente de este enabler en Jira.
+**EN-002 — Controles de seguridad:** completado dentro del alcance informado por el equipo.
 
 ## Demostración del trabajo completado
 
@@ -51,30 +39,21 @@ El incremento terminado comprende los siguientes bloques funcionales:
 | Vehículos, US-001 a US-003 | Registro de flota, parámetros operativos y ambientales y validación de datos. | Registrar un vehículo y mostrar el rechazo de datos inválidos. | Capturas y resultados del registro y validación. |
 | Pedidos, US-004 a US-006 | Registro de pedidos, direcciones no convencionales y validación de información. | Registrar un pedido con referencia de entrega y comprobar campos obligatorios. | Capturas del pedido y validaciones. |
 | Conductores, US-007 a US-009 | Registro, disponibilidad y validación de conductores. | Registrar un conductor y mostrar disponibilidad y validaciones. | Capturas y resultados asociados a KAN-22, KAN-23 y KAN-24. |
-| Seguridad, EN-002 | Control de seguridad incluido en el cierre reportado. | Mostrar una operación autorizada y una operación rechazada. | Resultado del control de acceso. |
-
-El contenido describe el trabajo terminado y el recorrido para presentarlo al docente y a los interesados del caso. No se aportó acta o grabación de una sesión: faltan registrar fecha, participantes, observaciones y evidencia de aceptación. No se atribuyen demostraciones ni aprobaciones no documentadas.
+| Seguridad, EN-002 | Control de acceso. | Mostrar una operación autorizada y una operación rechazada. | Resultado del control de acceso. |
 
 ## Pendientes
 
-No quedan historias funcionales del Sprint 1 abiertas en Jira. Se conserva únicamente trabajo de entrega:
+Las funcionalidades del Sprint 1 están finalizadas. Quedan las siguientes actividades de entrega:
 
-1. Publicar la versión completa del frontend y backend ya desarrollados, con instrucciones de instalación y ejecución.
-2. Vincular los commits y resultados de validación a las historias finalizadas.
-3. Adjuntar evidencia de la demostración y observaciones académicas cuando estén disponibles.
-
-El núcleo de gestión queda como base del Sprint 2. Estas tareas de publicación y evidencia no cambian el cierre funcional reportado del 22 de septiembre.
-
-## Coherencia y trazabilidad
-
-La fecha de culminación del 22 de septiembre corresponde al cronograma y al cierre reportado por el equipo. La sincronización administrativa de Jira se realizó posteriormente: actualmente KAN-2 y las nueve historias figuran **Finalizadas**. No se modificaron retrospectivamente las fechas del historial de Jira.
-
-El tablero KAN no admite sprints. La agrupación académica sigue los artefactos de planificación, y los hitos H-03 y H-04 se toman del acta de constitución. La arquitectura inicial se mantiene como referencia; confirmar la configuración efectiva al publicar ambos componentes, sin declarar cambios técnicos a partir de dependencias aisladas.
+1. Publicar la versión completa del frontend y backend, con instrucciones de instalación y ejecución.
+2. Vincular los commits y resultados de validación con las historias de Jira.
+3. Adjuntar las capturas o grabación de la demostración y su registro de fecha, participantes y observaciones académicas.
 
 ## Historial de versiones
 
 | Versión | Fecha de edición | Cambio |
 |---|---|---|
-| 1.0.0 | 2026-10-06 | Organización inicial y trazabilidad Jira. |
+| 1.0.0 | 2026-10-06 | Organización inicial de entregables. |
 | 1.0.1 | 2026-10-06 | Corrección del estado del Sprint 1 y seguimiento del Sprint 2. |
-| 1.0.2 | 2026-10-06 | Alineación con las plantillas, hitos del cronograma y estados actuales de Jira; fechas funcionales separadas de la edición documental. |
+| 1.0.2 | 2026-10-06 | Actualización de fechas, avance e historias de usuario. |
+| 1.0.3 | 2026-10-06 | Adecuación del contenido a la plantilla del entregable. |

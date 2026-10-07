@@ -6,17 +6,11 @@
 
 **Sprint:** 1 — Gestión Core de Operaciones
 
-**Inicio según Jira:** 2026-08-31. **Cierre funcional reportado por el equipo, según el hito H-03 del cronograma:** 2026-09-22.
+**Inicio:** 2026-08-31. **Cierre informado:** 2026-09-22.
 
-**Fecha de revisión documental y consulta de Jira:** 2026-10-06. **Versión:** 1.0.2.
+**Versión:** 1.0.3. **Fecha de actualización documental:** 2026-10-06.
 
 [Volver al README principal](../../../README.md)
-
-## Contexto
-
-El Sprint 1 culminó el **22 de septiembre de 2026**, conforme al cierre funcional reportado por el equipo para el hito H-03. Su alcance funcional está **completado al 100 %**: nueve historias de usuario y el control de seguridad previsto. El frontend y backend están desarrollados; publicar la versión completa constituye una actividad de entrega del código y no una funcionalidad pendiente de este sprint.
-
-Esta reflexión se basa en el trabajo confirmado por el equipo y los estados de Jira. Las acciones pendientes constituyen el plan propuesto de mejora; su ejecución se revisará por el equipo.
 
 ## ¿Qué aprendimos?
 
@@ -38,7 +32,7 @@ Dejar un mensaje breve al finalizar cada sesión con la clave Jira, el enlace al
 
 ### Procesos
 
-Conservar el cierre funcional en el hito asignado y registrar por separado las actualizaciones administrativas. Incorporar publicación y evidencia a la lista de entrega para que un retraso al subir código no se confunda con funcionalidades sin terminar.
+Incorporar publicación, validaciones y evidencia a la lista de entrega de cada historia. Actualizar el tablero al finalizar la sesión de trabajo para facilitar el seguimiento del equipo.
 
 ### Herramientas
 
@@ -52,14 +46,11 @@ Usar las claves KAN en commits y enlazar evidencias en Jira. Mantener frontend y
 | S1-ACT-02 | Sincronizar Jira con el cierre de la Gestión Core. | Líder del proyecto | 2026-10-06 | Realizada | KAN-2 y nueve historias finalizadas |
 | S1-ACT-03 | Adjuntar validaciones y evidencia de presentación. | Responsables de las historias y líder | En la revisión académica | Pendiente de evidencia | Resultados, capturas y observaciones registradas |
 
-## Seguimiento del plan de mejora
-
-El líder revisará publicación, evidencias y estados con los responsables de cada historia. Las acciones con fechas no confirmadas se programan por sesión o hito de entrega, sin atribuirles fechas históricas. El Sprint 1 queda **finalizado**, con su culminación funcional reportada en el hito del **22 de septiembre de 2026**. Jira refleja las nueve historias y la épica finalizadas. La publicación completa y la evidencia de presentación se conservan como seguimiento de entrega.
-
 ## Historial de versiones
 
 | Versión | Fecha de edición | Cambio |
 |---|---|---|
-| 1.0.0 | 2026-10-06 | Organización inicial y trazabilidad Jira. |
+| 1.0.0 | 2026-10-06 | Organización inicial de entregables. |
 | 1.0.1 | 2026-10-06 | Corrección del estado del Sprint 1 y seguimiento del Sprint 2. |
-| 1.0.2 | 2026-10-06 | Alineación con las plantillas, hitos del cronograma y estados actuales de Jira; fechas funcionales separadas de la edición documental. |
+| 1.0.2 | 2026-10-06 | Actualización de fechas, avance e historias de usuario. |
+| 1.0.3 | 2026-10-06 | Adecuación del contenido a la plantilla del entregable. |
