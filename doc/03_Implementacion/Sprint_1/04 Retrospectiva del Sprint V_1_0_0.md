@@ -5,58 +5,58 @@
 **Líder del Proyecto:** La Torre Párraga, Alvaro Andree
 
 **Sprint:** 1 — Gestión Core de Operaciones
-**Fecha de actualización / corte de Jira:** 2026-10-06
-**Versión:** 1.0.0
+
+**Fecha de actualización:** 2026-10-06
+
+**Versión:** 1.0.1
 
 [Volver al README principal](../../../README.md)
 
 ## Contexto
 
-Esta retrospectiva recoge conclusiones de la revisión de Jira, Git y el avance reportado por el equipo. Las acciones son propuestas para discutir en la reunión del equipo; no se inventa una reunión, votación ni acuerdos ya ejecutados. Desarrollo reportado: frontend y backend terminados; entrega completa en Git pendiente. Cierre en Jira: 1 de 9 historias finalizada (11,1 %); 7 en curso y 1 por hacer.
+El Sprint 1 se registra como completado al 2026-10-06 según la actualización del líder, con el 100 % de su alcance funcional realizado. El frontend y backend están desarrollados y queda su publicación completa. La reflexión se basa en el estado reportado; las acciones siguientes son propuestas de mejora y no acuerdos de una reunión cuya acta no fue proporcionada.
 
 ## ¿Qué aprendimos?
 
-El registro de vehículos, pedidos y conductores debe usar las mismas reglas de validación en formularios y servicios. Una historia puede estar desarrollada localmente y seguir abierta en Jira si no se ha publicado su evidencia.
+El cierre funcional y la publicación deben comunicarse por separado. Un tablero sin actualizar puede hacer parecer pendiente un trabajo que el equipo ya terminó. La gestión de vehículos, pedidos y conductores constituye la base del motor de rutas y debe conservar una trazabilidad clara hacia el Sprint 2.
 
 ## ¿Qué estamos haciendo bien?
 
-El alcance se encuentra desglosado en historias identificables, el equipo cuenta con Jira y un repositorio común, y ha informado el avance técnico y la publicación pendiente. Las historias finalizadas consultadas son: US-009 / KAN-24 — Validar información de conductores. Esto permite priorizar la entrega y revisar evidencias sin ampliar el alcance de la iteración.
+El equipo completó el alcance core reportado, cuenta con frontend y backend desarrollados y mantiene identificadas las nueve historias. Se dispone de un repositorio y de Jira para organizar la entrega. La actualización del líder permite corregir el informe y concentrar el esfuerzo en el Sprint 2.
 
 ## ¿Qué podemos hacer mejor?
 
 ### Personas
 
-Planificar bloques de trabajo según los horarios de clases y evaluaciones de los cuatro integrantes. Proponer que cada responsable de Jira prepare la evidencia de sus historias y otro compañero revise la ejecución; el líder consolida la entrega, evitando concentrar todas las revisiones en una sola persona. Esta distribución es una mejora propuesta, no un bloqueo personal confirmado.
+Distribuir publicación y revisión entre los cuatro integrantes según sus horarios de clases y evaluaciones. Cada responsable prepara los cambios de sus historias y un compañero revisa la evidencia; el líder consolida la entrega sin asumir todas las tareas.
 
 ### Relaciones
 
-Mantener un mensaje breve al terminar cada sesión: historia atendida, enlace al cambio y siguiente paso. Si no se coincide en horarios, dejar decisiones por escrito y reservar una revisión conjunta corta para dudas de integración. El aviso de “terminado” debe indicar si el código está local, publicado o aceptado.
+Comunicar al equipo cuándo una funcionalidad está terminada y cuándo ya está subida. Registrar el enlace al cambio en un mensaje breve para que quienes tienen otro horario puedan revisarlo sin depender de una reunión extensa.
 
 ### Procesos
 
-La planificación previa definió un alcance concreto, pero los antiguos informes usaban un 70 % sin una medición reproducible. A partir de esta revisión se separa el estado de las historias del desarrollo reportado y se evita utilizar ese porcentaje como cierre del sprint.
-
-Incluir publicación, validaciones y evidencia de demo en la lista de cierre. No es necesario volver a implementar lo que ya está terminado; corresponde entregar la versión correcta y comprobar su trazabilidad.
+Agregar la actualización de Jira y la publicación del código a la rutina de entrega, evitando que queden concentradas al final. El seguimiento debe distinguir desarrollo finalizado, evidencia publicada y aceptación académica.
 
 ### Herramientas
 
-Usar el identificador KAN de la historia en commits y enlazarlo en Jira. El tablero actual no admite sprints, por lo que se mantiene explícito el mapeo académico en la documentación. La organización de carpetas distingue las dos iteraciones y el .gitignore raíz excluye dependencias, temporales y variables de entorno de futuras publicaciones.
+Relacionar commits con las claves KAN y conservar un .gitignore común. Usar las carpetas por sprint para evitar mezclar los entregables y mantener los enlaces de ida y vuelta al README.
 
 ### Acciones a realizar
 
-| ID | Acción propuesta | Relación | Responsable propuesto | Momento objetivo | Evidencia de cierre |
-|---|---|---|---|---|---|
-| S1-ACT-01 | Repartir publicación y revisión en bloques compatibles con los horarios académicos. | Organización del equipo | Alvaro La Torre y los cuatro integrantes | Antes de consolidar la entrega | Responsables y bloques acordados por escrito |
-| S1-ACT-02 | Subir la versión completa y documentar instalación y configuración. | S1-IMP-01 | Equipo de desarrollo | Antes de la entrega académica | Commit con ambos componentes y ejecución reproducible |
-| S1-ACT-03 | Revisar cada historia con su caso de aceptación y conciliar Jira. | S1-IMP-02 | Responsable de cada historia y compañero revisor | Después de la publicación | Enlace al commit, resultado y estado coherente |
-| S1-ACT-04 | Registrar la demo, observaciones y decisiones del docente. | Evidencia de revisión | Líder y equipo | En la próxima revisión académica | Acta y capturas o grabación |
+| ID | Acción propuesta | Responsable propuesto | Momento objetivo | Evidencia de cierre |
+|---|---|---|---|---|
+| S1-ACT-01 | Publicar la versión completa del frontend y backend desarrollados. | Equipo de desarrollo, coordinación de Alvaro La Torre | Antes de la entrega académica | Commit accesible e instrucciones de ejecución |
+| S1-ACT-02 | Actualizar Jira para reflejar el cierre funcional reportado. | Responsables de cada historia | Al consolidar sus evidencias | Estados y enlaces consistentes |
+| S1-ACT-03 | Adjuntar validaciones y registro de presentación. | Equipo y líder | En la revisión académica | Resultados, capturas y observaciones del docente |
 
-## Verificación en la siguiente revisión
+## Seguimiento de mejora
 
-Comprobar si ambos componentes están publicados, si cada historia tiene evidencia asociada y si Jira refleja lo validado. Revisar las acciones abiertas en una reunión breve; registrar fechas reales solo cuando se ejecuten. Alimentar el Sprint 2 con vehículos, pedidos y conductores válidos, conservando evidencia del cierre del núcleo operativo.
+El Sprint 1 no conserva pendientes funcionales reportados. Verificar las tres acciones de entrega y trasladar al Sprint 2 la práctica de actualizar código, evidencia y tablero en la misma sesión de trabajo.
 
 ## Historial de versiones
 
 | Versión | Fecha | Cambio |
 |---|---|---|
-| 1.0.0 | 2026-10-06 | Reorganización del documento del Sprint 1 y conciliación del avance con Jira y el reporte del equipo. |
+| 1.0.0 | 2026-10-06 | Organización inicial y consulta de Jira. |
+| 1.0.1 | 2026-10-06 | Corrección solicitada por el líder: Sprint 1 completado al corte actual; publicación y sincronización separadas del desarrollo. |

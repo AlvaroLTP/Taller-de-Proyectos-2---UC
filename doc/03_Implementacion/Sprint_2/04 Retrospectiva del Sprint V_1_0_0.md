@@ -6,7 +6,7 @@
 
 **Sprint:** 2 — Motor de Optimización y Despacho
 **Fecha de actualización / corte de Jira:** 2026-10-06
-**Versión:** 1.0.0
+**Versión:** 1.0.1
 
 [Volver al README principal](../../../README.md)
 
@@ -55,8 +55,17 @@ Usar el identificador KAN de la historia en commits y enlazarlo en Jira. El tabl
 
 Comprobar si ambos componentes están publicados, si cada historia tiene evidencia asociada y si Jira refleja lo validado. Revisar las acciones abiertas en una reunión breve; registrar fechas reales solo cuando se ejecuten. Entregar al siguiente sprint las rutas y sus resultados verificables para visualización y monitoreo. La reoptimización US-015 se conserva en el Sprint 4 según la planificación previa.
 
+## Avance y retraso breve del Sprint 2
+
+El Sprint 1 está completado al 2026-10-06 según el líder. El Sprint 2 permanece **en proceso de cierre, con un retraso breve de entrega reportado por el líder**. Jira confirma US-010/KAN-25 y US-011/KAN-26 finalizadas; US-012/KAN-11, US-013/KAN-12, US-014/KAN-13 y US-016/KAN-21 siguen por hacer. No se declaran estas cuatro historias cerradas mientras el tablero y sus evidencias no se concilien.
+
+El equipo informa el frontend y backend desarrollados. El pendiente inmediato es publicar la versión completa y revisar el cierre de generación de rutas, restricciones, datos insuficientes y tráfico. Las mediciones de EN-001 también deben adjuntarse. El 33,3 % expresa dos de seis historias cerradas en Jira, no el porcentaje del código desarrollado ni la duración del retraso.
+
+**Plan de recuperación propuesto:** consolidar publicación y revisión de evidencias durante las próximas dos sesiones de trabajo del equipo, compatibles con clases y evaluaciones. Priorizar KAN-11, KAN-12 y KAN-13, y después KAN-21 y la medición de rendimiento. El líder revisa el resultado al final de la segunda sesión y acuerda el cierre. Las dos sesiones son una meta de recuperación; no una duración histórica del retraso calculada desde Jira.
+
 ## Historial de versiones
 
 | Versión | Fecha | Cambio |
 |---|---|---|
 | 1.0.0 | 2026-10-06 | Creación del documento del Sprint 2 con alcance, estado de Jira y pendientes de entrega. |
+| 1.0.1 | 2026-10-06 | Sprint 1 completado y Sprint 2 con retraso breve de entrega reportado; plan de recuperación y estados Jira conservados. |

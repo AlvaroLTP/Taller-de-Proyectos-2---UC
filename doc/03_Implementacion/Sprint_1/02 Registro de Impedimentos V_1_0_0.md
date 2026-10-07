@@ -5,28 +5,29 @@
 **Líder del Proyecto:** La Torre Párraga, Alvaro Andree
 
 **Sprint:** 1 — Gestión Core de Operaciones
-**Fecha de actualización / corte de Jira:** 2026-10-06
-**Versión:** 1.0.0
+
+**Fecha de actualización:** 2026-10-06
+
+**Versión:** 1.0.1
 
 [Volver al README principal](../../../README.md)
 
 ## Situación general
 
-Se registran dos dificultades actuales de entrega, sin atribuir fallos técnicos o retrasos de desarrollo que no estén confirmados. En un equipo universitario, la solución propuesta es dividir la publicación y la revisión en tareas breves compatibles con clases y evaluaciones. La disponibilidad académica se considera al planificar; no se declara como un bloqueo ocurrido sin confirmación del equipo.
+El Sprint 1 está completado según la actualización del líder al 2026-10-06. No se reportan impedimentos funcionales activos. Se conservan únicamente dos observaciones menores de entrega, que no cambian el cierre del desarrollo.
 
 | Impedimento # | Fecha de Registro | Descripción del Impedimento así como el Impacto en el Proyecto | Prioridad | Reportado por | Fecha tope de Resolución | Estado | Fecha de Resolución | Resolución/Comentarios |
 |---|---|---|---|---|---|---|---|---|
-| S1-IMP-01 | 2026-10-06 | Publicación de la versión completa pendiente. El frontend y backend están terminados según el equipo, pero su entrega completa en Git no permite aún reproducir todas las funcionalidades del sprint. | Media | Alvaro La Torre, mediante reporte del avance | Antes de la entrega académica; fecha calendario por acordar | Abierto | No resuelto al corte | Acción propuesta: consolidar una versión, revisar configuración y subir cambios pequeños por componente. Responsable propuesto: equipo de desarrollo. Cerrar con commit accesible e instrucciones de ejecución. |
-| S1-IMP-02 | 2026-10-06 | Diferencia entre avance técnico reportado y estados de Jira: 1 de 9 historias finalizada (11,1 %); 7 en curso y 1 por hacer. Impide identificar con claridad qué está aceptado y qué requiere revisión. | Media | Revisión documental del tablero KAN | Después de publicar y revisar la evidencia, antes de la entrega | Abierto | No resuelto al corte | Acción propuesta: cada responsable enlaza el commit y el caso de aceptación, y concilia el estado. No cerrar automáticamente por estar desarrollado localmente. |
+| S1-IMP-01 | 2026-10-06 | Falta publicar la versión completa del código terminado. Afecta la disponibilidad de evidencia en el repositorio, sin requerir desarrollo adicional del Sprint 1. | Baja | Alvaro La Torre | Antes de la entrega académica; fecha por acordar | Pendiente de publicación | No aplica todavía | Equipo de desarrollo: subir ambos componentes con instrucciones y enlazar el commit. |
+| S1-IMP-02 | 2026-10-06 | Jira conserva historias abiertas aunque el líder confirma el Sprint 1 completado. Afecta la consistencia de la documentación de gestión. | Baja | Revisión documental y actualización del líder | Después de consolidar la evidencia, antes de la entrega | Pendiente de actualización administrativa | No aplica todavía | Responsables de las historias: sincronizar estados y evidencias. No supone funcionalidades pendientes. |
 
-## Seguimiento y criterio de resolución
+## Seguimiento
 
-Estos impedimentos describen aspectos comunes a la entrega de ambos sprints; no se suman como cuatro problemas independientes. No modifican el alcance ni implican rehacer el backend o frontend. Actualizar el estado y la fecha de resolución solo cuando exista evidencia de publicación y conciliación.
-
-No se introducen ocho bloqueos ni una desviación del 30 % como en el registro anterior, porque no hay evidencia suficiente para sostenerlos en el estado actual.
+No se atribuyen bloqueos por clases, problemas de integración o fallas técnicas no confirmadas. Para un equipo universitario se propone repartir estas tareas breves entre los integrantes y revisarlas al final de una sesión de trabajo. Registrar la fecha de resolución cuando se publique el código y se actualice el tablero.
 
 ## Historial de versiones
 
 | Versión | Fecha | Cambio |
 |---|---|---|
-| 1.0.0 | 2026-10-06 | Reorganización del documento del Sprint 1 y conciliación del avance con Jira y el reporte del equipo. |
+| 1.0.0 | 2026-10-06 | Organización inicial y consulta de Jira. |
+| 1.0.1 | 2026-10-06 | Corrección solicitada por el líder: Sprint 1 completado al corte actual; publicación y sincronización separadas del desarrollo. |

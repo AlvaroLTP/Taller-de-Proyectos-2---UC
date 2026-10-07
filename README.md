@@ -27,7 +27,7 @@ Optimizador de Rutas Sostenibles para DistriRápido S.A.C. — Taller de Proyect
 
 ## Estado de la entrega al 2026-10-06
 
-El equipo reporta el frontend y backend terminados, con la versión completa pendiente de publicación. Jira registra una historia finalizada entre las nueve del Sprint 1 y dos entre las seis del Sprint 2. Estas proporciones describen el cierre del tablero; no miden el código desarrollado. Los documentos distinguen ambas fuentes y mantienen pendientes las evidencias de publicación, validación y demo.
+El Sprint 1 está completado al 6 de octubre de 2026: 100 % de su alcance funcional realizado según la actualización del líder. El frontend y backend están desarrollados, con publicación completa pendiente. Los estados abiertos del Sprint 1 en Jira deben sincronizarse con el cierre reportado. El Sprint 2 está en proceso de cierre, con un retraso breve de entrega informado por el líder: Jira muestra US-010 y US-011 finalizadas y cuatro historias pendientes de cierre. Se propone recuperar la entrega en dos sesiones de trabajo; ese plazo es una meta, no una duración medida del retraso.
 
 El tablero KAN no admite sprints; la distribución académica se toma de la planificación previa. EN-002 (Sprint 1) y EN-001 (Sprint 2) están previstos en esa planificación, pero no se identificó su incidencia en Jira.
 
