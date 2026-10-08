@@ -1,0 +1,2 @@
+﻿from app.schemas import common, vehicle, driver, client, order, parameter, route, traffic, preferences
+__all__ = ['common', 'vehicle', 'driver', 'client', 'order', 'parameter', 'route', 'traffic', 'preferences']
