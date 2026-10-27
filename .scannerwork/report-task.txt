@@ -1,0 +1,6 @@
+projectKey=ecologistica-lima-sprint-3-pruebas-qa
+serverUrl=http://localhost:9000
+serverVersion=26.10.0.133078
+dashboardUrl=http://localhost:9000/dashboard?id=ecologistica-lima-sprint-3-pruebas-qa
+ceTaskId=2d92068a-52c5-48f1-a0dc-2b7770ff9770
+ceTaskUrl=http://localhost:9000/api/ce/task?id=2d92068a-52c5-48f1-a0dc-2b7770ff9770
