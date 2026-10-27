@@ -4,6 +4,7 @@ import {
   LayoutDashboard, Truck, Users, Package, Calendar, Settings,
   Map, Route as RouteIcon, ClipboardList, History, Leaf,
   User as UserIcon, BarChart3, ListOrdered, Gauge, Ban, Sliders,
+  Activity,
 } from 'lucide-react';
 
 export interface NavItem {
@@ -24,6 +25,7 @@ export const navConfig: Record<UserRole, NavItem[]> = {
     { path: '/restrictions', label: 'Restricciones y preferencias', icon: <Ban size={20} /> },
     { path: '/planning', label: 'Planificación', icon: <Map size={20} /> },
     { path: '/routes', label: 'Rutas', icon: <RouteIcon size={20} /> },
+    { path: '/monitoring', label: 'Monitoreo', icon: <Activity size={20} /> },
     { path: '/dispatch', label: 'Despacho', icon: <ClipboardList size={20} /> },
     { path: '/tracking', label: 'Seguimiento', icon: <ListOrdered size={20} /> },
     { path: '/sustainability', label: 'Sostenibilidad', icon: <Leaf size={20} /> },
@@ -38,6 +40,7 @@ export const navConfig: Record<UserRole, NavItem[]> = {
     { path: '/restrictions', label: 'Restricciones', icon: <Ban size={20} /> },
     { path: '/planning', label: 'Planificación', icon: <Map size={20} /> },
     { path: '/routes', label: 'Rutas', icon: <RouteIcon size={20} /> },
+    { path: '/monitoring', label: 'Monitoreo', icon: <Activity size={20} /> },
     { path: '/dispatch', label: 'Despacho', icon: <ClipboardList size={20} /> },
     { path: '/tracking', label: 'Seguimiento', icon: <ListOrdered size={20} /> },
     { path: '/sustainability', label: 'Sostenibilidad', icon: <Leaf size={20} /> },
