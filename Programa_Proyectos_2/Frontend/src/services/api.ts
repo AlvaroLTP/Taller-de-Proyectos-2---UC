@@ -534,7 +534,7 @@ export const routeService = {
       const vehicle = vehicles[idx % vehicles.length];
       if (!driver || !vehicle) continue;
 
-      const distance = +(batch.length * 3.5 + Math.random() * 10).toFixed(1);
+      const distance = +(batch.length * 3.5 + (idx % 10)).toFixed(1);
       const timeMin = Math.round(distance * 4 + batch.length * 10);
       const routeCode = `R-${String(routeCount + idx + 1).padStart(3, '0')}`;
 

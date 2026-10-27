@@ -1,10 +1,11 @@
 ﻿from sqlalchemy import Column, String, Numeric, Integer
+from sqlalchemy import text
 from sqlalchemy.dialects.postgresql import UUID
 from app.models.base import Base
 
 class Parameter(Base):
     __tablename__ = 'parameters'
-    id = Column(UUID(as_uuid=True), primary_key=True, server_default='gen_random_uuid()')
+    id = Column(UUID(as_uuid=True), primary_key=True, server_default=text('gen_random_uuid()'))
     max_vehicle_capacity_kg = Column(Numeric, nullable=False, default=4500)
     max_weight_kg = Column(Numeric, nullable=False, default=4500)
     max_volume_m3 = Column(Numeric, nullable=False, default=20)

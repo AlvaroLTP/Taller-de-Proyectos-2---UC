@@ -4,6 +4,8 @@ vendor/
 dist/
 build/
 coverage/
+.coverage
+coverage.xml
 .venv/
 venv/
 env/
@@ -13,6 +15,7 @@ __pycache__/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+.scannerwork/
 # Local configuration and secrets
 .env
 .env.*
