@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from 'react';
 import { useApp } from '@/store/AppContext';
 import { navConfig, roleLabels } from './navConfig';
-import { Truck, Bell, LogOut, Menu, X, Leaf } from 'lucide-react';
+import { Truck, Bell, LogOut, Menu, X, Leaf, AlertCircle, RefreshCw } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { formatDate } from '@/utils/formatters';
 
@@ -10,7 +10,7 @@ interface LayoutProps {
 }
 
 export function MainLayout({ children }: LayoutProps) {
-  const { currentUser, setCurrentUser, notifications, markNotificationRead, markAllNotificationsRead, loading } = useApp();
+  const { currentUser, signOut, notifications, markNotificationRead, markAllNotificationsRead, loading, loadError, refreshAll } = useApp();
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -21,8 +21,8 @@ export function MainLayout({ children }: LayoutProps) {
   const navItems = navConfig[currentUser.role] || [];
   const unreadCount = notifications.filter((n) => !n.read).length;
 
-  const handleLogout = () => {
-    setCurrentUser(null);
+  const handleLogout = async () => {
+    await signOut();
     navigate('/');
   };
 
@@ -52,6 +52,7 @@ export function MainLayout({ children }: LayoutProps) {
                     navigate(item.path);
                     setSidebarOpen(false);
                   }}
+                  aria-current={isActive ? 'page' : undefined}
                   className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150 ${
                     isActive
                       ? 'bg-blue-500/15 text-blue-400 shadow-sm'
@@ -80,7 +81,8 @@ export function MainLayout({ children }: LayoutProps) {
           <button
             onClick={handleLogout}
             className="rounded-lg p-1.5 text-slate-400 transition-colors hover:bg-blue-900 hover:text-red-400"
-            title="Cambiar de rol"
+            aria-label="Cerrar sesión"
+            title="Cerrar sesión"
           >
             <LogOut size={18} />
           </button>
@@ -91,8 +93,9 @@ export function MainLayout({ children }: LayoutProps) {
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50">
+      <a href="#contenido-principal" className="skip-link">Saltar al contenido principal</a>
       {/* Desktop sidebar */}
-      <aside className="hidden w-64 shrink-0 lg:block">{sidebar}</aside>
+      <aside className="hidden w-64 shrink-0 lg:block" role="navigation" aria-label="Navegación principal">{sidebar}</aside>
 
       {/* Mobile sidebar */}
       {sidebarOpen && (
@@ -102,6 +105,7 @@ export function MainLayout({ children }: LayoutProps) {
             <button
               onClick={() => setSidebarOpen(false)}
               className="absolute -right-10 top-4 z-50 rounded-lg bg-slate-800 p-2 text-white"
+              aria-label="Cerrar menú de navegación"
             >
               <X size={20} />
             </button>
@@ -118,6 +122,7 @@ export function MainLayout({ children }: LayoutProps) {
             <button
               onClick={() => setSidebarOpen(true)}
               className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-slate-100 lg:hidden"
+              aria-label="Abrir menú de navegación"
             >
               <Menu size={20} />
             </button>
@@ -138,6 +143,8 @@ export function MainLayout({ children }: LayoutProps) {
               <button
                 onClick={() => setNotifOpen(!notifOpen)}
                 className="relative rounded-lg p-2 text-slate-500 transition-colors hover:bg-slate-100"
+                aria-label={`Notificaciones${unreadCount > 0 ? `, ${unreadCount} sin leer` : ''}`}
+                aria-expanded={notifOpen}
               >
                 <Bell size={20} />
                 {unreadCount > 0 && (
@@ -203,11 +210,25 @@ export function MainLayout({ children }: LayoutProps) {
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6" id="contenido-principal" tabIndex={-1}>
           <div className="mx-auto max-w-7xl">
             {loading ? (
               <div className="flex h-64 items-center justify-center">
                 <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-blue-500" />
+              </div>
+            ) : loadError ? (
+              <div className="flex flex-col items-center justify-center gap-4 py-20">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-red-100 text-red-600">
+                  <AlertCircle size={28} />
+                </div>
+                <p className="max-w-md text-center text-sm text-slate-600">{loadError}</p>
+                <button
+                  onClick={() => refreshAll()}
+                  className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
+                >
+                  <RefreshCw size={16} />
+                  Reintentar
+                </button>
               </div>
             ) : (
               children

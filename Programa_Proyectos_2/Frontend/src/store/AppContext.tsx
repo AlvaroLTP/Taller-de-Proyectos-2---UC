@@ -13,10 +13,14 @@ import type {
   VehicleSchedule,
 } from '@/types';
 import * as api from '@/services/api';
+import { authService } from '@/services/auth';
+import { supabase } from '@/services/supabase';
 
 interface AppContextType {
   currentUser: User | null;
   setCurrentUser: (user: User | null) => void;
+  signOut: () => Promise<void>;
+  authReady: boolean;
 
   vehicles: Vehicle[];
   drivers: Driver[];
@@ -30,6 +34,7 @@ interface AppContextType {
   vehicleSchedules: VehicleSchedule[];
 
   loading: boolean;
+  loadError: string | null;
   refreshAll: () => Promise<void>;
 
   // Vehicle actions
@@ -79,6 +84,7 @@ export function useApp() {
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [authReady, setAuthReady] = useState(false);
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [clients, setClients] = useState<Client[]>([]);
@@ -90,9 +96,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [driverSchedules, setDriverSchedules] = useState<DriverSchedule[]>([]);
   const [vehicleSchedules] = useState<VehicleSchedule[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const refreshAll = useCallback(async () => {
     setLoading(true);
+    setLoadError(null);
     try {
       const [v, d, c, o, r, p, n, s, ds] = await Promise.all([
         api.vehicleService.getAll(),
@@ -116,13 +124,53 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setDriverSchedules(ds);
     } catch (err) {
       console.error('Error loading data:', err);
+      const msg = err instanceof Error ? err.message : 'Error desconocido';
+      setLoadError(`No se pudieron cargar los datos: ${msg}. Verifique su conexión y reintente.`);
     }
     setLoading(false);
   }, []);
 
+  // Restore session on mount + subscribe to auth changes
   useEffect(() => {
-    refreshAll();
+    let mounted = true;
+    (async () => {
+      const user = await authService.getCurrentUser();
+      if (!mounted) return;
+      setCurrentUser(user);
+      setAuthReady(true);
+      if (user) await refreshAll();
+      else setLoading(false);
+    })();
+
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+      (async () => {
+        if (event === 'SIGNED_OUT' || !session?.user) {
+          setCurrentUser(null);
+          setLoading(false);
+          return;
+        }
+        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+          const user = await authService.getCurrentUser();
+          if (!mounted) return;
+          setCurrentUser(user);
+          if (user) await refreshAll();
+        }
+      })();
+    });
+
+    return () => {
+      mounted = false;
+      sub.subscription.unsubscribe();
+    };
   }, [refreshAll]);
+
+  // Load data when user changes externally
+  useEffect(() => {
+    if (currentUser && authReady) {
+      refreshAll();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser?.id]);
 
   // Vehicle actions
   const addVehicle = useCallback(async (v: Omit<Vehicle, 'id'>) => {
@@ -258,11 +306,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setNotifications(all);
   }, []);
 
+  const signOut = useCallback(async () => {
+    await authService.signOut();
+    setCurrentUser(null);
+  }, []);
+
   return (
     <AppContext.Provider
       value={{
         currentUser,
         setCurrentUser,
+        signOut,
+        authReady,
         vehicles,
         drivers,
         clients,
@@ -274,6 +329,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         driverSchedules,
         vehicleSchedules,
         loading,
+        loadError,
         refreshAll,
         addVehicle,
         updateVehicle,

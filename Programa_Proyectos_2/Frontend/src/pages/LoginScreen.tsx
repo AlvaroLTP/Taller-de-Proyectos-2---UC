@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useApp } from '@/store/AppContext';
-import { mockUsers } from '@/data/mockData';
+import { authService } from '@/services/auth';
 import { Truck, Leaf, Mail, Lock, Eye, EyeOff, AlertCircle, Loader2 } from 'lucide-react';
 
 export function LoginScreen() {
@@ -11,7 +11,7 @@ export function LoginScreen() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
@@ -21,33 +21,21 @@ export function LoginScreen() {
     }
 
     setLoading(true);
-
-    setTimeout(() => {
-      const user = mockUsers.find(
-        (u) => u.email.toLowerCase() === email.trim().toLowerCase()
-      );
-
-      if (!user) {
-        setError('El email ingresado no está registrado');
-        setLoading(false);
-        return;
-      }
-
-      if (password !== 'demo1234') {
-        setError('Contraseña incorrecta');
-        setLoading(false);
-        return;
-      }
-
+    try {
+      const user = await authService.signIn(email.trim(), password);
       setCurrentUser(user);
+    } catch (err: any) {
+      const msg = err?.message || '';
+      if (msg.includes('Invalid login credentials')) {
+        setError('Email o contraseña incorrectos');
+      } else if (msg.includes('Perfil no encontrado')) {
+        setError('El usuario no tiene perfil asignado. Contacte al administrador.');
+      } else {
+        setError('No se pudo iniciar sesión. Verifique sus credenciales.');
+      }
+    } finally {
       setLoading(false);
-    }, 600);
-  };
-
-  const fillDemo = (demoEmail: string) => {
-    setEmail(demoEmail);
-    setPassword('demo1234');
-    setError('');
+    }
   };
 
   return (
@@ -86,10 +74,11 @@ export function LoginScreen() {
 
             <div className="space-y-5">
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-slate-300">Email</label>
+                <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-slate-300">Email</label>
                 <div className="relative">
                   <Mail size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
                   <input
+                    id="email"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -101,10 +90,11 @@ export function LoginScreen() {
               </div>
 
               <div>
-                <label className="mb-1.5 block text-sm font-medium text-slate-300">Contraseña</label>
+                <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-slate-300">Contraseña</label>
                 <div className="relative">
                   <Lock size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
                   <input
+                    id="password"
                     type={showPassword ? 'text' : 'password'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -116,6 +106,7 @@ export function LoginScreen() {
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 transition-colors hover:text-slate-300"
+                    aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
@@ -138,30 +129,6 @@ export function LoginScreen() {
               )}
             </button>
           </form>
-
-          {/* Demo credentials hint */}
-          <div className="mt-5 rounded-xl border border-slate-700/50 bg-slate-800/40 p-4">
-            <p className="mb-3 text-center text-xs font-medium text-slate-400">
-              Credenciales de demostración (clave: <span className="font-mono text-blue-300">demo1234</span>)
-            </p>
-            <div className="space-y-2">
-              {mockUsers.map((u) => (
-                <button
-                  key={u.id}
-                  onClick={() => fillDemo(u.email)}
-                  className="flex w-full items-center justify-between rounded-lg border border-slate-700 bg-slate-900/40 px-3 py-2 text-left transition-colors hover:border-blue-500/50 hover:bg-slate-900/70"
-                >
-                  <div>
-                    <p className="text-xs font-medium text-slate-300">{u.name}</p>
-                    <p className="text-[11px] text-slate-500">{u.email}</p>
-                  </div>
-                  <span className="rounded bg-slate-700 px-2 py-0.5 text-[10px] font-medium text-slate-300">
-                    {u.role === 'admin' ? 'Admin' : u.role === 'operator' ? 'Operador' : 'Conductor'}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
       </div>
     </div>

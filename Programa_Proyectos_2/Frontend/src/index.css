@@ -1,3 +1,58 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  /* Focus visible visible y consistente para accesibilidad WCAG 2.1 AA */
+  *:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Respetar preferencia de movimiento reducido */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Tipografía base legible */
+  html {
+    font-size: 16px;
+  }
+
+  body {
+    @apply text-slate-800 antialiased;
+  }
+
+  /* Contraste mejorado para texto sobre fondos claros */
+  .text-slate-400 {
+    color: #64748b;
+  }
+  .text-slate-500 {
+    color: #475569;
+  }
+
+  /* Skip link para navegación por teclado */
+  .skip-link {
+    position: absolute;
+    top: -100px;
+    left: 0;
+    z-index: 100;
+    padding: 0.75rem 1.25rem;
+    background: #2563eb;
+    color: white;
+    font-weight: 600;
+    border-radius: 0 0 0.5rem 0;
+    transition: top 0.2s;
+  }
+  .skip-link:focus {
+    top: 0;
+  }
+}

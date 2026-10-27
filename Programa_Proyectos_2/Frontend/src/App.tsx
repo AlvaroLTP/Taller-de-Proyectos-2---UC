@@ -18,6 +18,7 @@ import { RouteDetailPage } from '@/pages/admin/RouteDetailPage';
 import { DispatchPage } from '@/pages/admin/DispatchPage';
 import { TrackingPage } from '@/pages/admin/TrackingPage';
 import { SustainabilityPage } from '@/pages/admin/SustainabilityPage';
+import { MonitoringPage } from '@/pages/admin/MonitoringPage';
 import { SettingsPage } from '@/pages/admin/SettingsPage';
 
 // Driver pages
@@ -39,7 +40,15 @@ function ScrollToTop() {
 }
 
 function AppRoutes() {
-  const { currentUser } = useApp();
+  const { currentUser, authReady } = useApp();
+
+  if (!authReady) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-50">
+        <div className="h-10 w-10 animate-spin rounded-full border-4 border-slate-200 border-t-blue-500" />
+      </div>
+    );
+  }
 
   if (!currentUser) {
     return <LoginScreen />;
@@ -69,6 +78,7 @@ function AppRoutes() {
               <Route path="/planning" element={<PlanningPage />} />
               <Route path="/routes" element={<RoutesPage />} />
               <Route path="/routes/:id" element={<RouteDetailPage />} />
+              <Route path="/monitoring" element={<MonitoringPage />} />
               <Route path="/dispatch" element={<DispatchPage />} />
               <Route path="/tracking" element={<TrackingPage />} />
               <Route path="/settings" element={<SettingsPage />} />
