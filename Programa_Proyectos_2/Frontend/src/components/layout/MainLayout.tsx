@@ -100,7 +100,12 @@ export function MainLayout({ children }: LayoutProps) {
       {/* Mobile sidebar */}
       {sidebarOpen && (
         <div className="fixed inset-0 z-40 lg:hidden">
-          <div className="absolute inset-0 bg-blue-950/60 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
+          <button
+            type="button"
+            className="absolute inset-0 bg-blue-950/60 backdrop-blur-sm"
+            aria-label="Cerrar menú de navegación"
+            onClick={() => setSidebarOpen(false)}
+          />
           <div className="absolute left-0 top-0 h-full w-64">
             <button
               onClick={() => setSidebarOpen(false)}
@@ -155,7 +160,12 @@ export function MainLayout({ children }: LayoutProps) {
               </button>
               {notifOpen && (
                 <>
-                  <div className="fixed inset-0 z-30" onClick={() => setNotifOpen(false)} />
+                  <button
+                    type="button"
+                    className="fixed inset-0 z-30"
+                    aria-label="Cerrar panel de notificaciones"
+                    onClick={() => setNotifOpen(false)}
+                  />
                   <div className="absolute right-0 top-12 z-40 w-80 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl">
                     <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
                       <span className="text-sm font-semibold text-slate-900">Notificaciones</span>

@@ -133,7 +133,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // Restore session on mount + subscribe to auth changes
   useEffect(() => {
     let mounted = true;
-    (async () => {
+    void (async () => {
       const user = await authService.getCurrentUser();
       if (!mounted) return;
       setCurrentUser(user);
@@ -143,7 +143,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     })();
 
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
-      (async () => {
+      void (async () => {
         if (event === 'SIGNED_OUT' || !session?.user) {
           setCurrentUser(null);
           setLoading(false);

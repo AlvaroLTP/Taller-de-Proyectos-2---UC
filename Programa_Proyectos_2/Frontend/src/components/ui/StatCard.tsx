@@ -5,7 +5,7 @@ interface StatCardProps {
   title: string;
   value: string | number;
   icon: ReactNode;
-  color?: 'blue' | 'emerald' | 'amber' | 'red' | 'sky' | 'blue' | 'slate' | 'indigo';
+  color?: 'blue' | 'emerald' | 'amber' | 'red' | 'sky' | 'slate' | 'indigo';
   trend?: { value: string; up: boolean };
   subtitle?: string;
 }
@@ -16,7 +16,6 @@ const colorClasses: Record<string, { bg: string; text: string; ring: string }> =
   amber: { bg: 'bg-amber-50', text: 'text-amber-600', ring: 'ring-amber-100' },
   red: { bg: 'bg-red-50', text: 'text-red-600', ring: 'ring-red-100' },
   sky: { bg: 'bg-sky-50', text: 'text-sky-600', ring: 'ring-sky-100' },
-  blue: { bg: 'bg-blue-50', text: 'text-blue-600', ring: 'ring-blue-100' },
   slate: { bg: 'bg-slate-100', text: 'text-slate-600', ring: 'ring-slate-200' },
   indigo: { bg: 'bg-indigo-50', text: 'text-indigo-600', ring: 'ring-indigo-100' },
 };

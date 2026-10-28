@@ -77,7 +77,12 @@ export function ConfirmDialog({
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={onCancel} />
+      <button
+        type="button"
+        className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+        aria-label="Cancelar y cerrar confirmación"
+        onClick={onCancel}
+      />
       <div className="relative w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl">
         <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
         <p className="mt-2 text-sm text-slate-600">{message}</p>
