@@ -1,36 +1,33 @@
-﻿from pydantic import BaseModel, Field, field_validator
-from typing import Optional
-import uuid
+from typing import Literal
+from uuid import UUID
 
-class ClientBase(BaseModel):
-    name: str
-    phone: str
-    email: str = ''
-    street: str
-    reference: str = ''
-    district: str
-    neighborhood: str = ''
-    lat: float = 0
-    lng: float = 0
-    indications: str = ''
-    access_type: str = 'Fácil'
-    priority: str = 'medium'
-    notes: str = ''
+from pydantic import Field
 
-    @field_validator('priority')
-    def priority_valid(cls, v):
-        if v not in {'high', 'medium', 'low'}:
-            raise ValueError('invalid priority')
-        return v
+from app.schemas.base import InputModel, partial_model
+
+
+class ClientBase(InputModel):
+    name: str = Field(min_length=1)
+    phone: str = Field(min_length=1)
+    email: str = ""
+    street: str = Field(min_length=1)
+    reference: str = ""
+    district: str = Field(min_length=1)
+    neighborhood: str = ""
+    lat: float = Field(ge=-90, le=90, default=0)
+    lng: float = Field(ge=-180, le=180, default=0)
+    indications: str = ""
+    access_type: str = "Fácil"
+    priority: Literal["high", "medium", "low"] = "medium"
+    notes: str = ""
+
 
 class ClientCreate(ClientBase):
     pass
 
-class ClientUpdate(ClientBase):
-    pass
+
+ClientUpdate = partial_model("ClientUpdate", ClientBase)
+
 
 class ClientResponse(ClientBase):
-    id: uuid.UUID
-
-    class Config:
-        from_attributes = True
+    id: UUID

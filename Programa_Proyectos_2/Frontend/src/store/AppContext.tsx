@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, useRef, type ReactNode } from 'react';
 import type {
   User,
   Vehicle,
@@ -83,7 +83,7 @@ export function useApp() {
 }
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [currentUser, setUser] = useState<User | null>(null);
   const [authReady, setAuthReady] = useState(false);
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [drivers, setDrivers] = useState<Driver[]>([]);
@@ -98,11 +98,29 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
 
+  const identity = useRef('');
+  const loadVersion = useRef(0);
+  const setCurrentUser = useCallback((user: User | null) => {
+    const key = user ? `${user.id}:${user.role}:${user.driverId || ''}` : '';
+    if (identity.current !== key || !user) {
+      identity.current = key;
+      loadVersion.current += 1;
+      setVehicles([]); setDrivers([]); setClients([]); setOrders([]); setRoutes([]);
+      setNotifications([]); setSustainability(null); setDriverSchedules([]);
+      setParameters({} as OperationalParameters); setLoadError(null);
+      setLoading(Boolean(user));
+    }
+    setUser(user);
+  }, []);
+
   const refreshAll = useCallback(async () => {
+    const expected = identity.current;
+    if (!expected) return;
+    const version = ++loadVersion.current;
     setLoading(true);
     setLoadError(null);
     try {
-      const [v, d, c, o, r, p, n, s, ds] = await Promise.all([
+      const [v, d, c, o, r, p, n] = await Promise.all([
         api.vehicleService.getAll(),
         api.driverService.getAll(),
         api.clientService.getAll(),
@@ -110,9 +128,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
         api.routeService.getAll(),
         api.parameterService.get(),
         api.notificationService.getAll(),
-        api.sustainabilityService.getMetrics(),
-        api.driverService.getSchedules(),
       ]);
+      const s = await api.sustainabilityService.getMetrics({ routes: r, vehicles: v, orders: o });
+      const ds = d.map(driver => ({ driverId: driver.id, shiftStart: driver.shiftStart, shiftEnd: driver.shiftEnd, status: driver.status, available: driver.available }));
+      if (expected !== identity.current || version !== loadVersion.current) return;
       setVehicles(v);
       setDrivers(d);
       setClients(c);
@@ -123,193 +142,234 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setSustainability(s);
       setDriverSchedules(ds);
     } catch (err) {
-      console.error('Error loading data:', err);
+      if (expected !== identity.current || version !== loadVersion.current) return;
       const msg = err instanceof Error ? err.message : 'Error desconocido';
       setLoadError(`No se pudieron cargar los datos: ${msg}. Verifique su conexión y reintente.`);
     }
-    setLoading(false);
+    if (version === loadVersion.current) setLoading(false);
   }, []);
 
-  // Restore session on mount + subscribe to auth changes
   useEffect(() => {
-    let mounted = true;
-    void (async () => {
-      const user = await authService.getCurrentUser();
-      if (!mounted) return;
-      setCurrentUser(user);
-      setAuthReady(true);
-      if (user) await refreshAll();
-      else setLoading(false);
-    })();
-
-    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
-      void (async () => {
-        if (event === 'SIGNED_OUT' || !session?.user) {
-          setCurrentUser(null);
-          setLoading(false);
-          return;
-        }
-        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-          const user = await authService.getCurrentUser();
-          if (!mounted) return;
-          setCurrentUser(user);
-          if (user) await refreshAll();
-        }
-      })();
-    });
-
-    return () => {
-      mounted = false;
-      sub.subscription.unsubscribe();
+    let active = true;
+    let revision = 0;
+    const timers = new Set<ReturnType<typeof setTimeout>>();
+    const restore = async () => {
+      const version = ++revision;
+      try {
+        const user = await authService.getCurrentUser();
+        if (active && version === revision) setCurrentUser(user);
+      } catch {
+        if (active && version === revision) setCurrentUser(null);
+      } finally {
+        if (active && version === revision) setAuthReady(true);
+      }
     };
-  }, [refreshAll]);
+    void restore();
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!active) return;
+      if (event === 'SIGNED_OUT' || !session?.user) {
+        revision += 1;
+        setCurrentUser(null);
+        setAuthReady(true);
+      } else {
+        // Supabase callbacks must return before another auth request starts.
+        const timer = setTimeout(() => { timers.delete(timer); if (active) void restore(); }, 0);
+        timers.add(timer);
+      }
+    });
+    return () => { active = false; revision += 1; timers.forEach(clearTimeout); sub.subscription.unsubscribe(); };
+  }, [setCurrentUser]);
 
-  // Load data when user changes externally
   useEffect(() => {
-    if (currentUser && authReady) {
-      refreshAll();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentUser?.id]);
+    if (currentUser?.id && authReady) void refreshAll();
+  }, [currentUser?.id, currentUser?.role, currentUser?.driverId, authReady, refreshAll]);
 
   // Vehicle actions
   const addVehicle = useCallback(async (v: Omit<Vehicle, 'id'>) => {
+    const account = identity.current;
     await api.vehicleService.create(v);
     const all = await api.vehicleService.getAll();
+    if (identity.current !== account) return;
     setVehicles(all);
   }, []);
   const updateVehicle = useCallback(async (id: string, updates: Partial<Vehicle>) => {
+    const account = identity.current;
     await api.vehicleService.update(id, updates);
     const all = await api.vehicleService.getAll();
+    if (identity.current !== account) return;
     setVehicles(all);
   }, []);
   const toggleVehicleAvailability = useCallback(async (id: string) => {
+    const account = identity.current;
     await api.vehicleService.toggleAvailability(id);
     const all = await api.vehicleService.getAll();
+    if (identity.current !== account) return;
     setVehicles(all);
   }, []);
   const deleteVehicle = useCallback(async (id: string) => {
+    const account = identity.current;
     await api.vehicleService.delete(id);
     const all = await api.vehicleService.getAll();
+    if (identity.current !== account) return;
     setVehicles(all);
   }, []);
 
   // Driver actions
   const addDriver = useCallback(async (d: Omit<Driver, 'id'>) => {
+    const account = identity.current;
     await api.driverService.create(d);
     const all = await api.driverService.getAll();
+    if (identity.current !== account) return;
     setDrivers(all);
   }, []);
   const updateDriver = useCallback(async (id: string, updates: Partial<Driver>) => {
+    const account = identity.current;
     await api.driverService.update(id, updates);
     const all = await api.driverService.getAll();
+    if (identity.current !== account) return;
     setDrivers(all);
   }, []);
   const toggleDriverAvailability = useCallback(async (id: string) => {
+    const account = identity.current;
     await api.driverService.toggleAvailability(id);
     const all = await api.driverService.getAll();
+    if (identity.current !== account) return;
     setDrivers(all);
   }, []);
   const assignVehicleToDriver = useCallback(async (driverId: string, vehicleId: string) => {
+    const account = identity.current;
     await api.driverService.assignVehicle(driverId, vehicleId);
     const [d, v] = await Promise.all([api.driverService.getAll(), api.vehicleService.getAll()]);
+    if (identity.current !== account) return;
     setDrivers(d);
+    if (identity.current !== account) return;
     setVehicles(v);
   }, []);
   const deleteDriver = useCallback(async (id: string) => {
+    const account = identity.current;
     await api.driverService.delete(id);
     const all = await api.driverService.getAll();
+    if (identity.current !== account) return;
     setDrivers(all);
   }, []);
 
   // Client actions
   const addClient = useCallback(async (c: Omit<Client, 'id'>) => {
+    const account = identity.current;
     await api.clientService.create(c);
     const all = await api.clientService.getAll();
+    if (identity.current !== account) return;
     setClients(all);
   }, []);
   const updateClient = useCallback(async (id: string, updates: Partial<Client>) => {
+    const account = identity.current;
     await api.clientService.update(id, updates);
     const all = await api.clientService.getAll();
+    if (identity.current !== account) return;
     setClients(all);
   }, []);
   const deleteClient = useCallback(async (id: string) => {
+    const account = identity.current;
     await api.clientService.delete(id);
     const all = await api.clientService.getAll();
+    if (identity.current !== account) return;
     setClients(all);
   }, []);
 
   // Order actions
   const addOrder = useCallback(async (o: Omit<Order, 'id'>) => {
+    const account = identity.current;
     await api.orderService.create(o);
     const all = await api.orderService.getAll();
+    if (identity.current !== account) return;
     setOrders(all);
   }, []);
   const updateOrder = useCallback(async (id: string, updates: Partial<Order>) => {
+    const account = identity.current;
     await api.orderService.update(id, updates);
     const all = await api.orderService.getAll();
+    if (identity.current !== account) return;
     setOrders(all);
   }, []);
   const updateOrderStatus = useCallback(async (id: string, status: Order['status'], extras?: Partial<Order>) => {
+    const account = identity.current;
     await api.orderService.updateStatus(id, status, extras);
     const all = await api.orderService.getAll();
+    if (identity.current !== account) return;
     setOrders(all);
     const metrics = await api.sustainabilityService.getMetrics();
+    if (identity.current !== account) return;
     setSustainability(metrics);
   }, []);
   const deleteOrder = useCallback(async (id: string) => {
+    const account = identity.current;
     await api.orderService.delete(id);
     const all = await api.orderService.getAll();
+    if (identity.current !== account) return;
     setOrders(all);
   }, []);
 
   // Route actions
   const generatePlan = useCallback(async (date: string, orderIds: string[], driverIds: string[], vehicleIds: string[]) => {
+    const account = identity.current;
     const newRoutes = await api.routeService.generatePlan(date, orderIds, driverIds, vehicleIds);
     const allRoutes = await api.routeService.getAll();
+    if (identity.current !== account) return [];
     setRoutes(allRoutes);
     const allOrders = await api.orderService.getAll();
+    if (identity.current !== account) return [];
     setOrders(allOrders);
     const metrics = await api.sustainabilityService.getMetrics();
+    if (identity.current !== account) return [];
     setSustainability(metrics);
     return newRoutes;
   }, []);
   const updateRouteStatus = useCallback(async (id: string, status: Route['status']) => {
+    const account = identity.current;
     await api.routeService.updateStatus(id, status);
     const all = await api.routeService.getAll();
+    if (identity.current !== account) return;
     setRoutes(all);
     const allOrders = await api.orderService.getAll();
+    if (identity.current !== account) return;
     setOrders(allOrders);
   }, []);
   const deleteRoute = useCallback(async (id: string) => {
+    const account = identity.current;
     await api.routeService.delete(id);
     const all = await api.routeService.getAll();
+    if (identity.current !== account) return;
     setRoutes(all);
   }, []);
 
   // Parameters
   const updateParameters = useCallback(async (updates: Partial<OperationalParameters>) => {
+    const account = identity.current;
     await api.parameterService.update(updates);
     const p = await api.parameterService.get();
+    if (identity.current !== account) return;
     setParameters(p);
   }, []);
 
   // Notifications
   const markNotificationRead = useCallback(async (id: string) => {
+    const account = identity.current;
     await api.notificationService.markAsRead(id);
     const all = await api.notificationService.getAll();
+    if (identity.current !== account) return;
     setNotifications(all);
   }, []);
   const markAllNotificationsRead = useCallback(async () => {
+    const account = identity.current;
     await api.notificationService.markAllAsRead();
     const all = await api.notificationService.getAll();
+    if (identity.current !== account) return;
     setNotifications(all);
   }, []);
 
   const signOut = useCallback(async () => {
-    await authService.signOut();
-    setCurrentUser(null);
-  }, []);
+    try { await authService.signOut(); } finally { setCurrentUser(null); }
+  }, [setCurrentUser]);
 
   return (
     <AppContext.Provider

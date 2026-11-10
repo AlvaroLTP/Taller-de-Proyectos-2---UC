@@ -3,7 +3,7 @@ import { PageHeader } from '@/components/ui';
 import { Card, CardHeader } from '@/components/ui/Charts';
 import { Badge } from '@/components/ui/Badge';
 import { driverStatusConfig, vehicleStatusConfig } from '@/utils/formatters';
-import { Calendar, Clock, Truck, Users, CheckCircle2, XCircle } from 'lucide-react';
+import { Clock, Truck, CheckCircle2, XCircle } from 'lucide-react';
 
 export function AvailabilityPage() {
   const { drivers, vehicles, toggleDriverAvailability, toggleVehicleAvailability } = useApp();

@@ -1,0 +1,7 @@
+-r requirements.txt
+aiosqlite==0.22.1
+pytest-cov==7.1.0
+pip-audit==2.10.0
+
+pytest==9.1.1
+ruff==0.15.6

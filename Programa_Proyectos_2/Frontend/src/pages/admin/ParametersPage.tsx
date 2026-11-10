@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/Button';
 import { Card, CardHeader } from '@/components/ui/Charts';
 import { Input, Select } from '@/components/ui/Form';
 import { fuelTypeConfig } from '@/utils/formatters';
-import { Save, Sliders, Gauge, Leaf, Fuel, Route } from 'lucide-react';
+import { Save, Sliders, Leaf } from 'lucide-react';
 import type { FuelType } from '@/types';
 
 export function ParametersPage() {

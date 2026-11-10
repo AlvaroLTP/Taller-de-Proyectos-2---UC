@@ -24,8 +24,8 @@ export function LoginScreen() {
     try {
       const user = await authService.signIn(email.trim(), password);
       setCurrentUser(user);
-    } catch (err: any) {
-      const msg = err?.message || '';
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : '';
       if (msg.includes('Invalid login credentials')) {
         setError('Email o contraseña incorrectos');
       } else if (msg.includes('Perfil no encontrado')) {

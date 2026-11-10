@@ -1,17 +1,17 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useApp } from '@/store/AppContext';
 import { PageHeader, useToast, Toast } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import { Card, CardHeader } from '@/components/ui/Charts';
 import { Badge } from '@/components/ui/Badge';
 import { Input } from '@/components/ui/Form';
-import { orderStatusConfig, priorityConfig, formatMinutes } from '@/utils/formatters';
-import { Calendar, Package, Users, Truck, Map, Sparkles, CheckCircle2, ArrowRight } from 'lucide-react';
+import { priorityConfig, formatMinutes } from '@/utils/formatters';
+import { Package, Users, Truck, Map, Sparkles, ArrowRight } from 'lucide-react';
 import type { Route } from '@/types';
 import { useNavigate } from 'react-router-dom';
 
 export function PlanningPage() {
-  const { orders, drivers, vehicles, generatePlan, routes } = useApp();
+  const { orders, drivers, vehicles, generatePlan } = useApp();
   const { toast, showToast } = useToast();
   const navigate = useNavigate();
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
@@ -21,12 +21,14 @@ export function PlanningPage() {
   const [generating, setGenerating] = useState(false);
   const [generatedRoutes, setGeneratedRoutes] = useState<Route[]>([]);
 
+  useEffect(() => { setSelectedOrders([]); setGeneratedRoutes([]); }, [date]);
+
   const pendingOrders = useMemo(
-    () => orders.filter((o) => o.status === 'pending' || o.status === 'planned'),
-    [orders]
+    () => orders.filter((o) => o.status === 'pending' && o.deliveryDate === date),
+    [orders, date]
   );
-  const availableDrivers = useMemo(() => drivers.filter((d) => d.available), [drivers]);
-  const availableVehicles = useMemo(() => vehicles.filter((v) => v.available), [vehicles]);
+  const availableDrivers = useMemo(() => drivers.filter((d) => d.available && d.status === 'available'), [drivers]);
+  const availableVehicles = useMemo(() => vehicles.filter((v) => v.available && v.status === 'available'), [vehicles]);
 
   const toggleOrder = (id: string) => {
     setSelectedOrders((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
@@ -51,9 +53,9 @@ export function PlanningPage() {
     try {
       const newRoutes = await generatePlan(date, selectedOrders, selectedDrivers, selectedVehicles);
       setGeneratedRoutes(newRoutes);
-      showToast(`Planificación simulada generada: ${newRoutes.length} ruta(s)`);
-    } catch {
-      showToast('Error al generar la planificación', 'error');
+      showToast(`Planificación generada: ${newRoutes.length} ruta(s)`);
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Error al generar la planificación', 'error');
     }
     setGenerating(false);
   };
@@ -62,15 +64,15 @@ export function PlanningPage() {
     <div className="space-y-6">
       <PageHeader
         title="Planificación de rutas"
-        subtitle="Preparar y generar una planificación simulada de rutas optimizadas"
+        subtitle="Generar rutas con validación de capacidad, disponibilidad y horarios"
       />
 
       <div className="rounded-xl border border-blue-200 bg-blue-50 p-4">
         <div className="flex items-start gap-3">
           <Sparkles size={20} className="mt-0.5 text-blue-600" />
           <p className="text-sm text-blue-800">
-            Esta herramienta genera una <strong>planificación simulada</strong> de rutas utilizando datos mock.
-            Posteriormente será reemplazada por el motor real de optimización.
+            El plan considera capacidades, turnos y ventanas horarias. Las distancias son estimaciones geográficas entre entregas.
+            Las restricciones de texto y la coordinación telefónica requieren revisión manual antes de planificar.
           </p>
         </div>
       </div>

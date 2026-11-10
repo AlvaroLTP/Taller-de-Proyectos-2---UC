@@ -5,12 +5,12 @@ import {
   Package, CheckCircle2, Truck, Users, Route as RouteIcon, AlertTriangle,
   MapPin, Clock, Leaf,
 } from 'lucide-react';
-import { orderStatusConfig, routeStatusConfig, formatMinutes } from '@/utils/formatters';
+import { routeStatusConfig, formatMinutes } from '@/utils/formatters';
 import { PageHeader } from '@/components/ui';
 import { useNavigate } from 'react-router-dom';
 
 export function DashboardPage() {
-  const { orders, vehicles, drivers, routes, sustainability, currentUser } = useApp();
+  const { orders, vehicles, drivers, routes, currentUser } = useApp();
   const navigate = useNavigate();
 
   const pending = orders.filter((o) => o.status === 'pending').length;

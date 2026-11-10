@@ -1,5 +1,6 @@
-import { supabase } from './supabase';
+import { apiRequest } from './http';
 import type {
+  Address,
   Vehicle,
   Driver,
   Client,
@@ -11,9 +12,23 @@ import type {
   Notification,
 } from '@/types';
 
-// ---- Mappers: DB snake_case -> TS camelCase ----
 
-function mapVehicle(r: any): Vehicle {
+type Snake<S extends string> = S extends `${infer A}${infer B}` ? `${A extends Lowercase<A> ? A : `_${Lowercase<A>}`}${Snake<B>}` : S;
+type Row<T> = { [K in keyof T as Snake<K & string>]: T[K] };
+type VehicleRow = Row<Vehicle>;
+type DriverRow = Row<Driver>;
+type ClientRow = Omit<Row<Client>, 'address'> & Row<Address>;
+type OrderRow = Omit<Row<Order>, 'address' | 'preferences'> & Row<Address> & {
+  preferred_time: string; pref_time_window_start: string; pref_time_window_end: string;
+  restrictions: string[]; requires_special_attention: boolean; no_lunch_hours: boolean;
+  requires_phone_coordination: boolean; pref_observations: string;
+};
+type RouteRow = Omit<Row<Route>, 'emissions_kg_c_o2'> & { emissions_kg_co2: number };
+type ParametersRow = Row<OperationalParameters>;
+type NotificationRow = Omit<Row<Notification>, 'timestamp'> & { created_at: string };
+
+
+function mapVehicle(r: VehicleRow): Vehicle {
   return {
     id: r.id,
     code: r.code,
@@ -32,7 +47,7 @@ function mapVehicle(r: any): Vehicle {
   };
 }
 
-function toVehicleRow(v: Partial<Vehicle>): Record<string, any> {
+function toVehicleRow(v: Partial<Vehicle>): Record<string, unknown> {
   return {
     code: v.code,
     plate: v.plate,
@@ -46,11 +61,10 @@ function toVehicleRow(v: Partial<Vehicle>): Record<string, any> {
     emissions_per_km: v.emissionsPerKm,
     status: v.status,
     available: v.available,
-    driver_id: v.driverId || null,
   };
 }
 
-function mapDriver(r: any): Driver {
+function mapDriver(r: DriverRow): Driver {
   return {
     id: r.id,
     name: r.name,
@@ -67,7 +81,7 @@ function mapDriver(r: any): Driver {
   };
 }
 
-function toDriverRow(d: Partial<Driver>): Record<string, any> {
+function toDriverRow(d: Partial<Driver>): Record<string, unknown> {
   return {
     name: d.name,
     dni: d.dni,
@@ -76,14 +90,13 @@ function toDriverRow(d: Partial<Driver>): Record<string, any> {
     license_type: d.licenseType,
     status: d.status,
     available: d.available,
-    vehicle_id: d.vehicleId || null,
     shift_start: d.shiftStart,
     shift_end: d.shiftEnd,
     avatar_initials: d.avatarInitials,
   };
 }
 
-function mapClient(r: any): Client {
+function mapClient(r: ClientRow): Client {
   return {
     id: r.id,
     name: r.name,
@@ -104,7 +117,7 @@ function mapClient(r: any): Client {
   };
 }
 
-function toClientRow(c: Partial<Client>): Record<string, any> {
+function toClientRow(c: Partial<Client>): Record<string, unknown> {
   const a = c.address;
   return {
     name: c.name,
@@ -123,7 +136,7 @@ function toClientRow(c: Partial<Client>): Record<string, any> {
   };
 }
 
-function mapOrder(r: any): Order {
+function mapOrder(r: OrderRow): Order {
   return {
     id: r.id,
     code: r.code,
@@ -169,7 +182,7 @@ function mapOrder(r: any): Order {
   };
 }
 
-function toOrderRow(o: Partial<Order>): Record<string, any> {
+function toOrderRow(o: Partial<Order>): Record<string, unknown> {
   const a = o.address;
   const p = o.preferences;
   return {
@@ -201,14 +214,11 @@ function toOrderRow(o: Partial<Order>): Record<string, any> {
     no_lunch_hours: p?.noLunchHours,
     requires_phone_coordination: p?.requiresPhoneCoordination,
     pref_observations: p?.observations,
-    route_id: o.routeId || null,
-    delivery_order: o.deliveryOrder ?? null,
-    driver_id: o.driverId || null,
   };
 }
 
-function mapRoute(r: any): Route {
-  const stops = (r.stops || []).map((s: any) => ({
+function mapRoute(r: RouteRow): Route {
+  const stops = (r.stops || []).map((s) => ({
     orderId: s.orderId || '',
     order: s.order,
     clientName: s.clientName || '',
@@ -237,7 +247,7 @@ function mapRoute(r: any): Route {
   };
 }
 
-function mapNotification(r: any): Notification {
+function mapNotification(r: NotificationRow): Notification {
   return {
     id: r.id,
     type: r.type,
@@ -248,7 +258,7 @@ function mapNotification(r: any): Notification {
   };
 }
 
-function mapParameters(r: any): OperationalParameters {
+function mapParameters(r: ParametersRow): OperationalParameters {
   return {
     maxVehicleCapacityKg: +r.max_vehicle_capacity_kg,
     maxWeightKg: +r.max_weight_kg,
@@ -263,477 +273,95 @@ function mapParameters(r: any): OperationalParameters {
   };
 }
 
-// ---- Vehicles ----
+
+function crud<T, R>(resource: string, map: (row: R) => T, toRow: (value: Partial<T>) => Record<string, unknown>) {
+  return {
+    async getAll(): Promise<T[]> { return (await apiRequest<R[]>(`/${resource}/`)).map(map); },
+    async create(value: Omit<T, 'id'>): Promise<T> { return map(await apiRequest<R>(`/${resource}/`, 'POST', toRow(value as Partial<T>))); },
+    async update(id: string, value: Partial<T>): Promise<T> { return map(await apiRequest<R>(`/${resource}/${encodeURIComponent(id)}`, 'PATCH', toRow(value))); },
+    async delete(id: string): Promise<void> { await apiRequest(`/${resource}/${encodeURIComponent(id)}`, 'DELETE'); },
+  };
+}
 export const vehicleService = {
-  async getAll(): Promise<Vehicle[]> {
-    const { data, error } = await supabase.from('vehicles').select('*').order('code');
-    if (error) throw error;
-    return data.map(mapVehicle);
-  },
-  async create(vehicle: Omit<Vehicle, 'id'>): Promise<Vehicle> {
-    const { data, error } = await supabase
-      .from('vehicles')
-      .insert(toVehicleRow(vehicle))
-      .select()
-      .single();
-    if (error) throw error;
-    return mapVehicle(data);
-  },
-  async update(id: string, updates: Partial<Vehicle>): Promise<Vehicle> {
-    const { data, error } = await supabase
-      .from('vehicles')
-      .update(toVehicleRow(updates))
-      .eq('id', id)
-      .select()
-      .single();
-    if (error) throw error;
-    return mapVehicle(data);
-  },
+  ...crud<Vehicle, VehicleRow>('vehicles', mapVehicle, toVehicleRow),
   async toggleAvailability(id: string): Promise<Vehicle> {
-    const { data: current } = await supabase
-      .from('vehicles')
-      .select('available, status')
-      .eq('id', id)
-      .single();
-    if (!current) throw new Error('Vehículo no encontrado');
-    const newAvailable = !current.available;
-    let newStatus = current.status;
-    if (newAvailable && current.status === 'unavailable') newStatus = 'available';
-    else if (!newAvailable && current.status === 'available') newStatus = 'unavailable';
-    const { data, error } = await supabase
-      .from('vehicles')
-      .update({ available: newAvailable, status: newStatus })
-      .eq('id', id)
-      .select()
-      .single();
-    if (error) throw error;
-    return mapVehicle(data);
-  },
-  async delete(id: string): Promise<void> {
-    const { error } = await supabase.from('vehicles').delete().eq('id', id);
-    if (error) throw error;
+    const current = mapVehicle(await apiRequest<VehicleRow>(`/vehicles/${encodeURIComponent(id)}`));
+    const available = !current.available;
+    const status = available && current.status === 'unavailable' ? 'available' : !available && current.status === 'available' ? 'unavailable' : current.status;
+    return this.update(id, { available, status });
   },
 };
-
-// ---- Drivers ----
 export const driverService = {
-  async getAll(): Promise<Driver[]> {
-    const { data, error } = await supabase.from('drivers').select('*').order('name');
-    if (error) throw error;
-    return data.map(mapDriver);
-  },
-  async create(driver: Omit<Driver, 'id'>): Promise<Driver> {
-    const { data, error } = await supabase
-      .from('drivers')
-      .insert(toDriverRow(driver))
-      .select()
-      .single();
-    if (error) throw error;
-    return mapDriver(data);
-  },
-  async update(id: string, updates: Partial<Driver>): Promise<Driver> {
-    const { data, error } = await supabase
-      .from('drivers')
-      .update(toDriverRow(updates))
-      .eq('id', id)
-      .select()
-      .single();
-    if (error) throw error;
-    return mapDriver(data);
-  },
+  ...crud<Driver, DriverRow>('drivers', mapDriver, toDriverRow),
   async toggleAvailability(id: string): Promise<Driver> {
-    const { data: current } = await supabase
-      .from('drivers')
-      .select('available')
-      .eq('id', id)
-      .single();
-    if (!current) throw new Error('Conductor no encontrado');
-    const newAvailable = !current.available;
-    const newStatus = newAvailable ? 'available' : 'resting';
-    const { data, error } = await supabase
-      .from('drivers')
-      .update({ available: newAvailable, status: newStatus })
-      .eq('id', id)
-      .select()
-      .single();
-    if (error) throw error;
-    return mapDriver(data);
+    const current = mapDriver(await apiRequest<DriverRow>(`/drivers/${encodeURIComponent(id)}`));
+    return this.update(id, { available: !current.available, status: current.available ? 'resting' : 'available' });
   },
-  async assignVehicle(driverId: string, vehicleId: string): Promise<Driver> {
-    const { data: oldDriver } = await supabase
-      .from('drivers')
-      .select('id')
-      .eq('vehicle_id', vehicleId)
-      .neq('id', driverId)
-      .maybeSingle();
-    if (oldDriver) {
-      await supabase.from('drivers').update({ vehicle_id: null }).eq('id', oldDriver.id);
-    }
-    const { data, error } = await supabase
-      .from('drivers')
-      .update({ vehicle_id: vehicleId })
-      .eq('id', driverId)
-      .select()
-      .single();
-    if (error) throw error;
-    await supabase.from('vehicles').update({ driver_id: driverId }).eq('id', vehicleId);
-    return mapDriver(data);
-  },
-  async delete(id: string): Promise<void> {
-    const { error } = await supabase.from('drivers').delete().eq('id', id);
-    if (error) throw error;
+  async assignVehicle(id: string, vehicleId: string): Promise<Driver> {
+    return mapDriver(await apiRequest<DriverRow>(`/drivers/${encodeURIComponent(id)}/vehicle`, 'PUT', { vehicle_id: vehicleId }));
   },
   async getSchedules(): Promise<DriverSchedule[]> {
-    const { data, error } = await supabase
-      .from('drivers')
-      .select('id, shift_start, shift_end, status, available')
-      .order('name');
-    if (error) throw error;
-    return data.map((r: any) => ({
-      driverId: r.id,
-      shiftStart: r.shift_start,
-      shiftEnd: r.shift_end,
-      status: r.status,
-      available: r.available,
+    return (await this.getAll()).map(d => ({ driverId: d.id, shiftStart: d.shiftStart, shiftEnd: d.shiftEnd, status: d.status, available: d.available }));
+  },
+};
+export const clientService = crud<Client, ClientRow>('clients', mapClient, toClientRow);
+export const orderService = {
+  ...crud<Order, OrderRow>('orders', mapOrder, toOrderRow),
+  async update(id: string, updates: Partial<Order>): Promise<Order> {
+    const row = toOrderRow(updates);
+    delete row.status;
+    return mapOrder(await apiRequest<OrderRow>(`/orders/${encodeURIComponent(id)}`, 'PATCH', row));
+  },
+  async updateStatus(id: string, status: Order['status'], extras?: Partial<Order>): Promise<Order> {
+    return mapOrder(await apiRequest<OrderRow>(`/orders/${encodeURIComponent(id)}/status`, 'PUT', {
+      status, incident_reason: extras?.incidentReason, incident_notes: extras?.incidentNotes,
     }));
   },
 };
-
-// ---- Clients ----
-export const clientService = {
-  async getAll(): Promise<Client[]> {
-    const { data, error } = await supabase.from('clients').select('*').order('name');
-    if (error) throw error;
-    return data.map(mapClient);
-  },
-  async create(client: Omit<Client, 'id'>): Promise<Client> {
-    const { data, error } = await supabase
-      .from('clients')
-      .insert(toClientRow(client))
-      .select()
-      .single();
-    if (error) throw error;
-    return mapClient(data);
-  },
-  async update(id: string, updates: Partial<Client>): Promise<Client> {
-    const { data, error } = await supabase
-      .from('clients')
-      .update(toClientRow(updates))
-      .eq('id', id)
-      .select()
-      .single();
-    if (error) throw error;
-    return mapClient(data);
-  },
-  async delete(id: string): Promise<void> {
-    const { error } = await supabase.from('clients').delete().eq('id', id);
-    if (error) throw error;
-  },
-};
-
-// ---- Orders ----
-export const orderService = {
-  async getAll(): Promise<Order[]> {
-    const { data, error } = await supabase.from('orders').select('*').order('code');
-    if (error) throw error;
-    return data.map(mapOrder);
-  },
-  async create(order: Omit<Order, 'id'>): Promise<Order> {
-    const { data, error } = await supabase
-      .from('orders')
-      .insert(toOrderRow(order))
-      .select()
-      .single();
-    if (error) throw error;
-    return mapOrder(data);
-  },
-  async update(id: string, updates: Partial<Order>): Promise<Order> {
-    const { data, error } = await supabase
-      .from('orders')
-      .update(toOrderRow(updates))
-      .eq('id', id)
-      .select()
-      .single();
-    if (error) throw error;
-    return mapOrder(data);
-  },
-  async updateStatus(id: string, status: Order['status'], extras?: Partial<Order>): Promise<Order> {
-    const updateRow: Record<string, any> = { status };
-    if (extras) {
-      if (extras.incidentReason !== undefined) updateRow.incident_reason = extras.incidentReason;
-      if (extras.incidentNotes !== undefined) updateRow.incident_notes = extras.incidentNotes;
-      if (extras.driverId !== undefined) updateRow.driver_id = extras.driverId;
-      if (extras.routeId !== undefined) updateRow.route_id = extras.routeId;
-      if (extras.deliveryOrder !== undefined) updateRow.delivery_order = extras.deliveryOrder;
-    }
-    if (status === 'delivered') updateRow.delivered_at = new Date().toISOString();
-    const { data, error } = await supabase
-      .from('orders')
-      .update(updateRow)
-      .eq('id', id)
-      .select()
-      .single();
-    if (error) throw error;
-    return mapOrder(data);
-  },
-  async delete(id: string): Promise<void> {
-    const { error } = await supabase.from('orders').delete().eq('id', id);
-    if (error) throw error;
-  },
-};
-
-// ---- Routes ----
-function addMinutesToTime(time: string, minutes: number): string {
-  const [h, m] = time.split(':').map(Number);
-  const total = h * 60 + m + minutes;
-  const newH = Math.floor(total / 60) % 24;
-  const newM = total % 60;
-  return `${String(newH).padStart(2, '0')}:${String(newM).padStart(2, '0')}`;
-}
-
 export const routeService = {
-  async getAll(): Promise<Route[]> {
-    const { data, error } = await supabase.from('routes').select('*').order('code');
-    if (error) throw error;
-    return data.map(mapRoute);
-  },
-  async getById(id: string): Promise<Route | null> {
-    const { data, error } = await supabase
-      .from('routes')
-      .select('*')
-      .eq('id', id)
-      .maybeSingle();
-    if (error) throw error;
-    return data ? mapRoute(data) : null;
-  },
-  async generatePlan(
-    date: string,
-    orderIds: string[],
-    driverIds: string[],
-    vehicleIds: string[]
-  ): Promise<Route[]> {
-    const { data: orders } = await supabase.from('orders').select('*').in('id', orderIds);
-    const { data: drivers } = await supabase.from('drivers').select('*').in('id', driverIds);
-    const { data: vehicles } = await supabase.from('vehicles').select('*').in('id', vehicleIds);
-    const { data: existingRoutes } = await supabase.from('routes').select('code');
-
-    if (!orders || !drivers || !vehicles) throw new Error('Error al obtener datos');
-
-    const maxPerRoute = 6;
-    const newRoutes: Route[] = [];
-    const stopBatches: any[][] = [];
-    for (let i = 0; i < orders.length; i += maxPerRoute) {
-      stopBatches.push(orders.slice(i, i + maxPerRoute));
-    }
-
-    const routeCount = existingRoutes?.length || 0;
-
-    for (let idx = 0; idx < stopBatches.length; idx++) {
-      const batch = stopBatches[idx];
-      const driver = drivers[idx % drivers.length];
-      const vehicle = vehicles[idx % vehicles.length];
-      if (!driver || !vehicle) continue;
-
-      const distance = +(batch.length * 3.5 + (idx % 10)).toFixed(1);
-      const timeMin = Math.round(distance * 4 + batch.length * 10);
-      const routeCode = `R-${String(routeCount + idx + 1).padStart(3, '0')}`;
-
-      const stops = batch.map((o, i) => ({
-        orderId: o.id,
-        order: i + 1,
-        clientName: '',
-        address: o.street,
-        district: o.district,
-        lat: +o.lat,
-        lng: +o.lng,
-        timeWindow: `${o.time_window_start} - ${o.time_window_end}`,
-        status: 'planned' as const,
-      }));
-
-      const insertRow = {
-        code: routeCode,
-        driver_id: driver.id,
-        vehicle_id: vehicle.id,
-        date,
-        total_distance_km: distance,
-        estimated_time_min: timeMin,
-        departure_time: driver.shift_start,
-        estimated_arrival_time: addMinutesToTime(driver.shift_start, timeMin),
-        emissions_kg_co2: +(distance * +vehicle.emissions_per_km).toFixed(1),
-        status: 'pending',
-        completed_deliveries: 0,
-        total_deliveries: batch.length,
-        stops,
-      };
-
-      const { data: inserted, error } = await supabase
-        .from('routes')
-        .insert(insertRow)
-        .select()
-        .single();
-      if (error) throw error;
-
-      const orderIds = batch.map((o) => o.id);
-      await supabase
-        .from('orders')
-        .update({
-          status: 'planned',
-          route_id: inserted.id,
-          delivery_order: null,
-          driver_id: driver.id,
-        })
-        .in('id', orderIds);
-
-      newRoutes.push(mapRoute(inserted));
-    }
-
-    return newRoutes;
+  async getAll(): Promise<Route[]> { return (await apiRequest<RouteRow[]>('/routes/')).map(mapRoute); },
+  async getById(id: string): Promise<Route> { return mapRoute(await apiRequest<RouteRow>(`/routes/${encodeURIComponent(id)}`)); },
+  async generatePlan(date: string, orderIds: string[], driverIds: string[], vehicleIds: string[]): Promise<Route[]> {
+    const result = await apiRequest<{ valid: boolean; errors: string[]; routes: RouteRow[] }>('/routes/generate', 'POST', {
+      date, order_ids: orderIds, driver_ids: driverIds, vehicle_ids: vehicleIds,
+    });
+    if (!result.valid) throw new Error(result.errors.join('. '));
+    return result.routes.map(mapRoute);
   },
   async updateStatus(id: string, status: Route['status']): Promise<Route> {
-    const { data: route } = await supabase.from('routes').select('*').eq('id', id).single();
-    if (!route) throw new Error('Ruta no encontrada');
-
-    const stops = (route.stops || []).map((s: any) => {
-      if (status === 'in_route' && s.status === 'planned') return { ...s, status: 'in_route' };
-      return s;
-    });
-
-    const { data, error } = await supabase
-      .from('routes')
-      .update({ status, stops })
-      .eq('id', id)
-      .select()
-      .single();
-    if (error) throw error;
-    return mapRoute(data);
+    return mapRoute(await apiRequest<RouteRow>(`/routes/${encodeURIComponent(id)}/status`, 'PUT', { status }));
   },
-  async delete(id: string): Promise<void> {
-    const { error } = await supabase.from('routes').delete().eq('id', id);
-    if (error) throw error;
-  },
+  async delete(id: string): Promise<void> { await apiRequest(`/routes/${encodeURIComponent(id)}`, 'DELETE'); },
 };
-
-// ---- Parameters ----
 export const parameterService = {
-  async get(): Promise<OperationalParameters> {
-    const { data, error } = await supabase
-      .from('parameters')
-      .select('*')
-      .order('id')
-      .limit(1)
-      .maybeSingle();
-    if (error) throw error;
-    if (!data) {
-      return {
-        maxVehicleCapacityKg: 4500,
-        maxWeightKg: 4500,
-        maxVolumeM3: 20,
-        averageSpeedKmH: 25,
-        maxOperationTimeH: 8,
-        estimatedConsumptionKmPerL: 9.5,
-        emissionFactor: 2.68,
-        fuelType: 'diesel',
-        maxDistanceKm: 120,
-        maxDeliveriesPerRoute: 15,
-      };
-    }
-    return mapParameters(data);
-  },
+  async get(): Promise<OperationalParameters> { return mapParameters(await apiRequest<ParametersRow>('/parameters/')); },
   async update(updates: Partial<OperationalParameters>): Promise<OperationalParameters> {
-    const { data: existing } = await supabase
-      .from('parameters')
-      .select('id')
-      .order('id')
-      .limit(1)
-      .maybeSingle();
-
-    const row: Record<string, any> = {
-      max_vehicle_capacity_kg: updates.maxVehicleCapacityKg,
-      max_weight_kg: updates.maxWeightKg,
-      max_volume_m3: updates.maxVolumeM3,
-      average_speed_km_h: updates.averageSpeedKmH,
-      max_operation_time_h: updates.maxOperationTimeH,
-      estimated_consumption_km_per_l: updates.estimatedConsumptionKmPerL,
-      emission_factor: updates.emissionFactor,
-      fuel_type: updates.fuelType,
-      max_distance_km: updates.maxDistanceKm,
-      max_deliveries_per_route: updates.maxDeliveriesPerRoute,
-    };
-
-    if (existing) {
-      const { data, error } = await supabase
-        .from('parameters')
-        .update(row)
-        .eq('id', existing.id)
-        .select()
-        .single();
-      if (error) throw error;
-      return mapParameters(data);
-    } else {
-      const { data, error } = await supabase
-        .from('parameters')
-        .insert(row)
-        .select()
-        .single();
-      if (error) throw error;
-      return mapParameters(data);
-    }
+    const keys = { maxVehicleCapacityKg: 'max_vehicle_capacity_kg', maxWeightKg: 'max_weight_kg', maxVolumeM3: 'max_volume_m3',
+      averageSpeedKmH: 'average_speed_km_h', maxOperationTimeH: 'max_operation_time_h', estimatedConsumptionKmPerL: 'estimated_consumption_km_per_l',
+      emissionFactor: 'emission_factor', fuelType: 'fuel_type', maxDistanceKm: 'max_distance_km', maxDeliveriesPerRoute: 'max_deliveries_per_route' };
+    const row = Object.fromEntries(Object.entries(keys).map(([key, column]) => [column, updates[key as keyof OperationalParameters]]));
+    return mapParameters(await apiRequest<ParametersRow>('/parameters/', 'PUT', row));
   },
 };
-
-// ---- Sustainability ----
 export const sustainabilityService = {
-  async getMetrics(): Promise<SustainabilityMetrics> {
-    const { data: routes } = await supabase.from('routes').select('*');
-    const { data: vehicles } = await supabase.from('vehicles').select('*');
-    const { data: orders } = await supabase.from('orders').select('status');
-
-    const r = routes || [];
-    const v = vehicles || [];
-    const o = orders || [];
-
-    const totalDistance = r.reduce((s: number, rt: any) => s + +rt.total_distance_km, 0);
-    const totalEmissions = r.reduce((s: number, rt: any) => s + +rt.emissions_kg_co2, 0);
-    const totalConsumption = r.reduce((s: number, rt: any) => {
-      const veh = v.find((vv: any) => vv.id === rt.vehicle_id);
-      if (!veh || +veh.consumption_km_per_l === 0) return s;
-      return s + +rt.total_distance_km / +veh.consumption_km_per_l;
+  async getMetrics(data?: { routes: Route[]; vehicles: Vehicle[]; orders: Order[] }): Promise<SustainabilityMetrics> {
+    const [routes, vehicles, orders] = data ? [data.routes, data.vehicles, data.orders] : await Promise.all([routeService.getAll(), vehicleService.getAll(), orderService.getAll()]);
+    const totalDistance = routes.reduce((s, r) => s + r.totalDistanceKm, 0);
+    const totalEmissions = routes.reduce((s, r) => s + r.emissionsKgCO2, 0);
+    const consumption = routes.reduce((s, r) => {
+      const vehicle = vehicles.find(v => v.id === r.vehicleId);
+      return s + (vehicle && vehicle.consumptionKmPerL > 0 ? r.totalDistanceKm / vehicle.consumptionKmPerL : 0);
     }, 0);
-    const completed = o.filter((oo: any) => oo.status === 'delivered').length;
-
-    return {
-      totalEmissionsKgCO2: +totalEmissions.toFixed(1),
-      totalDistanceKm: +totalDistance.toFixed(1),
-      estimatedConsumptionL: +totalConsumption.toFixed(1),
-      deliveriesCompleted: completed,
-      emissionsByRoute: r.map((rt: any) => ({ routeCode: rt.code, emissions: +rt.emissions_kg_co2 })),
-      emissionsByVehicle: v
-        .filter((vv: any) => vv.fuel_type !== 'electric')
-        .map((vv: any) => {
-          const route = r.find((rt: any) => rt.vehicle_id === vv.id);
-          return { vehicleCode: vv.code, emissions: route ? +route.emissions_kg_co2 : 0 };
-        }),
-      efficiencyIndex: +(completed / (totalDistance || 1)).toFixed(2),
-    };
+    const completed = orders.filter(o => o.status === 'delivered').length;
+    return { totalEmissionsKgCO2: +totalEmissions.toFixed(1), totalDistanceKm: +totalDistance.toFixed(1),
+      estimatedConsumptionL: +consumption.toFixed(1), deliveriesCompleted: completed,
+      emissionsByRoute: routes.map(r => ({ routeCode: r.code, emissions: r.emissionsKgCO2 })),
+      emissionsByVehicle: vehicles.map(v => ({ vehicleCode: v.code, emissions: routes.filter(r => r.vehicleId === v.id).reduce((s, r) => s+r.emissionsKgCO2, 0) })),
+      efficiencyIndex: +(completed / (totalDistance || 1)).toFixed(2) };
   },
 };
-
-// ---- Notifications ----
 export const notificationService = {
-  async getAll(): Promise<Notification[]> {
-    const { data, error } = await supabase
-      .from('notifications')
-      .select('*')
-      .order('created_at', { ascending: false });
-    if (error) throw error;
-    return data.map(mapNotification);
-  },
-  async markAsRead(id: string): Promise<void> {
-    const { error } = await supabase.from('notifications').update({ read: true }).eq('id', id);
-    if (error) throw error;
-  },
-  async markAllAsRead(): Promise<void> {
-    const { error } = await supabase.from('notifications').update({ read: true }).eq('read', false);
-    if (error) throw error;
-  },
+  async getAll(): Promise<Notification[]> { return (await apiRequest<NotificationRow[]>('/notifications/')).map(mapNotification); },
+  async markAsRead(id: string): Promise<void> { await apiRequest(`/notifications/${encodeURIComponent(id)}/read`, 'PUT'); },
+  async markAllAsRead(): Promise<void> { await apiRequest('/notifications/read', 'PUT'); },
 };

@@ -1,23 +1,48 @@
-﻿from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+from app.api.routes import (
+    clients,
+    drivers,
+    health,
+    notifications,
+    orders,
+    parameters,
+    routes,
+    traffic,
+    vehicles,
+)
 from app.core.config import settings
-from app.api.routes import health, vehicles, drivers, clients, orders, parameters, routes, traffic
+from app.core.security import get_current_user
 
-app = FastAPI(title=settings.PROJECT_NAME)
-
+app = FastAPI(title=settings.APP_NAME, debug=False)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,
-    allow_credentials=True,
-    allow_methods=['*'],
-    allow_headers=['*'],
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE"],
+    allow_headers=["Authorization", "Content-Type"],
 )
 
-app.include_router(health.router, tags=['health'])
-app.include_router(vehicles.router, tags=['vehicles'])
-app.include_router(drivers.router, tags=['drivers'])
-app.include_router(clients.router, tags=['clients'])
-app.include_router(orders.router, tags=['orders'])
-app.include_router(parameters.router, tags=['parameters'])
-app.include_router(routes.router, tags=['routes'])
-app.include_router(traffic.router, tags=['traffic'])
+
+@app.middleware("http")
+async def security_headers(request, call_next):
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Cache-Control"] = "no-store"
+    return response
+
+
+app.include_router(health.router)
+for module in (
+    vehicles,
+    drivers,
+    clients,
+    orders,
+    parameters,
+    routes,
+    traffic,
+    notifications,
+):
+    app.include_router(module.router, dependencies=[Depends(get_current_user)])

@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import {
   LayoutDashboard, Truck, Users, Package, Calendar, Settings,
   Map, Route as RouteIcon, ClipboardList, History, Leaf,
-  User as UserIcon, BarChart3, ListOrdered, Gauge, Ban, Sliders,
+  User as UserIcon, ListOrdered, Ban, Sliders,
   Activity,
 } from 'lucide-react';
 

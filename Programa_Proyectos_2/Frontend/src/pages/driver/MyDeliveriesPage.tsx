@@ -1,8 +1,8 @@
 import { useState, useMemo } from 'react';
 import { useApp } from '@/store/AppContext';
-import type { Order, OrderStatus } from '@/types';
+import type { Order } from '@/types';
 import { PageHeader, SearchBar, FilterSelect, useToast, Toast } from '@/components/ui';
-import { Card, CardHeader } from '@/components/ui/Charts';
+import { Card } from '@/components/ui/Charts';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';

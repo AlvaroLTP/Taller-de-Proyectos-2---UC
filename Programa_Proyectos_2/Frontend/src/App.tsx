@@ -55,6 +55,8 @@ function AppRoutes() {
   }
 
   const isDriver = currentUser.role === 'driver';
+  const isStaff = currentUser.role === 'admin' || currentUser.role === 'operator';
+  if (!isDriver && !isStaff) return <LoginScreen />;
 
   return (
     <>
@@ -66,7 +68,7 @@ function AppRoutes() {
           <Route path="/sustainability" element={<SustainabilityPage />} />
 
           {/* Admin & Operator */}
-          {!isDriver && (
+          {isStaff && (
             <>
               <Route path="/vehicles" element={<VehiclesPage />} />
               <Route path="/drivers" element={<DriversPage />} />

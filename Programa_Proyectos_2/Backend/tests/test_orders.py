@@ -1,8 +1,4 @@
-﻿from fastapi.testclient import TestClient
-from app.main import app
-
-client = TestClient(app)
-
-def test_orders_list():
-    r = client.get('/api/v1/orders')
-    assert r.status_code == 200
+def test_list_orders(api, seed):
+    response = api.get("/api/v1/orders/")
+    assert response.status_code == 200
+    assert len(response.json()) == 1
