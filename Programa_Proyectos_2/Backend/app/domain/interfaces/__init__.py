@@ -1,2 +1,3 @@
-﻿from app.domain.interfaces import optimization, traffic
-__all__ = ['optimization', 'traffic']
+from app.domain.interfaces import optimization, traffic
+
+__all__ = ["optimization", "traffic"]

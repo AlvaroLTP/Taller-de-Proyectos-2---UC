@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react';
+import { nextOrderStatuses } from '@/utils/workflow';
+import { useState, useMemo, useEffect } from 'react';
 import { useApp } from '@/store/AppContext';
 import type { Order, OrderStatus, DeliveryPreferences } from '@/types';
 import { PageHeader, SearchBar, FilterSelect, useToast, Toast, ConfirmDialog } from '@/components/ui';
@@ -8,7 +9,8 @@ import { Badge } from '@/components/ui/Badge';
 import { DataTable } from '@/components/ui/DataTable';
 import { Input, Select, Textarea } from '@/components/ui/Form';
 import { orderStatusConfig, priorityConfig } from '@/utils/formatters';
-import { Package, Plus, Eye, Edit, Trash2, Clock, MapPin, AlertCircle } from 'lucide-react';
+import { orderService } from '@/services/api';
+import { Plus, Eye, Edit, Trash2, Clock, AlertCircle } from 'lucide-react';
 
 const productTypes = ['Abarrotes', 'Medicinas', 'Ferretería', 'Vestido', 'Electrodomésticos', 'Panadería', 'Limpieza', 'Cosméticos', 'Muebles', 'Electrónica'];
 
@@ -43,9 +45,23 @@ export function OrdersPage() {
   const [deleteTarget, setDeleteTarget] = useState<Order | null>(null);
   const [statusChangeTarget, setStatusChangeTarget] = useState<Order | null>(null);
   const [newStatus, setNewStatus] = useState<OrderStatus>('pending');
+  const [incidentReason, setIncidentReason] = useState('');
+  const [page, setPage] = useState(0);
+  const [pageOrders, setPageOrders] = useState<Order[] | null>(null);
+  const pageSize = 25;
+
+  useEffect(() => {
+    let active = true;
+    void orderService.getPage({ limit: pageSize, offset: page * pageSize, status: statusFilter as OrderStatus || undefined })
+      .then((items) => { if (active) setPageOrders(items); })
+      .catch(() => { if (active) setPageOrders(null); });
+    return () => { active = false; };
+  }, [page, statusFilter]);
+
+  useEffect(() => { setPage(0); }, [statusFilter]);
 
   const filtered = useMemo(() => {
-    return orders.filter((o) => {
+    return (pageOrders ?? orders).filter((o) => {
       const client = clients.find((c) => c.id === o.clientId);
       const matchSearch = !search ||
         o.code.toLowerCase().includes(search.toLowerCase()) ||
@@ -65,6 +81,7 @@ export function OrdersPage() {
   };
 
   const openEdit = (o: Order) => {
+    if (o.status !== 'pending') { showToast('Solo se editan pedidos pendientes', 'error'); return; }
     setForm({ ...o, address: { ...o.address }, preferences: { ...o.preferences } });
     setEditOrder(o);
     setErrors({});
@@ -108,16 +125,24 @@ export function OrdersPage() {
 
   const handleDelete = async () => {
     if (!deleteTarget) return;
-    await deleteOrder(deleteTarget.id);
-    showToast('Pedido eliminado');
-    setDeleteTarget(null);
+    try {
+      await deleteOrder(deleteTarget.id);
+      showToast('Pedido eliminado'); setDeleteTarget(null);
+    } catch (error) { showToast(error instanceof Error ? error.message : 'Error al eliminar', 'error'); }
   };
 
   const handleStatusChange = async () => {
     if (!statusChangeTarget) return;
-    await updateOrderStatus(statusChangeTarget.id, newStatus);
-    showToast('Estado actualizado');
-    setStatusChangeTarget(null);
+    if (newStatus === 'not_delivered' && !incidentReason.trim()) {
+      showToast('Indique el motivo de la incidencia', 'error'); return;
+    }
+    try {
+      await updateOrderStatus(statusChangeTarget.id, newStatus, {
+        incidentReason: newStatus === 'not_delivered' ? incidentReason.trim() : undefined,
+      });
+      setIncidentReason('');
+      showToast('Estado actualizado'); setStatusChangeTarget(null);
+    } catch (error) { showToast(error instanceof Error ? error.message : 'Error al cambiar estado', 'error'); }
   };
 
   return (
@@ -173,7 +198,7 @@ export function OrdersPage() {
                 <button onClick={(e) => { e.stopPropagation(); openEdit(o); }} className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-blue-600" title="Editar">
                   <Edit size={16} />
                 </button>
-                <button onClick={(e) => { e.stopPropagation(); setNewStatus(o.status); setStatusChangeTarget(o); }} className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-blue-600" title="Cambiar estado">
+                <button onClick={(e) => { e.stopPropagation(); if (!nextOrderStatuses(o.status).length) return; setNewStatus(nextOrderStatuses(o.status)[0]); setStatusChangeTarget(o); }} className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-blue-600" title="Cambiar estado">
                   <AlertCircle size={16} />
                 </button>
                 <button onClick={(e) => { e.stopPropagation(); setDeleteTarget(o); }} className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-red-600" title="Eliminar">
@@ -186,6 +211,13 @@ export function OrdersPage() {
           onRowClick={(o) => setViewOrder(o)}
           emptyMessage="No se encontraron pedidos"
         />
+        <div className="flex items-center justify-between border-t border-slate-100 px-4 py-3 text-sm text-slate-600">
+          <span>Página {page + 1}{pageOrders ? ` · ${pageOrders.length} pedidos` : ''}</span>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => setPage((value) => Math.max(0, value - 1))} disabled={page === 0}>Anterior</Button>
+            <Button variant="outline" onClick={() => setPage((value) => value + 1)} disabled={!pageOrders || pageOrders.length < pageSize}>Siguiente</Button>
+          </div>
+        </div>
       </div>
 
       {/* View Modal */}
@@ -272,7 +304,7 @@ export function OrdersPage() {
             <Select label="Tipo de producto" value={form.productType} onChange={(e) => setForm({ ...form, productType: e.target.value })}>
               {productTypes.map((p) => <option key={p} value={p}>{p}</option>)}
             </Select>
-            <Select label="Estado" value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as OrderStatus })}>
+            <Select disabled label="Estado" value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value as OrderStatus })}>
               {Object.entries(orderStatusConfig).map(([v, c]) => <option key={v} value={v}>{c.label}</option>)}
             </Select>
           </div>
@@ -316,8 +348,9 @@ export function OrdersPage() {
         <div className="space-y-4">
           <p className="text-sm text-slate-600">Pedido <strong>{statusChangeTarget?.code}</strong></p>
           <Select label="Nuevo estado" value={newStatus} onChange={(e) => setNewStatus(e.target.value as OrderStatus)}>
-            {Object.entries(orderStatusConfig).map(([v, c]) => <option key={v} value={v}>{c.label}</option>)}
+            {(statusChangeTarget ? nextOrderStatuses(statusChangeTarget.status) : []).map(v => <option key={v} value={v}>{orderStatusConfig[v].label}</option>)}
           </Select>
+          {newStatus === 'not_delivered' && <Textarea label="Motivo de la incidencia" value={incidentReason} onChange={(e) => setIncidentReason(e.target.value)} />}
           <div className="flex justify-end gap-3">
             <Button variant="outline" onClick={() => setStatusChangeTarget(null)}>Cancelar</Button>
             <Button onClick={handleStatusChange}>Confirmar</Button>

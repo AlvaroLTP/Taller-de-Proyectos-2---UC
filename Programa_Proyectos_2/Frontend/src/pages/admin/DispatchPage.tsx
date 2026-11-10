@@ -1,9 +1,9 @@
 import { useApp } from '@/store/AppContext';
 import { PageHeader } from '@/components/ui';
-import { Card, CardHeader } from '@/components/ui/Charts';
+import { Card } from '@/components/ui/Charts';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import { routeStatusConfig, formatMinutes } from '@/utils/formatters';
+import { routeStatusConfig } from '@/utils/formatters';
 import { Truck, Users, Clock, ArrowRight, Play, AlertTriangle, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import type { RouteStatus } from '@/types';

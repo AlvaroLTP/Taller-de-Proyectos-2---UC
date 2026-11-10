@@ -36,7 +36,6 @@ export function DonutChart({ data, size = 160 }: DonutChartProps) {
   const total = data.reduce((s, d) => s + d.value, 0);
   const radius = size / 2;
   const strokeWidth = 24;
-  const innerRadius = radius - strokeWidth;
   const circumference = 2 * Math.PI * (radius - strokeWidth / 2);
 
   let offset = 0;

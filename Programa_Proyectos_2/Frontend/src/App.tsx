@@ -1,35 +1,31 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { lazy, Suspense, useEffect } from 'react';
 import { AppProvider, useApp } from '@/store/AppContext';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { LoginScreen } from '@/pages/LoginScreen';
 
-// Admin/Operator pages
-import { DashboardPage } from '@/pages/admin/DashboardPage';
-import { VehiclesPage } from '@/pages/admin/VehiclesPage';
-import { DriversPage } from '@/pages/admin/DriversPage';
-import { ClientsPage } from '@/pages/admin/ClientsPage';
-import { OrdersPage } from '@/pages/admin/OrdersPage';
-import { AvailabilityPage } from '@/pages/admin/AvailabilityPage';
-import { ParametersPage } from '@/pages/admin/ParametersPage';
-import { RestrictionsPage } from '@/pages/admin/RestrictionsPage';
-import { PlanningPage } from '@/pages/admin/PlanningPage';
-import { RoutesPage } from '@/pages/admin/RoutesPage';
-import { RouteDetailPage } from '@/pages/admin/RouteDetailPage';
-import { DispatchPage } from '@/pages/admin/DispatchPage';
-import { TrackingPage } from '@/pages/admin/TrackingPage';
-import { SustainabilityPage } from '@/pages/admin/SustainabilityPage';
-import { MonitoringPage } from '@/pages/admin/MonitoringPage';
-import { SettingsPage } from '@/pages/admin/SettingsPage';
-
-// Driver pages
-import { DriverDashboardPage } from '@/pages/driver/DriverDashboardPage';
-import { MyRoutePage } from '@/pages/driver/MyRoutePage';
-import { MyDeliveriesPage } from '@/pages/driver/MyDeliveriesPage';
-import { DriverHistoryPage } from '@/pages/driver/DriverHistoryPage';
-import { MyVehiclePage } from '@/pages/driver/MyVehiclePage';
-import { DriverProfilePage } from '@/pages/driver/DriverProfilePage';
-
-import { useEffect } from 'react';
+const DashboardPage = lazy(() => import('@/pages/admin/DashboardPage').then(({ DashboardPage }) => ({ default: DashboardPage })));
+const VehiclesPage = lazy(() => import('@/pages/admin/VehiclesPage').then(({ VehiclesPage }) => ({ default: VehiclesPage })));
+const DriversPage = lazy(() => import('@/pages/admin/DriversPage').then(({ DriversPage }) => ({ default: DriversPage })));
+const ClientsPage = lazy(() => import('@/pages/admin/ClientsPage').then(({ ClientsPage }) => ({ default: ClientsPage })));
+const OrdersPage = lazy(() => import('@/pages/admin/OrdersPage').then(({ OrdersPage }) => ({ default: OrdersPage })));
+const AvailabilityPage = lazy(() => import('@/pages/admin/AvailabilityPage').then(({ AvailabilityPage }) => ({ default: AvailabilityPage })));
+const ParametersPage = lazy(() => import('@/pages/admin/ParametersPage').then(({ ParametersPage }) => ({ default: ParametersPage })));
+const RestrictionsPage = lazy(() => import('@/pages/admin/RestrictionsPage').then(({ RestrictionsPage }) => ({ default: RestrictionsPage })));
+const PlanningPage = lazy(() => import('@/pages/admin/PlanningPage').then(({ PlanningPage }) => ({ default: PlanningPage })));
+const RoutesPage = lazy(() => import('@/pages/admin/RoutesPage').then(({ RoutesPage }) => ({ default: RoutesPage })));
+const RouteDetailPage = lazy(() => import('@/pages/admin/RouteDetailPage').then(({ RouteDetailPage }) => ({ default: RouteDetailPage })));
+const DispatchPage = lazy(() => import('@/pages/admin/DispatchPage').then(({ DispatchPage }) => ({ default: DispatchPage })));
+const TrackingPage = lazy(() => import('@/pages/admin/TrackingPage').then(({ TrackingPage }) => ({ default: TrackingPage })));
+const SustainabilityPage = lazy(() => import('@/pages/admin/SustainabilityPage').then(({ SustainabilityPage }) => ({ default: SustainabilityPage })));
+const MonitoringPage = lazy(() => import('@/pages/admin/MonitoringPage').then(({ MonitoringPage }) => ({ default: MonitoringPage })));
+const SettingsPage = lazy(() => import('@/pages/admin/SettingsPage').then(({ SettingsPage }) => ({ default: SettingsPage })));
+const DriverDashboardPage = lazy(() => import('@/pages/driver/DriverDashboardPage').then(({ DriverDashboardPage }) => ({ default: DriverDashboardPage })));
+const MyRoutePage = lazy(() => import('@/pages/driver/MyRoutePage').then(({ MyRoutePage }) => ({ default: MyRoutePage })));
+const MyDeliveriesPage = lazy(() => import('@/pages/driver/MyDeliveriesPage').then(({ MyDeliveriesPage }) => ({ default: MyDeliveriesPage })));
+const DriverHistoryPage = lazy(() => import('@/pages/driver/DriverHistoryPage').then(({ DriverHistoryPage }) => ({ default: DriverHistoryPage })));
+const MyVehiclePage = lazy(() => import('@/pages/driver/MyVehiclePage').then(({ MyVehiclePage }) => ({ default: MyVehiclePage })));
+const DriverProfilePage = lazy(() => import('@/pages/driver/DriverProfilePage').then(({ DriverProfilePage }) => ({ default: DriverProfilePage })));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -55,18 +51,21 @@ function AppRoutes() {
   }
 
   const isDriver = currentUser.role === 'driver';
+  const isStaff = currentUser.role === 'admin' || currentUser.role === 'operator';
+  if (!isDriver && !isStaff) return <LoginScreen />;
 
   return (
     <>
       <ScrollToTop />
       <MainLayout>
-        <Routes>
+        <Suspense fallback={<div className="flex h-64 items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-blue-500" /></div>}>
+          <Routes>
           {/* Shared */}
           <Route path="/dashboard" element={isDriver ? <DriverDashboardPage /> : <DashboardPage />} />
           <Route path="/sustainability" element={<SustainabilityPage />} />
 
           {/* Admin & Operator */}
-          {!isDriver && (
+          {isStaff && (
             <>
               <Route path="/vehicles" element={<VehiclesPage />} />
               <Route path="/drivers" element={<DriversPage />} />
@@ -98,7 +97,8 @@ function AppRoutes() {
 
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
-        </Routes>
+          </Routes>
+        </Suspense>
       </MainLayout>
     </>
   );

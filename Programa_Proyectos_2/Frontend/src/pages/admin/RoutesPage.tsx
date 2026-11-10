@@ -1,6 +1,6 @@
 import { useApp } from '@/store/AppContext';
 import { PageHeader } from '@/components/ui';
-import { Card, CardHeader } from '@/components/ui/Charts';
+import { Card } from '@/components/ui/Charts';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { routeStatusConfig, formatMinutes } from '@/utils/formatters';

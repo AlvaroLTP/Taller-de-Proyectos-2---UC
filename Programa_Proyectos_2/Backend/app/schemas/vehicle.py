@@ -1,43 +1,35 @@
-﻿from pydantic import BaseModel, Field, field_validator
-from typing import Optional
-import uuid
+from typing import Literal
+from uuid import UUID
 
-class VehicleBase(BaseModel):
-    code: str
-    plate: str
-    type: str
-    brand: str
-    model: str
-    capacity_kg: float = Field(ge=0)
-    capacity_m3: float = Field(ge=0)
+from pydantic import Field
+
+from app.schemas.base import FuelType, InputModel, partial_model
+
+
+class VehicleBase(InputModel):
+    code: str = Field(min_length=1, max_length=50)
+    plate: str = Field(min_length=1, max_length=20)
+    type: str = Field(min_length=1)
+    brand: str = Field(min_length=1)
+    model: str = Field(min_length=1)
+    capacity_kg: float = Field(gt=0)
+    capacity_m3: float = Field(gt=0)
     consumption_km_per_l: float = Field(ge=0)
-    fuel_type: str = 'diesel'
+    fuel_type: FuelType = "diesel"
     emissions_per_km: float = Field(ge=0)
-    status: str = 'available'
+    energy_kwh_per_km: float | None = Field(default=None, ge=0)
+    emission_factor_source: str | None = Field(default=None, max_length=500)
+    status: Literal["available", "in_route", "maintenance", "unavailable"] = "available"
     available: bool = True
-    driver_id: Optional[uuid.UUID] = None
+    driver_id: UUID | None = None
 
-    @field_validator('plate')
-    def plate_not_empty(cls, v):
-        if not v or not v.strip():
-            raise ValueError('plate required')
-        return v.strip()
-
-    @field_validator('status')
-    def status_valid(cls, v):
-        allowed = {'available', 'in_route', 'maintenance', 'unavailable'}
-        if v not in allowed:
-            raise ValueError('invalid status')
-        return v
 
 class VehicleCreate(VehicleBase):
     pass
 
-class VehicleUpdate(VehicleBase):
-    pass
+
+VehicleUpdate = partial_model("VehicleUpdate", VehicleBase)
+
 
 class VehicleResponse(VehicleBase):
-    id: uuid.UUID
-
-    class Config:
-        from_attributes = True
+    id: UUID

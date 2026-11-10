@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/Badge';
 import { DataTable } from '@/components/ui/DataTable';
 import { Input, Select } from '@/components/ui/Form';
 import { driverStatusConfig } from '@/utils/formatters';
-import { Users, Plus, Eye, Edit, Truck, ToggleLeft, ToggleRight, Phone, Trash2 } from 'lucide-react';
+import { Plus, Eye, Edit, Truck, ToggleLeft, ToggleRight, Phone, Trash2 } from 'lucide-react';
 
 const emptyForm: Omit<Driver, 'id'> = {
   name: '', dni: '', phone: '', license: '', licenseType: 'B-II',
