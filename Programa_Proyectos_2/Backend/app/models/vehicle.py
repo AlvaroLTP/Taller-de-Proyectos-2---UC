@@ -39,6 +39,8 @@ class Vehicle(Base):
     consumption_km_per_l = Column(Numeric, nullable=False, default=0)
     fuel_type = Column(String, nullable=False, default="diesel")
     emissions_per_km = Column(Numeric, nullable=False, default=0)
+    energy_kwh_per_km = Column(Numeric, nullable=True)
+    emission_factor_source = Column(String, nullable=True)
     status = Column(String, nullable=False, default="available")
     available = Column(Boolean, nullable=False, default=True)
     driver_id = Column(

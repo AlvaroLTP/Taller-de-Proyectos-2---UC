@@ -25,3 +25,6 @@ class Parameter(Base):
     fuel_type = Column(String, nullable=False, default="diesel")
     max_distance_km = Column(Numeric, nullable=False, default=120)
     max_deliveries_per_route = Column(Integer, nullable=False, default=15)
+    depot_lat = Column(Numeric, nullable=True)
+    depot_lng = Column(Numeric, nullable=True)
+    electricity_emission_factor_kg_co2e_per_kwh = Column(Numeric, nullable=True)

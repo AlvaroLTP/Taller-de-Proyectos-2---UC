@@ -24,7 +24,9 @@ type OrderRow = Omit<Row<Order>, 'address' | 'preferences'> & Row<Address> & {
   requires_phone_coordination: boolean; pref_observations: string;
 };
 type RouteRow = Omit<Row<Route>, 'emissions_kg_c_o2'> & { emissions_kg_co2: number };
-type ParametersRow = Row<OperationalParameters>;
+type ParametersRow = Omit<Row<OperationalParameters>, 'electricity_emission_factor_kg_c_o2e_per_kwh'> & {
+  electricity_emission_factor_kg_co2e_per_kwh?: number;
+};
 type NotificationRow = Omit<Row<Notification>, 'timestamp'> & { created_at: string };
 
 
@@ -41,6 +43,8 @@ function mapVehicle(r: VehicleRow): Vehicle {
     consumptionKmPerL: +r.consumption_km_per_l,
     fuelType: r.fuel_type,
     emissionsPerKm: +r.emissions_per_km,
+    energyKwhPerKm: r.energy_kwh_per_km == null ? undefined : +r.energy_kwh_per_km,
+    emissionFactorSource: r.emission_factor_source || undefined,
     status: r.status,
     available: r.available,
     driverId: r.driver_id || undefined,
@@ -59,6 +63,8 @@ function toVehicleRow(v: Partial<Vehicle>): Record<string, unknown> {
     consumption_km_per_l: v.consumptionKmPerL,
     fuel_type: v.fuelType,
     emissions_per_km: v.emissionsPerKm,
+    energy_kwh_per_km: v.energyKwhPerKm,
+    emission_factor_source: v.emissionFactorSource,
     status: v.status,
     available: v.available,
   };
@@ -241,6 +247,12 @@ function mapRoute(r: RouteRow): Route {
     departureTime: r.departure_time,
     estimatedArrivalTime: r.estimated_arrival_time,
     emissionsKgCO2: +r.emissions_kg_co2,
+    outboundDistanceKm: r.outbound_distance_km == null ? undefined : +r.outbound_distance_km,
+    returnDistanceKm: r.return_distance_km == null ? undefined : +r.return_distance_km,
+    payloadTonneKm: r.payload_tonne_km == null ? undefined : +r.payload_tonne_km,
+    energyKwh: r.energy_kwh == null ? undefined : +r.energy_kwh,
+    emissionsMethod: r.emissions_method || undefined,
+    emissionsSource: r.emissions_source || undefined,
     status: r.status,
     completedDeliveries: r.completed_deliveries,
     totalDeliveries: r.total_deliveries,
@@ -270,6 +282,9 @@ function mapParameters(r: ParametersRow): OperationalParameters {
     fuelType: r.fuel_type,
     maxDistanceKm: +r.max_distance_km,
     maxDeliveriesPerRoute: +r.max_deliveries_per_route,
+    depotLat: r.depot_lat == null ? undefined : +r.depot_lat,
+    depotLng: r.depot_lng == null ? undefined : +r.depot_lng,
+    electricityEmissionFactorKgCO2ePerKwh: r.electricity_emission_factor_kg_co2e_per_kwh == null ? undefined : +r.electricity_emission_factor_kg_co2e_per_kwh,
   };
 }
 
@@ -307,6 +322,15 @@ export const driverService = {
 export const clientService = crud<Client, ClientRow>('clients', mapClient, toClientRow);
 export const orderService = {
   ...crud<Order, OrderRow>('orders', mapOrder, toOrderRow),
+  async getPage(options: { limit?: number; offset?: number; status?: Order['status']; deliveryDate?: string } = {}): Promise<Order[]> {
+    const params = new URLSearchParams();
+    if (options.limit !== undefined) params.set('limit', String(options.limit));
+    if (options.offset !== undefined) params.set('offset', String(options.offset));
+    if (options.status) params.set('status', options.status);
+    if (options.deliveryDate) params.set('delivery_date', options.deliveryDate);
+    const query = params.size ? `?${params}` : '';
+    return (await apiRequest<OrderRow[]>(`/orders/${query}`)).map(mapOrder);
+  },
   async update(id: string, updates: Partial<Order>): Promise<Order> {
     const row = toOrderRow(updates);
     delete row.status;
@@ -338,7 +362,8 @@ export const parameterService = {
   async update(updates: Partial<OperationalParameters>): Promise<OperationalParameters> {
     const keys = { maxVehicleCapacityKg: 'max_vehicle_capacity_kg', maxWeightKg: 'max_weight_kg', maxVolumeM3: 'max_volume_m3',
       averageSpeedKmH: 'average_speed_km_h', maxOperationTimeH: 'max_operation_time_h', estimatedConsumptionKmPerL: 'estimated_consumption_km_per_l',
-      emissionFactor: 'emission_factor', fuelType: 'fuel_type', maxDistanceKm: 'max_distance_km', maxDeliveriesPerRoute: 'max_deliveries_per_route' };
+      emissionFactor: 'emission_factor', fuelType: 'fuel_type', maxDistanceKm: 'max_distance_km', maxDeliveriesPerRoute: 'max_deliveries_per_route',
+      depotLat: 'depot_lat', depotLng: 'depot_lng', electricityEmissionFactorKgCO2ePerKwh: 'electricity_emission_factor_kg_co2e_per_kwh' };
     const row = Object.fromEntries(Object.entries(keys).map(([key, column]) => [column, updates[key as keyof OperationalParameters]]));
     return mapParameters(await apiRequest<ParametersRow>('/parameters/', 'PUT', row));
   },

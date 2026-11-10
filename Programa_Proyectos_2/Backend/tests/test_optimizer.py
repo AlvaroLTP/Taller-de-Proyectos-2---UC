@@ -16,6 +16,9 @@ def context(**parameter_changes):
         capacity_kg=100,
         capacity_m3=10,
         emissions_per_km=0.2,
+        fuel_type="diesel",
+        energy_kwh_per_km=None,
+        emission_factor_source="fixture",
     )
     order = Item(
         id=uuid4(),
@@ -98,3 +101,23 @@ def test_incompatible_vehicle_assignment():
     ctx = context()
     ctx["drivers"][0].vehicle_id = uuid4()
     assert plan(ctx).metrics["errors"]
+
+
+def test_plan_records_depot_return_load_and_energy_metrics():
+    ctx = context(
+        depot_lat=-12.05,
+        depot_lng=-77.04,
+        electricity_emission_factor_kg_co2e_per_kwh=0.4,
+    )
+    vehicle = ctx["vehicles"][0]
+    vehicle.fuel_type = "electric"
+    vehicle.energy_kwh_per_km = 0.2
+    result = plan(ctx).routes[0]
+    assert result["outbound_distance_km"] > 0
+    assert result["return_distance_km"] > 0
+    assert result["total_distance_km"] == pytest.approx(
+        result["outbound_distance_km"] + result["return_distance_km"], abs=0.002
+    )
+    assert result["payload_tonne_km"] > 0
+    assert result["energy_kwh"] > 0
+    assert result["emissions_method"] == "energy_kwh_x_electricity_factor"

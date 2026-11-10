@@ -16,6 +16,9 @@ class ParameterBase(InputModel):
     fuel_type: FuelType = "diesel"
     max_distance_km: float = Field(default=120, gt=0)
     max_deliveries_per_route: int = Field(default=15, ge=1, le=500)
+    depot_lat: float | None = Field(default=None, ge=-90, le=90)
+    depot_lng: float | None = Field(default=None, ge=-180, le=180)
+    electricity_emission_factor_kg_co2e_per_kwh: float | None = Field(default=None, ge=0)
 
 
 ParameterUpdate = partial_model("ParameterUpdate", ParameterBase)

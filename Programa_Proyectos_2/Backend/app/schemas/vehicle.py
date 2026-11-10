@@ -17,6 +17,8 @@ class VehicleBase(InputModel):
     consumption_km_per_l: float = Field(ge=0)
     fuel_type: FuelType = "diesel"
     emissions_per_km: float = Field(ge=0)
+    energy_kwh_per_km: float | None = Field(default=None, ge=0)
+    emission_factor_source: str | None = Field(default=None, max_length=500)
     status: Literal["available", "in_route", "maintenance", "unavailable"] = "available"
     available: bool = True
     driver_id: UUID | None = None

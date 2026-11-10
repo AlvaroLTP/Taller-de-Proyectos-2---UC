@@ -1,6 +1,8 @@
+from typing import Literal
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query, Response
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.helpers import get_record, save, scoped, validated_patch
@@ -14,9 +16,22 @@ router = APIRouter(prefix="/api/v1/orders")
 
 @router.get("/", response_model=list[OrderResponse])
 async def list_records(
-    user: CurrentUser = Depends(get_current_user), db: AsyncSession = Depends(get_db)
+    response: Response,
+    limit: int = Query(default=100, ge=1, le=200),
+    offset: int = Query(default=0, ge=0),
+    status: Literal["pending", "planned", "in_route", "delivered", "not_delivered", "cancelled"] | None = None,
+    delivery_date: str | None = Query(default=None, pattern=r"^\d{4}-\d{2}-\d{2}$"),
+    user: CurrentUser = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
 ):
-    return (await db.execute(scoped(Order, user).order_by(Order.id))).scalars().all()
+    stmt = scoped(Order, user)
+    if status:
+        stmt = stmt.where(Order.status == status)
+    if delivery_date:
+        stmt = stmt.where(Order.delivery_date == delivery_date)
+    total = await db.scalar(select(func.count()).select_from(stmt.subquery()))
+    response.headers["X-Total-Count"] = str(total or 0)
+    return (await db.execute(stmt.order_by(Order.id).offset(offset).limit(limit))).scalars().all()
 
 
 @router.get("/{id}", response_model=OrderResponse)

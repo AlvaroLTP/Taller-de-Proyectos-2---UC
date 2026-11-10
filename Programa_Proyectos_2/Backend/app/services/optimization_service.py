@@ -32,6 +32,55 @@ def distance(a, b):
     )
 
 
+def depot_distance(depot, order):
+    class Point:
+        def __init__(self, lat, lng):
+            self.lat, self.lng = lat, lng
+
+    return distance(Point(*depot), order)
+
+
+def route_metrics(batch, vehicle, parameters, distance_without_return):
+    depot = (
+        (float(parameters.depot_lat), float(parameters.depot_lng))
+        if parameters.depot_lat is not None and parameters.depot_lng is not None
+        else None
+    )
+    outbound = depot_distance(depot, batch[0]) if depot else None
+    return_distance = depot_distance(depot, batch[-1]) if depot else None
+    total_distance = distance_without_return + (return_distance or 0)
+
+    remaining_tonnes = sum(float(order.weight_kg) for order in batch) / 1000
+    payload_tonne_km = 0
+    previous = None
+    for order in batch:
+        leg = depot_distance(depot, order) if previous is None and depot else (
+            distance(previous, order) if previous else 0
+        )
+        payload_tonne_km += leg * remaining_tonnes
+        remaining_tonnes -= float(order.weight_kg) / 1000
+        previous = order
+
+    energy_per_km = getattr(vehicle, "energy_kwh_per_km", None)
+    energy_kwh = total_distance * float(energy_per_km) if energy_per_km is not None else None
+    if vehicle.fuel_type == "electric" and energy_kwh is not None and parameters.electricity_emission_factor_kg_co2e_per_kwh is not None:
+        emissions = energy_kwh * float(parameters.electricity_emission_factor_kg_co2e_per_kwh)
+        method = "energy_kwh_x_electricity_factor"
+    else:
+        emissions = total_distance * float(vehicle.emissions_per_km)
+        method = "distance_km_x_vehicle_emissions_per_km"
+    return {
+        "outbound_distance_km": round(outbound, 3) if outbound is not None else None,
+        "return_distance_km": round(return_distance, 3) if return_distance is not None else None,
+        "total_distance_km": round(total_distance, 3),
+        "payload_tonne_km": round(payload_tonne_km, 3),
+        "energy_kwh": round(energy_kwh, 3) if energy_kwh is not None else None,
+        "emissions_kg_co2": round(emissions, 3),
+        "emissions_method": method,
+        "emissions_source": getattr(vehicle, "emission_factor_source", None),
+    }
+
+
 class BasicOptimizationService:
     """Deterministic feasible greedy plan; distances are geographic estimates between stops."""
 
@@ -80,7 +129,16 @@ class BasicOptimizationService:
                     order.time_window_start, order.time_window_end
                 ):
                     continue
-                leg = distance(batch[-1], order) if batch else 0
+                depot = (
+                    (float(p.depot_lat), float(p.depot_lng))
+                    if p.depot_lat is not None and p.depot_lng is not None
+                    else None
+                )
+                leg = (
+                    distance(batch[-1], order)
+                    if batch
+                    else depot_distance(depot, order) if depot else 0
+                )
                 service = 20 if order.requires_special_attention else 10
                 arrival = max(
                     now + ceil(leg / p.average_speed_km_h * 60),
@@ -100,9 +158,14 @@ class BasicOptimizationService:
                     minutes(driver.shift_end),
                 ):
                     continue
+                projected_return = depot_distance(depot, order) if depot else 0
                 if (
                     end - start > p.max_operation_time_h * 60
-                    or km + leg > p.max_distance_km
+                    or end + ceil(projected_return / p.average_speed_km_h * 60)
+                    > minutes(driver.shift_end)
+                    or end + ceil(projected_return / p.average_speed_km_h * 60) - start
+                    > p.max_operation_time_h * 60
+                    or km + leg + projected_return > p.max_distance_km
                 ):
                     continue
                 now = end
@@ -112,18 +175,21 @@ class BasicOptimizationService:
                 batch.append(order)
                 remaining.remove(order)
             if batch:
+                metrics = route_metrics(batch, vehicle, p, km)
+                return_minutes = (
+                    ceil((metrics["return_distance_km"] or 0) / p.average_speed_km_h * 60)
+                    if metrics["return_distance_km"] is not None
+                    else 0
+                )
                 routes.append(
                     {
                         "driver_id": driver.id,
                         "vehicle_id": vehicle.id,
                         "date": context["date"],
                         "departure_time": clock(start),
-                        "estimated_arrival_time": clock(now),
-                        "estimated_time_min": now - start,
-                        "total_distance_km": round(km, 3),
-                        "emissions_kg_co2": round(
-                            km * float(vehicle.emissions_per_km), 3
-                        ),
+                        "estimated_arrival_time": clock(now + return_minutes),
+                        "estimated_time_min": now + return_minutes - start,
+                        **metrics,
                         "total_deliveries": len(batch),
                         "completed_deliveries": 0,
                         "status": "pending",

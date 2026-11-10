@@ -1,5 +1,5 @@
 import { nextOrderStatuses } from '@/utils/workflow';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useApp } from '@/store/AppContext';
 import type { Order, OrderStatus, DeliveryPreferences } from '@/types';
 import { PageHeader, SearchBar, FilterSelect, useToast, Toast, ConfirmDialog } from '@/components/ui';
@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/Badge';
 import { DataTable } from '@/components/ui/DataTable';
 import { Input, Select, Textarea } from '@/components/ui/Form';
 import { orderStatusConfig, priorityConfig } from '@/utils/formatters';
+import { orderService } from '@/services/api';
 import { Plus, Eye, Edit, Trash2, Clock, AlertCircle } from 'lucide-react';
 
 const productTypes = ['Abarrotes', 'Medicinas', 'Ferretería', 'Vestido', 'Electrodomésticos', 'Panadería', 'Limpieza', 'Cosméticos', 'Muebles', 'Electrónica'];
@@ -45,9 +46,22 @@ export function OrdersPage() {
   const [statusChangeTarget, setStatusChangeTarget] = useState<Order | null>(null);
   const [newStatus, setNewStatus] = useState<OrderStatus>('pending');
   const [incidentReason, setIncidentReason] = useState('');
+  const [page, setPage] = useState(0);
+  const [pageOrders, setPageOrders] = useState<Order[] | null>(null);
+  const pageSize = 25;
+
+  useEffect(() => {
+    let active = true;
+    void orderService.getPage({ limit: pageSize, offset: page * pageSize, status: statusFilter as OrderStatus || undefined })
+      .then((items) => { if (active) setPageOrders(items); })
+      .catch(() => { if (active) setPageOrders(null); });
+    return () => { active = false; };
+  }, [page, statusFilter]);
+
+  useEffect(() => { setPage(0); }, [statusFilter]);
 
   const filtered = useMemo(() => {
-    return orders.filter((o) => {
+    return (pageOrders ?? orders).filter((o) => {
       const client = clients.find((c) => c.id === o.clientId);
       const matchSearch = !search ||
         o.code.toLowerCase().includes(search.toLowerCase()) ||
@@ -197,6 +211,13 @@ export function OrdersPage() {
           onRowClick={(o) => setViewOrder(o)}
           emptyMessage="No se encontraron pedidos"
         />
+        <div className="flex items-center justify-between border-t border-slate-100 px-4 py-3 text-sm text-slate-600">
+          <span>Página {page + 1}{pageOrders ? ` · ${pageOrders.length} pedidos` : ''}</span>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => setPage((value) => Math.max(0, value - 1))} disabled={page === 0}>Anterior</Button>
+            <Button variant="outline" onClick={() => setPage((value) => value + 1)} disabled={!pageOrders || pageOrders.length < pageSize}>Siguiente</Button>
+          </div>
+        </div>
       </div>
 
       {/* View Modal */}
