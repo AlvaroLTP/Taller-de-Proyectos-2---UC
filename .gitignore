@@ -28,3 +28,9 @@ __pycache__/
 *.sqlite3
 .DS_Store
 Thumbs.db
+
+# CI test reports
+/Programa_Proyectos_2/Frontend/playwright-report/
+/Programa_Proyectos_2/Frontend/test-results/
+/Programa_Proyectos_2/Frontend/reports/
+/Programa_Proyectos_2/Backend/reports/

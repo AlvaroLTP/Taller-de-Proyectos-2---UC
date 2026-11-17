@@ -1,0 +1,61 @@
+name: Despliegue a producción
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production
+  cancel-in-progress: false
+
+jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
+  tests:
+    uses: ./.github/workflows/tests.yml
+  deploy:
+    needs: [ci, tests]
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    environment: production
+    steps:
+      - name: Desplegar el commit validado en Render
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_BACKEND_ID: ${{ vars.RENDER_BACKEND_ID }}
+          RENDER_FRONTEND_ID: ${{ vars.RENDER_FRONTEND_ID }}
+        run: |
+          : "${RENDER_API_KEY:?Falta el secreto RENDER_API_KEY}"
+          : "${RENDER_BACKEND_ID:?Falta la variable RENDER_BACKEND_ID}"
+          : "${RENDER_FRONTEND_ID:?Falta la variable RENDER_FRONTEND_ID}"
+
+          render() {
+            curl --silent --show-error --fail --max-time 30 \
+              -H "Authorization: Bearer $RENDER_API_KEY" \
+              -H "Content-Type: application/json" "$@"
+          }
+
+          deploy() {
+            local service_id="$1"
+            local endpoint="https://api.render.com/v1/services/$service_id/deploys"
+            local payload deploy_id status
+            payload=$(jq -nc --arg sha "$GITHUB_SHA" '{commitId: $sha}')
+            deploy_id=$(render -X POST -d "$payload" "$endpoint" | jq -er '.id')
+            for attempt in {1..45}; do
+              status=$(render "$endpoint/$deploy_id" | jq -er '.status')
+              echo "Render $deploy_id: $status"
+              case "$status" in
+                live) return 0 ;;
+                *failed|canceled|deactivated) return 1 ;;
+              esac
+              sleep 10
+            done
+            echo "::error::Render no confirmó el despliegue a tiempo."
+            return 1
+          }
+
+          deploy "$RENDER_BACKEND_ID"
+          deploy "$RENDER_FRONTEND_ID"
