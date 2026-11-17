@@ -110,7 +110,7 @@ Las pruebas Python usan SQLite en memoria con claves foráneas activas y un prov
 
 Las pruebas de RLS requieren un entorno PostgreSQL/Supabase desechable. El archivo SQL citado a continuación no viene en esta descarga y debe reconstruirse antes de ejecutar estos pasos. Requieren Docker y Supabase CLI. Desde `Frontend`, inicializar la configuración local con `supabase init` si todavía no existe, iniciar `supabase start` y ejecutar `supabase test db supabase/tests/security.test.sql` contra una instancia local desechable. No ejecutar `db reset` ni pruebas contra una base compartida. La prueba crea datos de ensayo dentro de una transacción y los revierte. Las comprobaciones SQL de la auditoría anterior no están presentes en esta descarga y no se ejecutaron en esta revisión.
 
-Se incluye `.github/workflows/checks.yml` para pruebas y auditorías al subir el proyecto a GitHub; ese workflow todavía no se ha ejecutado en GitHub.
+Se incluye [`.github/workflows/checks.yml`](../.github/workflows/checks.yml) para pruebas y auditorías al subir el proyecto a GitHub; ese workflow todavía no se ha ejecutado en GitHub.
 
 Ver resultados, evidencias y trabajo pendiente en [la auditoría](docs/AUDITORIA_SISTEMA.md).
 

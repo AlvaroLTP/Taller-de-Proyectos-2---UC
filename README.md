@@ -7,23 +7,23 @@ Optimizador de Rutas Sostenibles para DistriRápido S.A.C. — Taller de Proyect
 
 ## Documentación
 
-- [Inicio del proyecto](doc/01_Inicio/)
-- [Planificación y artefactos de Jira](doc/02_Planficacion/02.%20Artefactos%20Jira%20V_1_0_0.md)
+- [Inicio del proyecto](docs/01_Inicio/)
+- [Planificación y artefactos de Jira](docs/02_Planficacion/02.%20Artefactos%20Jira%20V_1_0_0.md)
 - [Tablero Jira](https://continental-team-lz4401n3.atlassian.net/jira/software/projects/KAN/boards/1)
 
 ### Sprint 1 — Gestión Core de Operaciones
 
-- [Informe de estado](doc/03_Implementacion/Sprint_1/01%20Informe%20de%20estado%20del%20proyecto%20V_1_0_0.md)
-- [Registro de impedimentos](doc/03_Implementacion/Sprint_1/02%20Registro%20de%20Impedimentos%20V_1_0_0.md)
-- [Revisión del sprint](doc/03_Implementacion/Sprint_1/03%20Revisi%C3%B3n%20del%20Sprint%20V_1_0_0.md)
-- [Retrospectiva](doc/03_Implementacion/Sprint_1/04%20Retrospectiva%20del%20Sprint%20V_1_0_0.md)
+- [Informe de estado](docs/03_Implementacion/Sprint_1/01%20Informe%20de%20estado%20del%20proyecto%20V_1_0_0.md)
+- [Registro de impedimentos](docs/03_Implementacion/Sprint_1/02%20Registro%20de%20Impedimentos%20V_1_0_0.md)
+- [Revisión del sprint](docs/03_Implementacion/Sprint_1/03%20Revisi%C3%B3n%20del%20Sprint%20V_1_0_0.md)
+- [Retrospectiva](docs/03_Implementacion/Sprint_1/04%20Retrospectiva%20del%20Sprint%20V_1_0_0.md)
 
 ### Sprint 2 — Motor de Optimización y Despacho
 
-- [Informe de estado](doc/03_Implementacion/Sprint_2/01%20Informe%20de%20estado%20del%20proyecto%20V_1_0_0.md)
-- [Registro de impedimentos](doc/03_Implementacion/Sprint_2/02%20Registro%20de%20Impedimentos%20V_1_0_0.md)
-- [Revisión del sprint](doc/03_Implementacion/Sprint_2/03%20Revisi%C3%B3n%20del%20Sprint%20V_1_0_0.md)
-- [Retrospectiva](doc/03_Implementacion/Sprint_2/04%20Retrospectiva%20del%20Sprint%20V_1_0_0.md)
+- [Informe de estado](docs/03_Implementacion/Sprint_2/01%20Informe%20de%20estado%20del%20proyecto%20V_1_0_0.md)
+- [Registro de impedimentos](docs/03_Implementacion/Sprint_2/02%20Registro%20de%20Impedimentos%20V_1_0_0.md)
+- [Revisión del sprint](docs/03_Implementacion/Sprint_2/03%20Revisi%C3%B3n%20del%20Sprint%20V_1_0_0.md)
+- [Retrospectiva](docs/03_Implementacion/Sprint_2/04%20Retrospectiva%20del%20Sprint%20V_1_0_0.md)
 
 ## Estado de la entrega al 2026-10-06
 
@@ -35,5 +35,5 @@ El frontend y backend están desarrollados según el equipo; falta publicar la v
 
 ## Código fuente
 
-- [Frontend del Sprint 1 ya presente](doc/Programa_Proyectos/Frontend/Programa_Sprint_1/project/)
-- [Carpeta reservada para backend](doc/Programa_Proyectos/backend/): contiene únicamente un README vacío al corte; falta incorporar el código completo reportado por el equipo.
+- [Código frontend](Programa_Proyectos_2/Frontend/)
+- [Código backend](Programa_Proyectos_2/Backend/)

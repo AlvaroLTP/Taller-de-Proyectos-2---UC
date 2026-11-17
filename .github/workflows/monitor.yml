@@ -13,13 +13,13 @@ jobs:
         with:
           node-version: '24'
           cache: npm
-          cache-dependency-path: Frontend/package-lock.json
+          cache-dependency-path: Programa_Proyectos_2/Frontend/package-lock.json
       - run: npm ci
-        working-directory: Frontend
+        working-directory: Programa_Proyectos_2/Frontend
       - run: npx playwright install --with-deps chromium
-        working-directory: Frontend
+        working-directory: Programa_Proyectos_2/Frontend
       - run: npm run monitor
-        working-directory: Frontend
+        working-directory: Programa_Proyectos_2/Frontend
         env:
           MONITOR_FRONTEND_URL: ${{ vars.MONITOR_FRONTEND_URL }}
           MONITOR_API_URL: ${{ vars.MONITOR_API_URL }}
@@ -30,6 +30,6 @@ jobs:
         with:
           name: monitor-report
           path: |
-            Frontend/monitor-report
-            Frontend/monitor-results
+            Programa_Proyectos_2/Frontend/monitor-report
+            Programa_Proyectos_2/Frontend/monitor-results
           retention-days: 7
