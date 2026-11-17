@@ -93,7 +93,10 @@ test('muestra un fallo de API y permite reintentar', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Panel de control', exact: true })).toBeVisible();
 });
 
-test('planifica, despacha y confirma una entrega con cambio de sesión', async ({ page, request }) => {
+test('planifica, despacha y confirma una entrega con cambio de sesión', async ({ page, request }, testInfo) => {
+  const browserNumber = { chromium: '1', firefox: '2', webkit: '3' }[testInfo.project.name] || '9';
+  const fixture = `${testInfo.project.name}-${testInfo.retry}`;
+  const phone = `99911${browserNumber}${testInfo.retry}22`;
   const auth = await request.post('http://127.0.0.1:8011/auth/v1/token', { data: { email: 'admin@e2e.local', password: 'e2e-password' } });
   const { access_token } = await auth.json();
   const headers = { Authorization: `Bearer ${access_token}` };
@@ -102,21 +105,29 @@ test('planifica, despacha y confirma una entrega con cambio de sesión', async (
     expect(response.status(), await response.text()).toBe(201);
     return response.json();
   };
-  const client = await create('clients', { name: 'E2E Destinatario', phone: '999111222', street: 'Av. Lima', district: 'Lima' });
-  await create('vehicles', { code: 'E2E-PLAN', plate: 'PLN-001', type: 'Van', brand: 'Test', model: 'Plan', capacity_kg: 1000, capacity_m3: 10, consumption_km_per_l: 10, emissions_per_km: 0.2 });
-  await create('orders', { code: 'E2E-PEDIDO', client_id: client.id, phone: '999111222', street: 'Av. Lima', district: 'Lima', lat: -12.04, lng: -77.03, delivery_date: '2026-11-16', time_window_start: '09:00', time_window_end: '12:00', weight_kg: 100, volume_m3: 1 });
+  const client = await create('clients', { name: `E2E Destinatario ${fixture}`, phone, street: 'Av. Lima', district: 'Lima' });
+  const vehicleCode = 'E2E-PLAN';
+  const vehiclesResponse = await request.get('http://127.0.0.1:8011/api/v1/vehicles/', { headers });
+  expect(vehiclesResponse.status(), await vehiclesResponse.text()).toBe(200);
+  const vehicleExists = (await vehiclesResponse.json()).some((vehicle: { code: string }) => vehicle.code === vehicleCode);
+  if (!vehicleExists) {
+    await create('vehicles', { code: vehicleCode, plate: 'PLN-001', type: 'Van', brand: 'Test', model: 'Plan', capacity_kg: 1000, capacity_m3: 10, consumption_km_per_l: 10, emissions_per_km: 0.2 });
+  }
+  const orderCode = `E2E-PEDIDO-${fixture}`;
+  await create('orders', { code: orderCode, client_id: client.id, phone, street: 'Av. Lima', district: 'Lima', lat: -12.04, lng: -77.03, delivery_date: '2026-11-16', time_window_start: '09:00', time_window_end: '12:00', weight_kg: 100, volume_m3: 1 });
   await login(page);
   await page.goto('/planning');
   await page.getByLabel('Fecha de planificación').fill('2026-11-16');
-  await page.getByRole('checkbox', { name: /E2E-PEDIDO/ }).check();
+  await page.getByRole('checkbox', { name: new RegExp(orderCode) }).check();
   await page.getByRole('checkbox', { name: /E2E Driver/ }).check();
-  await page.getByRole('checkbox', { name: /E2E-PLAN/ }).check();
+  await page.getByRole('checkbox', { name: vehicleCode }).check();
   const generated = page.waitForResponse(response => response.url().endsWith('/routes/generate') && response.request().method() === 'POST');
   await page.getByRole('button', { name: 'Generar planificación', exact: true }).click();
   const planResponse = await generated;
   expect(planResponse.ok(), await planResponse.text()).toBeTruthy();
   const plan = await planResponse.json();
   expect(plan.valid).toBeTruthy();
+  const routeId = plan.routes[0].id;
   await expect(page.getByText('Rutas generadas', { exact: true })).toBeVisible();
   await page.getByRole('navigation').getByRole('button', { name: 'Despacho', exact: true }).click();
   await page.getByRole('button', { name: 'Iniciar', exact: true }).click();
@@ -129,8 +140,13 @@ test('planifica, despacha y confirma una entrega con cambio de sesión', async (
   await page.getByRole('button', { name: 'OK', exact: true }).click();
   await expect(page.getByText('Entrega completada', { exact: true })).toBeVisible();
   await page.reload();
-  await expect(page.getByText('E2E-PEDIDO', { exact: true })).toBeVisible();
+  await expect(page.getByText(orderCode, { exact: true })).toBeVisible();
   await expect(page.getByRole('button', { name: 'OK', exact: true })).toHaveCount(0);
   const orders = await request.get('http://127.0.0.1:8011/api/v1/orders/', { headers });
-  expect((await orders.json()).find((order: { code: string }) => order.code === 'E2E-PEDIDO').status).toBe('delivered');
+  expect((await orders.json()).find((order: { code: string }) => order.code === orderCode).status).toBe('delivered');
+  const finished = await request.put(`http://127.0.0.1:8011/api/v1/routes/${routeId}/status`, {
+    headers,
+    data: { status: 'finished' },
+  });
+  expect(finished.status(), await finished.text()).toBe(200);
 });

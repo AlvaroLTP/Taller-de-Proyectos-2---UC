@@ -25,6 +25,10 @@ Optimizador de Rutas Sostenibles para DistriRápido S.A.C. — Taller de Proyect
 - [Revisión del sprint](docs/03_Implementacion/Sprint_2/03%20Revisi%C3%B3n%20del%20Sprint%20V_1_0_0.md)
 - [Retrospectiva](docs/03_Implementacion/Sprint_2/04%20Retrospectiva%20del%20Sprint%20V_1_0_0.md)
 
+### Sprint 4 — Evidencias de pruebas
+
+- [Resultados generales de pruebas](docs/03_Implementacion/Sprint_4/Resultados_Pruebas_Generales/)
+
 ## Estado de la entrega al 2026-10-06
 
 El **Sprint 1 culminó el 22 de septiembre de 2026**, según el cierre funcional reportado por el equipo para el hito H-03 del cronograma. Actualmente las nueve historias y la épica KAN-2 figuran finalizadas en Jira.
