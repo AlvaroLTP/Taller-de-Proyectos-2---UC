@@ -1,3 +1,4 @@
+param([switch]$E2E)
 $ErrorActionPreference = 'Stop'
 $taskRoot = Split-Path -Parent $PSScriptRoot
 $taskPython = Join-Path $taskRoot 'Backend/.venv/Scripts/python.exe'
@@ -22,6 +23,10 @@ try {
     try {
         npm.cmd run check
         if ($LASTEXITCODE -ne 0) { throw 'Fallaron las verificaciones del frontend' }
+        if ($E2E) {
+            npm.cmd run test:e2e
+            if ($LASTEXITCODE -ne 0) { throw 'Fallaron las pruebas E2E' }
+        }
     } finally { Pop-Location }
 } finally {
     $env:TEMP = $taskOldTemp

@@ -14,8 +14,12 @@ export function ParametersPage() {
   const [form, setForm] = useState(parameters);
 
   const handleSubmit = async () => {
-    await updateParameters(form);
-    showToast('Parámetros actualizados correctamente');
+    try {
+      await updateParameters(form);
+      showToast('Parámetros actualizados correctamente');
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'No se pudo completar la operación', 'error');
+    }
   };
 
   return (
@@ -62,7 +66,7 @@ export function ParametersPage() {
             <Input label="Factor de emisión (kg CO₂/L)" type="number" step="0.01" value={form.emissionFactor || ''} onChange={(e) => setForm({ ...form, emissionFactor: +e.target.value })} />
             <div className="flex items-end">
               <div className="rounded-lg bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-                <Leaf size={16} className="mb-1 inline" /> Estos parámetros se usarán en el motor de optimización para calcular emisiones estimadas.
+                <Leaf size={16} className="mb-1 inline" /> El factor por litro es informativo; la planificación utiliza las emisiones por kilómetro del vehículo.
               </div>
             </div>
           </div>
@@ -77,8 +81,8 @@ export function ParametersPage() {
           <div>
             <p className="text-sm font-medium text-teal-900">Parámetros para el motor de optimización</p>
             <p className="mt-1 text-xs text-teal-700">
-              Estos valores serán utilizados posteriormente por el motor real de optimización de rutas.
-              En esta etapa funcionan con datos simulados para validar la interfaz.
+              Los cambios se guardan en la API y se aplican a las nuevas planificaciones.
+              Las emisiones de cada ruta se estiman usando el factor del vehículo.
             </p>
           </div>
         </div>

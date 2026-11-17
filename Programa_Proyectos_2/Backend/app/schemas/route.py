@@ -49,6 +49,10 @@ class RouteStatusUpdate(InputModel):
     status: Literal["preparing", "in_route", "finished", "with_incidents"]
 
 
+class RouteReoptimizeRequest(InputModel):
+    reason: str = Field(min_length=1, max_length=500)
+
+
 class RouteResponse(InputModel):
     id: UUID
     code: str
@@ -60,12 +64,6 @@ class RouteResponse(InputModel):
     departure_time: str
     estimated_arrival_time: str
     emissions_kg_co2: float
-    outbound_distance_km: float | None = None
-    return_distance_km: float | None = None
-    payload_tonne_km: float | None = None
-    energy_kwh: float | None = None
-    emissions_method: str | None = None
-    emissions_source: str | None = None
     status: str
     completed_deliveries: int
     total_deliveries: int

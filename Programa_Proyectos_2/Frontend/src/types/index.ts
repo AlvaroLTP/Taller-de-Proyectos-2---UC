@@ -24,8 +24,6 @@ export interface Vehicle {
   consumptionKmPerL: number;
   fuelType: FuelType;
   emissionsPerKm: number;
-  energyKwhPerKm?: number;
-  emissionFactorSource?: string;
   status: VehicleStatus;
   available: boolean;
   driverId?: string;
@@ -145,12 +143,6 @@ export interface Route {
   departureTime: string;
   estimatedArrivalTime: string;
   emissionsKgCO2: number;
-  outboundDistanceKm?: number;
-  returnDistanceKm?: number;
-  payloadTonneKm?: number;
-  energyKwh?: number;
-  emissionsMethod?: string;
-  emissionsSource?: string;
   status: RouteStatus;
   completedDeliveries: number;
   totalDeliveries: number;
@@ -167,9 +159,6 @@ export interface OperationalParameters {
   fuelType: FuelType;
   maxDistanceKm: number;
   maxDeliveriesPerRoute: number;
-  depotLat?: number;
-  depotLng?: number;
-  electricityEmissionFactorKgCO2ePerKwh?: number;
 }
 
 export interface DriverSchedule {
@@ -205,4 +194,65 @@ export interface SustainabilityMetrics {
   emissionsByRoute: { routeCode: string; emissions: number }[];
   emissionsByVehicle: { vehicleCode: string; emissions: number }[];
   efficiencyIndex: number;
+}
+
+export interface CostAnalysis {
+  fuelCostTotal: number;
+  fuelCostPerRoute: { routeCode: string; cost: number }[];
+  fuelCostPerVehicle: { vehicleCode: string; cost: number; fuelType: string }[];
+  maintenanceCostTotal: number;
+  totalOperationalCost: number;
+  costPerDelivery: number;
+  costPerKm: number;
+  dieselPricePerL: number;
+  maintenanceCostPerKm: number;
+}
+
+export interface EmissionsBreakdown {
+  totalEmissionsKgCO2: number;
+  totalEmissionsTonsCO2: number;
+  emissionsByFuelType: { fuelType: string; emissions: number; percentage: number }[];
+  emissionsByDistrict: { district: string; emissions: number }[];
+  emissionsByRoute: { routeCode: string; emissions: number; distance: number }[];
+  electricVehicleSavings: number;
+  hybridVehicleSavings: number;
+  equivalentTreesNeeded: number;
+  equivalentCarsOffRoad: number;
+}
+
+export interface CarbonCompensationPlan {
+  totalEmissionsTonsCO2: number;
+  compensationTargetTons: number;
+  compensationPercentage: number;
+  initiatives: CarbonInitiative[];
+  totalCompensationTons: number;
+  totalInvestmentUSD: number;
+  remainingEmissionsTons: number;
+  netEmissionsTons: number;
+}
+
+export interface CarbonInitiative {
+  id: string;
+  name: string;
+  description: string;
+  type: 'reforestation' | 'renewable_energy' | 'fleet_renewal' | 'route_optimization' | 'carbon_credits';
+  compensationTons: number;
+  costUSD: number;
+  costPerTon: number;
+  timeframe: string;
+  impact: 'high' | 'medium' | 'low';
+}
+
+export interface ReoptimizationResult {
+  routeId: string;
+  routeCode: string;
+  previousDistance: number;
+  newDistance: number;
+  distanceSaved: number;
+  previousEmissions: number;
+  newEmissions: number;
+  emissionsSaved: number;
+  stopsReordered: number;
+  reason: string;
+  timestamp: string;
 }

@@ -52,13 +52,13 @@ export function MonitoringPage() {
   const onTimeRate = totalDeliveries > 0 ? ((delivered / totalDeliveries) * 100).toFixed(0) : '0';
   const avgTimePerDelivery =
     routes.length > 0
-      ? Math.round(routes.reduce((s, r) => s + r.estimatedTimeMin, 0) / routes.length)
+      ? Math.round(routes.reduce((s, r) => s + r.estimatedTimeMin, 0) / (routes.reduce((s, r) => s + r.totalDeliveries, 0) || 1))
       : 0;
   const vehicleUtilization =
     vehicles.length > 0
-      ? Math.round((vehicles.filter((v) => v.status === 'in_route').length / vehicles.length) * 100)
+      ? Math.round((new Set(inRouteNow.map((r) => r.vehicleId)).size / vehicles.length) * 100)
       : 0;
-  const activeDrivers = drivers.filter((d) => d.status === 'in_route').length;
+  const activeDrivers = new Set(inRouteNow.map((r) => r.driverId)).size;
 
   // US-020: ahorros de las rutas (comparación optimizado vs no optimizado)
   const totalDistanceOptimized = routes.reduce((s, r) => s + r.totalDistanceKm, 0);
@@ -82,7 +82,7 @@ export function MonitoringPage() {
 
   const operationalIndicators = [
     { label: 'Rutas activas', value: routes.filter((r) => r.status === 'in_route' || r.status === 'preparing').length, icon: <RouteIcon size={22} />, color: 'blue' as const },
-    { label: 'Tasa a tiempo', value: `${onTimeRate}%`, icon: <Gauge size={22} />, color: 'emerald' as const },
+    { label: 'Pedidos entregados', value: `${onTimeRate}%`, icon: <Gauge size={22} />, color: 'emerald' as const },
     { label: 'Tiempo medio/entrega', value: formatMinutes(avgTimePerDelivery), icon: <Timer size={22} />, color: 'sky' as const },
     { label: 'Uso de flota', value: `${vehicleUtilization}%`, icon: <Truck size={22} />, color: 'amber' as const },
     { label: 'Conductores activos', value: activeDrivers, icon: <Package size={22} />, color: 'blue' as const },
@@ -109,7 +109,7 @@ export function MonitoringPage() {
     <div className="space-y-6">
       <PageHeader
         title="Monitoreo operativo"
-        subtitle="Visualización y seguimiento de rutas en tiempo real · Sprint 3"
+        subtitle="Visualización de rutas y estimaciones operativas"
       />
 
       {/* US-017: Mapa de rutas optimizadas */}
@@ -177,7 +177,7 @@ export function MonitoringPage() {
       {/* US-019: Indicadores operativos */}
       <div>
         <h2 className="mb-3 text-lg font-semibold text-slate-900">Indicadores operativos (US-019)</h2>
-        <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-6">
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 2xl:grid-cols-6">
           {operationalIndicators.map((ind) => (
             <StatCard
               key={ind.label}
@@ -204,7 +204,7 @@ export function MonitoringPage() {
         </Card>
 
         <Card>
-          <CardHeader title="Rutas en ejecución" subtitle="Seguimiento en tiempo real" />
+          <CardHeader title="Rutas en ejecución" subtitle="Estado guardado de las rutas; actualice los datos para consultar cambios" />
           <div className="divide-y divide-slate-100">
             {inRouteNow.length > 0 ? (
               inRouteNow.map((r) => {

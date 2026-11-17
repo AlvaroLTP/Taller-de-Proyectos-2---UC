@@ -80,17 +80,21 @@ export function DriversPage() {
         showToast('Conductor registrado correctamente');
       }
       setModalOpen(false);
-    } catch {
-      showToast('Error al guardar el conductor', 'error');
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Error al guardar el conductor', 'error');
     }
   };
 
   const handleAssign = async () => {
-    if (!assignModalDriver || !assignVehicleId) return;
-    await assignVehicleToDriver(assignModalDriver.id, assignVehicleId);
-    showToast('Vehículo asignado correctamente');
-    setAssignModalDriver(null);
-    setAssignVehicleId('');
+    try {
+      if (!assignModalDriver || !assignVehicleId) return;
+      await assignVehicleToDriver(assignModalDriver.id, assignVehicleId);
+      showToast('Vehículo asignado correctamente');
+      setAssignModalDriver(null);
+      setAssignVehicleId('');
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'No se pudo completar la operación', 'error');
+    }
   };
 
   const handleDelete = async () => {
@@ -98,8 +102,8 @@ export function DriversPage() {
     try {
       await deleteDriver(deleteTarget.id);
       showToast('Conductor eliminado');
-    } catch {
-      showToast('Error al eliminar el conductor', 'error');
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Error al eliminar el conductor', 'error');
     }
     setDeleteTarget(null);
   };
@@ -150,7 +154,7 @@ export function DriversPage() {
                 <button onClick={(e) => { e.stopPropagation(); openEdit(d); }} className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-blue-600" title="Editar">
                   <Edit size={16} />
                 </button>
-                <button onClick={(e) => { e.stopPropagation(); toggleDriverAvailability(d.id); }} className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-blue-600" title="Disponibilidad">
+                <button onClick={(e) => { e.stopPropagation(); toggleDriverAvailability(d.id).catch((error: unknown) => showToast(error instanceof Error ? error.message : 'No se pudo cambiar la disponibilidad', 'error')); }} className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-blue-600" title="Disponibilidad">
                   {d.available ? <ToggleRight size={18} /> : <ToggleLeft size={18} />}
                 </button>
                 <button onClick={(e) => { e.stopPropagation(); setAssignModalDriver(d); setAssignVehicleId(d.vehicleId || ''); }} className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-indigo-600" title="Asignar vehículo">

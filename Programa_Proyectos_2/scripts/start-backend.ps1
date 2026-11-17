@@ -21,10 +21,15 @@ if ($Restart -and (Test-Path -LiteralPath (Join-Path $taskLogs 'backend.pid'))) 
         $taskChildren = Get-CimInstance Win32_Process -Filter ('ParentProcessId=' + $taskPid)
         foreach ($taskChild in $taskChildren) {
             if ($taskChild.CommandLine -match 'uvicorn' -and $taskChild.CommandLine.Contains($taskBackend)) {
-                Stop-Process -Id $taskChild.ProcessId -ErrorAction SilentlyContinue
+                $taskResult = Invoke-CimMethod -InputObject $taskChild -MethodName Terminate
+                if ($taskResult.ReturnValue -ne 0) { throw 'No se pudo detener el proceso hijo del backend.' }
             }
         }
-        Stop-Process -Id $taskPid -ErrorAction SilentlyContinue
+        $taskRemaining = Get-CimInstance Win32_Process -Filter ('ProcessId=' + $taskPid)
+        if ($taskRemaining) {
+            $taskResult = Invoke-CimMethod -InputObject $taskRemaining -MethodName Terminate
+            if ($taskResult.ReturnValue -ne 0) { throw 'No se pudo detener el backend anterior.' }
+        }
     }
 }
 if (Get-NetTCPConnection -LocalPort 8000 -State Listen -ErrorAction SilentlyContinue) {

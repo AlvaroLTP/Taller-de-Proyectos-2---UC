@@ -1,0 +1,35 @@
+name: Read-only system monitoring
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 13 * * *'
+jobs:
+  monitor:
+    if: vars.MONITOR_FRONTEND_URL != '' && vars.MONITOR_API_URL != ''
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: Frontend/package-lock.json
+      - run: npm ci
+        working-directory: Frontend
+      - run: npx playwright install --with-deps chromium
+        working-directory: Frontend
+      - run: npm run monitor
+        working-directory: Frontend
+        env:
+          MONITOR_FRONTEND_URL: ${{ vars.MONITOR_FRONTEND_URL }}
+          MONITOR_API_URL: ${{ vars.MONITOR_API_URL }}
+          MONITOR_EMAIL: ${{ secrets.MONITOR_EMAIL }}
+          MONITOR_PASSWORD: ${{ secrets.MONITOR_PASSWORD }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: monitor-report
+          path: |
+            Frontend/monitor-report
+            Frontend/monitor-results
+          retention-days: 7

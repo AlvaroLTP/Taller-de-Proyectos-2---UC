@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import type { InputHTMLAttributes, SelectHTMLAttributes, TextareaHTMLAttributes, ReactNode } from 'react';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -7,10 +8,12 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 export function Input({ label, error, icon, className = '', ...props }: InputProps) {
+  const generatedId = useId();
+  const fieldId = props.id || generatedId;
   return (
     <div>
       {label && (
-        <label className="mb-1.5 block text-sm font-medium text-slate-700">{label}</label>
+        <label htmlFor={fieldId} className="mb-1.5 block text-sm font-medium text-slate-700">{label}</label>
       )}
       <div className="relative">
         {icon && (
@@ -19,6 +22,7 @@ export function Input({ label, error, icon, className = '', ...props }: InputPro
           </div>
         )}
         <input
+          id={fieldId}
           className={`w-full rounded-lg border ${error ? 'border-red-300' : 'border-slate-300'} ${icon ? 'pl-10' : ''} px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 ${className}`}
           {...props}
         />
@@ -35,12 +39,15 @@ interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
 }
 
 export function Select({ label, error, children, className = '', ...props }: SelectProps) {
+  const generatedId = useId();
+  const fieldId = props.id || generatedId;
   return (
     <div>
       {label && (
-        <label className="mb-1.5 block text-sm font-medium text-slate-700">{label}</label>
+        <label htmlFor={fieldId} className="mb-1.5 block text-sm font-medium text-slate-700">{label}</label>
       )}
       <select
+          id={fieldId}
         className={`w-full rounded-lg border ${error ? 'border-red-300' : 'border-slate-300'} bg-white px-3.5 py-2.5 text-sm text-slate-900 transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 ${className}`}
         {...props}
       >
@@ -57,12 +64,15 @@ interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
 }
 
 export function Textarea({ label, error, className = '', ...props }: TextareaProps) {
+  const generatedId = useId();
+  const fieldId = props.id || generatedId;
   return (
     <div>
       {label && (
-        <label className="mb-1.5 block text-sm font-medium text-slate-700">{label}</label>
+        <label htmlFor={fieldId} className="mb-1.5 block text-sm font-medium text-slate-700">{label}</label>
       )}
       <textarea
+          id={fieldId}
         className={`w-full rounded-lg border ${error ? 'border-red-300' : 'border-slate-300'} px-3.5 py-2.5 text-sm text-slate-900 placeholder-slate-400 transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 ${className}`}
         {...props}
       />

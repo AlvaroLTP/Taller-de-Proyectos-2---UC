@@ -1,10 +1,7 @@
 import { useApp } from '@/store/AppContext';
 import { StatCard, Card, CardHeader, DonutChart, BarChart, ActivityChart } from '@/components/ui';
 import { Badge } from '@/components/ui/Badge';
-import {
-  Package, CheckCircle2, Truck, Users, Route as RouteIcon, AlertTriangle,
-  MapPin, Clock, Leaf,
-} from 'lucide-react';
+import { Package, CheckCircle2, Truck, Users, Route as RouteIcon, AlertTriangle, MapPin, Clock, Leaf } from 'lucide-react';
 import { routeStatusConfig, formatMinutes } from '@/utils/formatters';
 import { PageHeader } from '@/components/ui';
 import { useNavigate } from 'react-router-dom';
@@ -61,7 +58,7 @@ export function DashboardPage() {
       />
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4 xl:grid-cols-5">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
         <StatCard title="Pedidos pendientes" value={pending} icon={<Package size={22} />} color="amber" />
         <StatCard title="Pedidos en ruta" value={inRoute} icon={<Truck size={22} />} color="blue" />
         <StatCard title="Pedidos entregados" value={delivered} icon={<CheckCircle2 size={22} />} color="emerald" />

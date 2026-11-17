@@ -1,32 +1,5 @@
 # EcoLogística Lima
 
-Optimizador de Rutas Sostenibles para DistriRápido S.A.C. — Taller de Proyectos 2, Universidad Continental.
-
-**Líder:** La Torre Párraga, Alvaro Andree.
-**Equipo:** Caldas Alanya, Marvin Usias; Guevara Chamorro, Augusto Jose; La Torre Párraga, Alvaro Andree; Yanarico Ticona, Ivan Josue.
-
-## Documentación
-
-- [Inicio del proyecto](doc/01_Inicio/)
-- [Planificación y artefactos de Jira](doc/02_Planficacion/02.%20Artefactos%20Jira%20V_1_0_0.md)
-- [Tablero Jira](https://continental-team-lz4401n3.atlassian.net/jira/software/projects/KAN/boards/1)
-
-### Sprint 1 — Gestión Core de Operaciones
-
-- [Informe de estado](doc/03_Implementacion/Sprint_1/01%20Informe%20de%20estado%20del%20proyecto%20V_1_0_0.md)
-- [Registro de impedimentos](doc/03_Implementacion/Sprint_1/02%20Registro%20de%20Impedimentos%20V_1_0_0.md)
-- [Revisión del sprint](doc/03_Implementacion/Sprint_1/03%20Revisi%C3%B3n%20del%20Sprint%20V_1_0_0.md)
-- [Retrospectiva](doc/03_Implementacion/Sprint_1/04%20Retrospectiva%20del%20Sprint%20V_1_0_0.md)
-
-### Sprint 2 — Motor de Optimización y Despacho
-
-- [Informe de estado](doc/03_Implementacion/Sprint_2/01%20Informe%20de%20estado%20del%20proyecto%20V_1_0_0.md)
-- [Registro de impedimentos](doc/03_Implementacion/Sprint_2/02%20Registro%20de%20Impedimentos%20V_1_0_0.md)
-- [Revisión del sprint](doc/03_Implementacion/Sprint_2/03%20Revisi%C3%B3n%20del%20Sprint%20V_1_0_0.md)
-- [Retrospectiva](doc/03_Implementacion/Sprint_2/04%20Retrospectiva%20del%20Sprint%20V_1_0_0.md)
-
-# Descripción Inicial
-
 Aplicación React/TypeScript y API FastAPI para gestionar vehículos, conductores, clientes, pedidos y rutas.
 Supabase gestiona la autenticación y PostgreSQL. El frontend envía las operaciones a FastAPI con el token de sesión.
 
@@ -79,12 +52,12 @@ Si la URL contiene `pgbouncer=true`, el backend elimina esa opción de Prisma an
 
 Las migraciones canónicas están en `Frontend/supabase/migrations`. Para una base nueva, aplicarlas por orden de nombre. En una base existente con las tres migraciones originales aplicadas, ejecutar únicamente:
 
-1. `20261026150000_secure_api_access.sql`: revoca escrituras directas y limita lecturas por rol y asignación.
+1. `20261026150000_secure_api_access.sql`: revoca el acceso directo a tablas operativas; conserva lectura del perfil propio. La API aplica permisos por rol y asignación.
 2. `20261026151000_data_constraints.sql`: agrega restricciones, referencias e índices únicos.
 
 **Estas migraciones están preparadas, pero no se aplicaron a una base remota durante esta revisión.** Revisar primero `docs/AUDITORIA_SISTEMA.md` y ejecutar las pruebas SQL en desarrollo. Antes de la segunda migración, comprobar códigos, placas, DNI, licencias y asignaciones duplicadas: los índices únicos fallarán si existen duplicados. Los `CHECK` y claves foráneas nuevos usan `NOT VALID` para permitir corregir datos históricos y luego ejecutar `VALIDATE CONSTRAINT` sobre cada restricción nueva.
 
-La migración histórica de perfiles ya no crea cuentas con contraseñas compartidas. En proyectos donde ya se ejecutó la versión anterior, deshabilitar o cambiar las contraseñas de las cuentas de demostración antes de exponer el sistema. Crear usuarios en Supabase Auth y sus perfiles mediante una cuenta administrativa. `profiles.id` debe coincidir con `auth.users.id`; el rol `driver` requiere un `driver_id` válido. Los roles admitidos son `admin`, `operator` y `driver`.
+La migración histórica de perfiles descargada con Bolt contiene cuentas de demostración con contraseña compartida; omitir ese bloque en instalaciones nuevas. En proyectos donde ya se ejecutó la versión anterior, deshabilitar o cambiar las contraseñas de las cuentas de demostración antes de exponer el sistema. Crear usuarios en Supabase Auth y sus perfiles mediante una cuenta administrativa. `profiles.id` debe coincidir con `auth.users.id`; el rol `driver` requiere un `driver_id` válido. Los roles admitidos son `admin`, `operator` y `driver`.
 
 `Backend/alembic` conserva el esqueleto original y no sustituye estas migraciones Supabase, que también configuran `auth`, permisos y RLS.
 
@@ -135,8 +108,28 @@ npm audit
 
 Las pruebas Python usan SQLite en memoria con claves foráneas activas y un proveedor de identidad simulado. Las pruebas unitarias de autenticación verifican las respuestas del emisor con HTTP simulado. No necesitan credenciales ni modifican datos remotos.
 
-Las pruebas de RLS son independientes: requieren Docker y Supabase CLI. Desde `Frontend`, inicializar la configuración local con `supabase init` si todavía no existe, iniciar `supabase start` y ejecutar `supabase test db supabase/tests/security.test.sql` contra una instancia local desechable. No ejecutar `db reset` ni pruebas contra una base compartida. La prueba crea datos de ensayo dentro de una transacción y los revierte. Hay 15 comprobaciones SQL preparadas; no se ejecutaron en esta revisión porque Docker no estaba disponible.
+Las pruebas de RLS requieren un entorno PostgreSQL/Supabase desechable. El archivo SQL citado a continuación no viene en esta descarga y debe reconstruirse antes de ejecutar estos pasos. Requieren Docker y Supabase CLI. Desde `Frontend`, inicializar la configuración local con `supabase init` si todavía no existe, iniciar `supabase start` y ejecutar `supabase test db supabase/tests/security.test.sql` contra una instancia local desechable. No ejecutar `db reset` ni pruebas contra una base compartida. La prueba crea datos de ensayo dentro de una transacción y los revierte. Las comprobaciones SQL de la auditoría anterior no están presentes en esta descarga y no se ejecutaron en esta revisión.
 
 Se incluye `.github/workflows/checks.yml` para pruebas y auditorías al subir el proyecto a GitHub; ese workflow todavía no se ha ejecutado en GitHub.
 
 Ver resultados, evidencias y trabajo pendiente en [la auditoría](docs/AUDITORIA_SISTEMA.md).
+
+## Integración Bolt y pruebas de navegador (16/11/2026)
+
+Se reconectó el frontend a FastAPI y se alineó su entorno local con el proyecto Supabase del backend por indicación del usuario. Ver [revisión del frontend](docs/REVISION_FRONTEND_2026-11-16.md) y [revisión del backend](docs/REVISION_BACKEND.md). Los resultados de esta revisión sustituyen los resultados históricos para estos cambios.
+
+Comprobar que los entornos locales pertenecen al mismo proyecto sin mostrar credenciales:
+
+```powershell
+Backend/.venv/Scripts/python.exe scripts/validate-config.py
+```
+
+Desde `Frontend`, instalar las dependencias y Chromium antes de ejecutar Playwright:
+
+```powershell
+npm ci
+npx playwright install chromium
+npm run test:e2e
+```
+
+La suite inicia una interfaz Vite, FastAPI real, SQLite desechable y un proveedor de identidad HTTP local. No cambia datos remotos. El monitor se ejecuta por separado; consultar los ejemplos y comandos en el informe actualizado. Las migraciones recuperadas siguen pendientes de revisión y aplicación. No aplicar el seed de rutas simuladas a datos reales.
