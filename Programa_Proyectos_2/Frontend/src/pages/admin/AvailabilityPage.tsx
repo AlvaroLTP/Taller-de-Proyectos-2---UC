@@ -1,5 +1,5 @@
 import { useApp } from '@/store/AppContext';
-import { PageHeader } from '@/components/ui';
+import { PageHeader, useToast, Toast } from '@/components/ui';
 import { Card, CardHeader } from '@/components/ui/Charts';
 import { Badge } from '@/components/ui/Badge';
 import { driverStatusConfig, vehicleStatusConfig } from '@/utils/formatters';
@@ -7,6 +7,12 @@ import { Clock, Truck, CheckCircle2, XCircle } from 'lucide-react';
 
 export function AvailabilityPage() {
   const { drivers, vehicles, toggleDriverAvailability, toggleVehicleAvailability } = useApp();
+  const { toast, showToast } = useToast();
+  const perform = async (operation: () => Promise<void>) => {
+    try { await operation(); } catch (error) {
+      showToast(error instanceof Error ? error.message : 'No se pudo completar la operación', 'error');
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -30,7 +36,7 @@ export function AvailabilityPage() {
                 </div>
                 <Badge color={driverStatusConfig[d.status].color}>{driverStatusConfig[d.status].label}</Badge>
                 <button
-                  onClick={() => toggleDriverAvailability(d.id)}
+                  onClick={() => perform(() => toggleDriverAvailability(d.id))}
                   className={`relative h-6 w-11 rounded-full transition-colors ${d.available ? 'bg-blue-500' : 'bg-slate-300'}`}
                 >
                   <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${d.available ? 'left-5' : 'left-0.5'}`} />
@@ -55,7 +61,7 @@ export function AvailabilityPage() {
                 </div>
                 <Badge color={vehicleStatusConfig[v.status].color}>{vehicleStatusConfig[v.status].label}</Badge>
                 <button
-                  onClick={() => toggleVehicleAvailability(v.id)}
+                  onClick={() => perform(() => toggleVehicleAvailability(v.id))}
                   className={`relative h-6 w-11 rounded-full transition-colors ${v.available ? 'bg-blue-500' : 'bg-slate-300'}`}
                 >
                   <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${v.available ? 'left-5' : 'left-0.5'}`} />
@@ -97,6 +103,7 @@ export function AvailabilityPage() {
           <p className="mt-2 text-2xl font-bold text-slate-900">{vehicles.filter((v) => !v.available).length}</p>
         </div>
       </div>
+      <Toast {...toast} />
     </div>
   );
 }

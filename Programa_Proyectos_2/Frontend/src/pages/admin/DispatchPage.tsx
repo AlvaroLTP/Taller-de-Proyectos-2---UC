@@ -1,5 +1,5 @@
 import { useApp } from '@/store/AppContext';
-import { PageHeader } from '@/components/ui';
+import { PageHeader, useToast, Toast } from '@/components/ui';
 import { Card } from '@/components/ui/Charts';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
@@ -11,6 +11,12 @@ import type { RouteStatus } from '@/types';
 export function DispatchPage() {
   const { routes, drivers, vehicles, updateRouteStatus } = useApp();
   const navigate = useNavigate();
+  const { toast, showToast } = useToast();
+  const perform = async (operation: () => Promise<void>) => {
+    try { await operation(); } catch (error) {
+      showToast(error instanceof Error ? error.message : 'No se pudo completar la operación', 'error');
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -56,21 +62,21 @@ export function DispatchPage() {
                 </div>
                 <div className="flex gap-2">
                   {r.status === 'pending' && (
-                    <Button size="sm" className="flex-1" icon={<Play size={14} />} onClick={() => updateRouteStatus(r.id, 'preparing')}>
+                    <Button size="sm" className="flex-1" icon={<Play size={14} />} onClick={() => perform(() => updateRouteStatus(r.id, 'preparing'))}>
                       Iniciar
                     </Button>
                   )}
                   {r.status === 'preparing' && (
-                    <Button size="sm" className="flex-1" icon={<Play size={14} />} onClick={() => updateRouteStatus(r.id, 'in_route')}>
+                    <Button size="sm" className="flex-1" icon={<Play size={14} />} onClick={() => perform(() => updateRouteStatus(r.id, 'in_route'))}>
                       Despachar
                     </Button>
                   )}
                   {r.status === 'in_route' && (
                     <>
-                      <Button size="sm" variant="danger" icon={<AlertTriangle size={14} />} onClick={() => updateRouteStatus(r.id, 'with_incidents')}>
+                      <Button size="sm" variant="danger" icon={<AlertTriangle size={14} />} onClick={() => perform(() => updateRouteStatus(r.id, 'with_incidents'))}>
                         Incidencia
                       </Button>
-                      <Button size="sm" variant="success" icon={<CheckCircle size={14} />} onClick={() => updateRouteStatus(r.id, 'finished')}>
+                      <Button size="sm" variant="success" icon={<CheckCircle size={14} />} onClick={() => perform(() => updateRouteStatus(r.id, 'finished'))}>
                         Finalizar
                       </Button>
                     </>
@@ -84,6 +90,7 @@ export function DispatchPage() {
           );
         })}
       </div>
+      <Toast {...toast} />
     </div>
   );
 }

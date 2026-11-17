@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useApp } from '@/store/AppContext';
 import { PageHeader, useToast, Toast } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
@@ -6,7 +6,7 @@ import { Card, CardHeader } from '@/components/ui/Charts';
 import { Badge } from '@/components/ui/Badge';
 import { Input } from '@/components/ui/Form';
 import { priorityConfig, formatMinutes } from '@/utils/formatters';
-import { Package, Users, Truck, Map, Sparkles, ArrowRight } from 'lucide-react';
+import { Package, Users, Truck, Map, Sparkles, ArrowRight, AlertTriangle, TrafficCone } from 'lucide-react';
 import type { Route } from '@/types';
 import { useNavigate } from 'react-router-dom';
 
@@ -21,14 +21,80 @@ export function PlanningPage() {
   const [generating, setGenerating] = useState(false);
   const [generatedRoutes, setGeneratedRoutes] = useState<Route[]>([]);
 
-  useEffect(() => { setSelectedOrders([]); setGeneratedRoutes([]); }, [date]);
-
   const pendingOrders = useMemo(
-    () => orders.filter((o) => o.status === 'pending' && o.deliveryDate === date),
+    () => orders.filter((o) => o.status === 'pending' && !o.routeId && o.deliveryDate === date),
     [orders, date]
   );
-  const availableDrivers = useMemo(() => drivers.filter((d) => d.available && d.status === 'available'), [drivers]);
-  const availableVehicles = useMemo(() => vehicles.filter((v) => v.available && v.status === 'available'), [vehicles]);
+  const availableDrivers = useMemo(() => drivers.filter((d) => d.available), [drivers]);
+  const availableVehicles = useMemo(() => vehicles.filter((v) => v.available), [vehicles]);
+
+  // US-013: Analyze restrictions in selected orders
+  const selectedOrderObjects = useMemo(
+    () => pendingOrders.filter((o) => selectedOrders.includes(o.id)),
+    [pendingOrders, selectedOrders]
+  );
+
+  const restrictionWarnings = useMemo(() => {
+    const warnings: { type: string; message: string; count: number }[] = [];
+    const specialAttention = selectedOrderObjects.filter((o) => o.preferences?.requiresSpecialAttention);
+    const noLunch = selectedOrderObjects.filter((o) => o.preferences?.noLunchHours);
+    const phoneCoord = selectedOrderObjects.filter((o) => o.preferences?.requiresPhoneCoordination);
+    const highPriority = selectedOrderObjects.filter((o) => o.priority === 'high');
+
+    if (highPriority.length > 0) {
+      warnings.push({ type: 'priority', message: `${highPriority.length} pedido(s) de prioridad alta — se planifican primero`, count: highPriority.length });
+    }
+    if (specialAttention.length > 0) {
+      warnings.push({ type: 'attention', message: `${specialAttention.length} pedido(s) requieren atención especial`, count: specialAttention.length });
+    }
+    if (noLunch.length > 0) {
+      warnings.push({ type: 'lunch', message: `${noLunch.length} pedido(s) no permiten entrega en horario de almuerzo (12-14h)`, count: noLunch.length });
+    }
+    if (phoneCoord.length > 0) {
+      warnings.push({ type: 'phone', message: `${phoneCoord.length} pedido(s) requieren coordinación telefónica previa`, count: phoneCoord.length });
+    }
+    return warnings;
+  }, [selectedOrderObjects]);
+
+  // US-013: Check capacity constraints
+  const capacityWarnings = useMemo(() => {
+    const warnings: string[] = [];
+    const totalWeight = selectedOrderObjects.reduce((s, o) => s + o.weightKg, 0);
+    const totalVolume = selectedOrderObjects.reduce((s, o) => s + o.volumeM3, 0);
+    const totalVehicleCapacity = selectedVehicles.reduce((s, vid) => {
+      const v = vehicles.find((vv) => vv.id === vid);
+      return s + (v?.capacityKg || 0);
+    }, 0);
+
+    const totalVolumeCapacity = selectedVehicles.reduce((sum, id) => sum + (vehicles.find(v => v.id === id)?.capacityM3 || 0), 0);
+    if (selectedVehicles.length > 0 && totalVolume > totalVolumeCapacity) {
+      warnings.push(`Volumen total (${totalVolume.toFixed(1)} m3) excede capacidad combinada (${totalVolumeCapacity} m3)`);
+    }
+    if (selectedVehicles.length > 0 && totalWeight > totalVehicleCapacity) {
+      warnings.push(`Peso total (${totalWeight.toFixed(0)} kg) excede capacidad combinada de vehículos (${totalVehicleCapacity} kg)`);
+    }
+    return warnings;
+  }, [selectedOrderObjects, selectedVehicles, vehicles]);
+
+  // US-016: Traffic info for selected departure times
+  const trafficInfo = useMemo(() => {
+    const selectedDriverObjects = drivers.filter((d) => selectedDrivers.includes(d.id));
+    if (selectedDriverObjects.length === 0) return null;
+
+    const getTrafficLevel = (time: string): { level: string; factor: number; color: string } => {
+      const hour = parseInt((time || '08:00').split(':')[0]);
+      if (hour >= 7 && hour < 9) return { level: 'Alto (hora punta matutina)', factor: 1.6, color: 'text-red-600 bg-red-50' };
+      if (hour >= 12 && hour < 14) return { level: 'Moderado (hora de almuerzo)', factor: 1.4, color: 'text-amber-600 bg-amber-50' };
+      if (hour >= 18 && hour < 20) return { level: 'Alto (hora punta vespertina)', factor: 1.7, color: 'text-red-600 bg-red-50' };
+      return { level: 'Bajo (hora valle)', factor: 1.0, color: 'text-emerald-600 bg-emerald-50' };
+    };
+
+    return selectedDriverObjects.map((d) => ({
+      driverName: d.name,
+      shiftStart: d.shiftStart,
+      traffic: getTrafficLevel(d.shiftStart),
+    }));
+  }, [drivers, selectedDrivers]);
 
   const toggleOrder = (id: string) => {
     setSelectedOrders((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
@@ -53,7 +119,8 @@ export function PlanningPage() {
     try {
       const newRoutes = await generatePlan(date, selectedOrders, selectedDrivers, selectedVehicles);
       setGeneratedRoutes(newRoutes);
-      showToast(`Planificación generada: ${newRoutes.length} ruta(s)`);
+      setSelectedOrders([]);
+      showToast(`Planificación generada: ${newRoutes.length} ruta(s) con validación de capacidad y horarios`);
     } catch (error) {
       showToast(error instanceof Error ? error.message : 'Error al generar la planificación', 'error');
     }
@@ -64,21 +131,21 @@ export function PlanningPage() {
     <div className="space-y-6">
       <PageHeader
         title="Planificación de rutas"
-        subtitle="Generar rutas con validación de capacidad, disponibilidad y horarios"
+        subtitle="Generar rutas considerando restricciones, prioridades y capacidad"
       />
 
       <div className="rounded-xl border border-blue-200 bg-blue-50 p-4">
         <div className="flex items-start gap-3">
           <Sparkles size={20} className="mt-0.5 text-blue-600" />
           <p className="text-sm text-blue-800">
-            El plan considera capacidades, turnos y ventanas horarias. Las distancias son estimaciones geográficas entre entregas.
-            Las restricciones de texto y la coordinación telefónica requieren revisión manual antes de planificar.
+            El motor planifica por ventanas de entrega y prioridad, valida la capacidad y los turnos,
+            y estima distancias geográficas entre paradas. Los tiempos no incluyen tráfico en tiempo real.
           </p>
         </div>
       </div>
 
       <div className="flex flex-wrap items-end gap-4 rounded-xl border border-slate-200 bg-white p-4">
-        <Input label="Fecha de planificación" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+        <Input label="Fecha de planificación" type="date" value={date} onChange={(e) => { setDate(e.target.value); setSelectedOrders([]); setGeneratedRoutes([]); }} />
         <div className="flex items-end gap-2 text-sm text-slate-500">
           <Package size={16} /> {pendingOrders.length} pedidos ·
           <Users size={16} /> {availableDrivers.length} conductores ·
@@ -94,6 +161,50 @@ export function PlanningPage() {
           </Button>
         </div>
       </div>
+
+      {/* US-013: Restriction warnings */}
+      {restrictionWarnings.length > 0 && (
+        <Card>
+          <CardHeader title="Restricciones detectadas" subtitle="Consideraciones aplicadas en la planificación" />
+          <div className="space-y-2 p-5">
+            {restrictionWarnings.map((w, i) => (
+              <div key={i} className="flex items-center gap-3 rounded-lg bg-amber-50 p-3">
+                <AlertTriangle size={18} className="shrink-0 text-amber-600" />
+                <span className="text-sm text-amber-800">{w.message}</span>
+              </div>
+            ))}
+            {capacityWarnings.map((w, i) => (
+              <div key={`cap-${i}`} className="flex items-center gap-3 rounded-lg bg-red-50 p-3">
+                <AlertTriangle size={18} className="shrink-0 text-red-600" />
+                <span className="text-sm text-red-800">{w}</span>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
+
+      {/* US-016: Traffic info */}
+      {trafficInfo && trafficInfo.length > 0 && (
+        <Card>
+          <CardHeader title="Tráfico estimado por horario de salida" subtitle="Referencia horaria informativa; no se aplica al cálculo del plan" />
+          <div className="grid gap-3 p-5 sm:grid-cols-2 lg:grid-cols-3">
+            {trafficInfo.map((t, i) => (
+              <div key={i} className="flex items-center gap-3 rounded-lg border border-slate-200 p-3">
+                <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${t.traffic.color}`}>
+                  <TrafficCone size={18} />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium text-slate-900">{t.driverName}</p>
+                  <p className="text-xs text-slate-500">Sale a las {t.shiftStart}</p>
+                  <p className={`text-xs font-medium ${t.traffic.color.split(' ')[0]}`}>
+                    {t.traffic.level} · factor {t.traffic.factor}x
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
 
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Orders */}
@@ -122,6 +233,19 @@ export function PlanningPage() {
                     <Badge color={priorityConfig[o.priority].color}>{priorityConfig[o.priority].label}</Badge>
                   </div>
                   <p className="truncate text-xs text-slate-500">{o.address.district} · {o.timeWindowStart}-{o.timeWindowEnd}</p>
+                  {(o.preferences?.requiresSpecialAttention || o.preferences?.requiresPhoneCoordination || o.preferences?.noLunchHours) && (
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {o.preferences?.requiresSpecialAttention && (
+                        <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-medium text-amber-700">Atención especial</span>
+                      )}
+                      {o.preferences?.requiresPhoneCoordination && (
+                        <span className="rounded bg-blue-100 px-1.5 py-0.5 text-[10px] font-medium text-blue-700">Coord. telefónica</span>
+                      )}
+                      {o.preferences?.noLunchHours && (
+                        <span className="rounded bg-red-100 px-1.5 py-0.5 text-[10px] font-medium text-red-700">Sin almuerzo</span>
+                      )}
+                    </div>
+                  )}
                 </div>
               </label>
             ))}
@@ -180,7 +304,7 @@ export function PlanningPage() {
       {/* Generated routes */}
       {generatedRoutes.length > 0 && (
         <Card>
-          <CardHeader title="Rutas generadas" subtitle="Planificación simulada" />
+          <CardHeader title="Rutas generadas" subtitle="Planificación optimizada" />
           <div className="divide-y divide-slate-100">
             {generatedRoutes.map((r) => {
               const driver = drivers.find((d) => d.id === r.driverId);

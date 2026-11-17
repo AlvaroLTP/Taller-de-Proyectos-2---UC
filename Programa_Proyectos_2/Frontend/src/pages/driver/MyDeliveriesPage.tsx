@@ -46,29 +46,41 @@ export function MyDeliveriesPage() {
   }, [myOrders, clients, search, statusFilter]);
 
   const handleStart = async (order: Order) => {
-    await updateOrderStatus(order.id, 'in_route');
-    showToast('Entrega iniciada');
-    setViewOrder(null);
+    try {
+      await updateOrderStatus(order.id, 'in_route');
+      showToast('Entrega iniciada');
+      setViewOrder(null);
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'No se pudo completar la operación', 'error');
+    }
   };
 
   const handleComplete = async (order: Order) => {
-    await updateOrderStatus(order.id, 'delivered');
-    showToast('Entrega completada');
-    setViewOrder(null);
+    try {
+      await updateOrderStatus(order.id, 'delivered');
+      showToast('Entrega completada');
+      setViewOrder(null);
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'No se pudo completar la operación', 'error');
+    }
   };
 
   const handleIncident = async () => {
-    if (!incidentOrder) return;
-    if (!incidentReason) { showToast('Seleccione un motivo', 'error'); return; }
-    await updateOrderStatus(incidentOrder.id, 'not_delivered', {
-      incidentReason,
-      incidentNotes,
-    });
-    showToast('Incidencia registrada');
-    setIncidentOrder(null);
-    setIncidentReason('');
-    setIncidentNotes('');
-    setViewOrder(null);
+    try {
+      if (!incidentOrder) return;
+      if (!incidentReason) { showToast('Seleccione un motivo', 'error'); return; }
+      await updateOrderStatus(incidentOrder.id, 'not_delivered', {
+        incidentReason,
+        incidentNotes,
+      });
+      showToast('Incidencia registrada');
+      setIncidentOrder(null);
+      setIncidentReason('');
+      setIncidentNotes('');
+      setViewOrder(null);
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'No se pudo completar la operación', 'error');
+    }
   };
 
   return (

@@ -11,6 +11,7 @@ from app.models import Order, Route
 from app.schemas.route import (
     RouteGenerateRequest,
     RouteGenerateResponse,
+    RouteReoptimizeRequest,
     RouteResponse,
     RouteStatusUpdate,
     RouteValidationRequest,
@@ -21,6 +22,17 @@ from app.services.route_service import RouteService
 from app.services.route_validation_service import RouteValidationService
 
 router = APIRouter(prefix="/api/v1/routes")
+
+
+@router.post("/{id}/reoptimize", dependencies=[Depends(require_staff)])
+async def reoptimize(
+    id: UUID,
+    data: RouteReoptimizeRequest,
+    db: AsyncSession = Depends(get_db),
+):
+    return await RouteService(
+        db, BasicOptimizationService(), RouteValidationService(db)
+    ).reoptimize(id, data.reason)
 
 
 @router.post(

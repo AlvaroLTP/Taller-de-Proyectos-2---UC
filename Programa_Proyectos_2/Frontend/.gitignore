@@ -20,4 +20,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+playwright-report/
+test-results/
+monitor-report/
+monitor-results/
 .env

@@ -85,8 +85,8 @@ export function ClientsPage() {
         showToast('Cliente registrado correctamente');
       }
       setModalOpen(false);
-    } catch {
-      showToast('Error al guardar el cliente', 'error');
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Error al guardar el cliente', 'error');
     }
   };
 

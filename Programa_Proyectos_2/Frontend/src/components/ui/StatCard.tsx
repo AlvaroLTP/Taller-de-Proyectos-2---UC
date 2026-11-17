@@ -24,10 +24,10 @@ export function StatCard({ title, value, icon, color = 'blue', trend, subtitle }
   const c = colorClasses[color];
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-5 transition-shadow hover:shadow-md">
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0 flex-1">
           <p className="text-sm font-medium text-slate-500">{title}</p>
-          <p className="mt-2 text-2xl font-bold text-slate-900">{value}</p>
+          <p className="mt-2 break-words text-2xl font-bold text-slate-900">{value}</p>
           {subtitle && <p className="mt-1 text-xs text-slate-400">{subtitle}</p>}
           {trend && (
             <div className="mt-2 flex items-center gap-1 text-xs">
@@ -40,7 +40,7 @@ export function StatCard({ title, value, icon, color = 'blue', trend, subtitle }
             </div>
           )}
         </div>
-        <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${c.bg} ${c.text} ring-4 ${c.ring}`}>
+        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${c.bg} ${c.text} ring-4 ${c.ring}`}>
           {icon}
         </div>
       </div>

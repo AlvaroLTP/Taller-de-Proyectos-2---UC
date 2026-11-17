@@ -84,8 +84,8 @@ export function VehiclesPage() {
         showToast('Vehículo registrado correctamente');
       }
       setModalOpen(false);
-    } catch {
-      showToast('Error al guardar el vehículo', 'error');
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Error al guardar el vehículo', 'error');
     }
   };
 
@@ -150,7 +150,7 @@ export function VehiclesPage() {
                   <button onClick={(e) => { e.stopPropagation(); openEdit(v); }} className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-blue-600" title="Editar">
                     <Edit size={16} />
                   </button>
-                  <button onClick={(e) => { e.stopPropagation(); toggleVehicleAvailability(v.id); }} className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-blue-600" title="Cambiar disponibilidad">
+                  <button onClick={(e) => { e.stopPropagation(); toggleVehicleAvailability(v.id).catch((error: unknown) => showToast(error instanceof Error ? error.message : 'No se pudo cambiar la disponibilidad', 'error')); }} className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-blue-600" title="Cambiar disponibilidad">
                     {v.available ? <ToggleRight size={18} /> : <ToggleLeft size={18} />}
                   </button>
                   <button onClick={(e) => { e.stopPropagation(); setDeleteTarget(v); }} className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-red-600" title="Eliminar">

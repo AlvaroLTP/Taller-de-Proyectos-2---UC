@@ -1,11 +1,6 @@
 import type { UserRole } from '@/types';
 import type { ReactNode } from 'react';
-import {
-  LayoutDashboard, Truck, Users, Package, Calendar, Settings,
-  Map, Route as RouteIcon, ClipboardList, History, Leaf,
-  User as UserIcon, ListOrdered, Ban, Sliders,
-  Activity,
-} from 'lucide-react';
+import { LayoutDashboard, Truck, Users, Package, Calendar, Settings, Map, Route as RouteIcon, ClipboardList, History, Leaf, User as UserIcon, ListOrdered, Ban, Sliders, Activity } from 'lucide-react';
 
 export interface NavItem {
   path: string;

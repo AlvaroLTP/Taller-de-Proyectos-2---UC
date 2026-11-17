@@ -1,18 +1,25 @@
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApp } from '@/store/AppContext';
-import { PageHeader } from '@/components/ui';
+import { PageHeader, useToast, Toast } from '@/components/ui';
 import { Card, CardHeader } from '@/components/ui/Charts';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { Modal } from '@/components/ui/Modal';
 import { RouteMap } from '@/components/ui/RouteMap';
 import { routeStatusConfig, orderStatusConfig, formatMinutes } from '@/utils/formatters';
-import { ArrowLeft, Truck, Users, Clock, Leaf, MapPin, Package } from 'lucide-react';
-import type { RouteStatus } from '@/types';
+import { ArrowLeft, Truck, Users, Clock, Leaf, MapPin, Package, RefreshCw, TrendingDown, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import type { RouteStatus, ReoptimizationResult } from '@/types';
 
 export function RouteDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { routes, drivers, vehicles, updateRouteStatus } = useApp();
+  const { routes, drivers, vehicles, updateRouteStatus, reoptimizeRoute } = useApp();
+  const { toast, showToast } = useToast();
+  const [showReoptModal, setShowReoptModal] = useState(false);
+  const [reoptReason, setReoptReason] = useState('');
+  const [reoptResult, setReoptResult] = useState<ReoptimizationResult | null>(null);
+  const [reoptimizing, setReoptimizing] = useState(false);
 
   const route = routes.find((r) => r.id === id);
 
@@ -35,8 +42,31 @@ export function RouteDetailPage() {
   const pct = route.totalDeliveries > 0 ? (route.completedDeliveries / route.totalDeliveries) * 100 : 0;
 
   const handleStatusChange = async (status: RouteStatus) => {
-    await updateRouteStatus(route.id, status);
+    try {
+      await updateRouteStatus(route.id, status);
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'No se pudo completar la operación', 'error');
+    }
   };
+
+  const handleReoptimize = async () => {
+    if (!reoptReason.trim()) {
+      showToast('Ingrese el motivo de la re-optimización', 'error');
+      return;
+    }
+    setReoptimizing(true);
+    try {
+      const result = await reoptimizeRoute(route.id, reoptReason.trim());
+      setReoptResult(result);
+      setShowReoptModal(false);
+      showToast('Ruta re-optimizada correctamente');
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Error al re-optimizar la ruta', 'error');
+    }
+    setReoptimizing(false);
+  };
+
+  const canReoptimize = route.status === 'pending' || route.status === 'preparing';
 
   return (
     <div className="space-y-6">
@@ -47,7 +77,17 @@ export function RouteDetailPage() {
 
       <div className="flex flex-wrap items-center gap-3">
         <Badge color={routeStatusConfig[route.status].color}>{routeStatusConfig[route.status].label}</Badge>
-        <div className="ml-auto flex gap-2">
+        <div className="ml-auto flex flex-wrap gap-2">
+          {canReoptimize && (
+            <Button
+              size="sm"
+              variant="secondary"
+              icon={<RefreshCw size={14} />}
+              onClick={() => setShowReoptModal(true)}
+            >
+              Re-optimizar ruta
+            </Button>
+          )}
           {route.status === 'pending' && (
             <Button size="sm" onClick={() => handleStatusChange('preparing')}>Iniciar preparación</Button>
           )}
@@ -127,6 +167,100 @@ export function RouteDetailPage() {
           ))}
         </div>
       </Card>
+
+      {/* Re-optimization reason modal */}
+      <Modal isOpen={showReoptModal} onClose={() => setShowReoptModal(false)} title="Re-optimizar ruta" size="md">
+        <div className="space-y-4">
+          <div className="flex items-start gap-3 rounded-lg bg-amber-50 p-4">
+            <AlertTriangle size={20} className="mt-0.5 shrink-0 text-amber-600" />
+            <p className="text-sm text-amber-800">
+              La re-optimización reordenará las paradas utilizando el algoritmo de vecino más cercano (nearest-neighbor),
+              recalculando distancia, tiempo y emisiones. Esta acción es recomendada ante cambios operativos como
+              cancelaciones, nuevas entregas o incidencias de tráfico.
+            </p>
+          </div>
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-slate-700">
+              Motivo del cambio operativo
+            </label>
+            <textarea
+              value={reoptReason}
+              onChange={(e) => setReoptReason(e.target.value)}
+              placeholder="Ej: Cliente canceló entrega, tráfico reportado en zona, nuevo pedido agregado..."
+              rows={3}
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder-slate-400 transition-colors focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
+            />
+          </div>
+          <div className="flex justify-end gap-3">
+            <Button variant="outline" size="sm" onClick={() => setShowReoptModal(false)}>Cancelar</Button>
+            <Button
+              size="sm"
+              icon={<RefreshCw size={14} />}
+              onClick={handleReoptimize}
+              disabled={reoptimizing || !reoptReason.trim()}
+            >
+              {reoptimizing ? 'Re-optimizando...' : 'Confirmar re-optimización'}
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Re-optimization result modal */}
+      <Modal
+        isOpen={!!reoptResult}
+        onClose={() => setReoptResult(null)}
+        title="Resultado de re-optimización"
+        size="md"
+      >
+        {reoptResult && (
+          <div className="space-y-5">
+            <div className="flex items-center gap-3 rounded-lg bg-emerald-50 p-4">
+              <CheckCircle2 size={24} className="text-emerald-600" />
+              <div>
+                <p className="text-sm font-medium text-emerald-800">Ruta {reoptResult.routeCode} re-optimizada</p>
+                <p className="text-xs text-emerald-600">{reoptResult.stopsReordered} paradas reordenadas</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="rounded-xl border border-slate-200 p-4">
+                <p className="mb-2 text-xs font-medium text-slate-500">Distancia</p>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-slate-400 line-through">{reoptResult.previousDistance} km</span>
+                  <TrendingDown size={14} className="text-emerald-500" />
+                  <span className="text-lg font-bold text-slate-900">{reoptResult.newDistance} km</span>
+                </div>
+                <p className={`mt-1 text-xs font-medium ${reoptResult.distanceSaved > 0 ? 'text-emerald-600' : 'text-amber-600'}`}>
+                  {reoptResult.distanceSaved > 0 ? '−' : '+'}{Math.abs(reoptResult.distanceSaved)} km
+                </p>
+              </div>
+
+              <div className="rounded-xl border border-slate-200 p-4">
+                <p className="mb-2 text-xs font-medium text-slate-500">Emisiones CO₂</p>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-slate-400 line-through">{reoptResult.previousEmissions} kg</span>
+                  <TrendingDown size={14} className="text-emerald-500" />
+                  <span className="text-lg font-bold text-slate-900">{reoptResult.newEmissions} kg</span>
+                </div>
+                <p className={`mt-1 text-xs font-medium ${reoptResult.emissionsSaved > 0 ? 'text-emerald-600' : 'text-amber-600'}`}>
+                  {reoptResult.emissionsSaved > 0 ? '−' : '+'}{Math.abs(reoptResult.emissionsSaved)} kg CO₂
+                </p>
+              </div>
+            </div>
+
+            <div className="rounded-lg border border-slate-200 p-4">
+              <p className="mb-1 text-xs font-medium text-slate-500">Motivo registrado</p>
+              <p className="text-sm text-slate-700">{reoptResult.reason}</p>
+            </div>
+
+            <div className="flex justify-end">
+              <Button size="sm" onClick={() => setReoptResult(null)}>Cerrar</Button>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      <Toast {...toast} />
     </div>
   );
 }

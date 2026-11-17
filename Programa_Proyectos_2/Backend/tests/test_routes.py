@@ -23,6 +23,7 @@ def test_generate_persists_orders_and_route(api, seed):
         order["status"],
     ) == (route["id"], seed["driver"]["id"], 1, "planned")
     assert route["stops"][0]["orderId"] == order["id"]
+    assert route["stops"][0]["clientName"] == seed["client"]["name"]
     api.headers["Authorization"] = "Bearer driver"
     assert api.get("/api/v1/vehicles/").json()[0]["id"] == seed["vehicle"]["id"]
     assert api.get("/api/v1/drivers/").json()[0]["vehicle_id"] == seed["vehicle"]["id"]
@@ -115,3 +116,41 @@ def test_validation_does_not_write(api, seed):
     assert result.json()["valid"]
     assert api.get("/api/v1/routes/").json() == []
     assert api.get("/api/v1/orders/").json()[0]["status"] == "pending"
+
+
+def test_reoptimization_persists_same_route_and_assignments(api, seed):
+    route = generate(api, seed)["routes"][0]
+    api.put(f"/api/v1/routes/{route['id']}/status", json={"status": "preparing"})
+    response = api.post(
+        f"/api/v1/routes/{route['id']}/reoptimize", json={"reason": "Revisar secuencia"}
+    )
+    assert response.status_code == 200, response.text
+    assert response.json()["routeId"] == route["id"]
+    assert response.json()["reason"] == "Revisar secuencia"
+    routes = api.get("/api/v1/routes/").json()
+    assert len(routes) == 1
+    assert routes[0]["code"] == route["code"]
+    assert routes[0]["status"] == "preparing"
+    order = api.get("/api/v1/orders/").json()[0]
+    assert order["delivery_order"] == 1
+    assert order["route_id"] == route["id"]
+
+
+def test_reoptimization_rejects_started_routes_and_driver(api, seed):
+    route = generate(api, seed)["routes"][0]
+    url = f"/api/v1/routes/{route['id']}/reoptimize"
+    api.headers["Authorization"] = "Bearer driver"
+    assert api.post(url, json={"reason": "Cambio"}).status_code == 403
+    api.headers["Authorization"] = "Bearer admin"
+    api.put(f"/api/v1/routes/{route['id']}/status", json={"status": "in_route"})
+    assert api.post(url, json={"reason": "Cambio"}).status_code == 409
+    assert api.get("/api/v1/orders/").json()[0]["status"] == "in_route"
+
+
+def test_infeasible_reoptimization_preserves_previous_plan(api, seed):
+    route = generate(api, seed)["routes"][0]
+    assert api.put("/api/v1/parameters/", json={"max_weight_kg": 1}).status_code == 200
+    url = f"/api/v1/routes/{route['id']}/reoptimize"
+    assert api.post(url, json={"reason": "Cambio de capacidad"}).status_code == 409
+    assert api.get(f"/api/v1/routes/{route['id']}").json() == route
+    assert api.get("/api/v1/orders/").json()[0]["delivery_order"] == 1
