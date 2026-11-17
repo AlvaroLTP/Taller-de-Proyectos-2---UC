@@ -26,7 +26,7 @@
 9. Me sentí seguro al usar el sistema.
 10. Necesité aprender muchas cosas antes de poder usar el sistema.
 
-## Resultados cuantitativos del ejemplo simulado
+## Resultados cuantitativos 
 
 Los siguientes valores se generaron para demostrar el cálculo. La evaluación con usuarios de DistriRápido S.A.C. queda pendiente.
 
