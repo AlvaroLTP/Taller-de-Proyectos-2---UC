@@ -1,33 +1,42 @@
-﻿from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
+from uuid import UUID
+
+from fastapi import APIRouter, Depends
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.api.helpers import save, validated_patch
 from app.core.database import get_db
-from app.models.parameter import Parameter
-from app.schemas.parameter import ParameterResponse, ParameterBase
-from typing import List
+from app.core.security import get_current_user, require_staff
+from app.models import Parameter
+from app.schemas.parameter import ParameterBase, ParameterResponse, ParameterUpdate
 
-router = APIRouter(prefix='/api/v1/parameters', tags=['parameters'])
+router = APIRouter(prefix="/api/v1/parameters")
 
-@router.get('/', response_model=ParameterResponse)
+
+@router.get(
+    "/", response_model=ParameterResponse, dependencies=[Depends(get_current_user)]
+)
 async def get_params(db: AsyncSession = Depends(get_db)):
-    res = await db.execute(select(Parameter))
-    params = res.scalars().first()
-    if not params:
-        params = Parameter()
-        db.add(params)
-        await db.commit()
-        await db.refresh(params)
-    return params
+    params = (
+        (await db.execute(select(Parameter).order_by(Parameter.id))).scalars().first()
+    )
+    return params or ParameterResponse(id=UUID(int=0), **ParameterBase().model_dump())
 
-@router.put('/', response_model=ParameterResponse)
-async def update_params(data: ParameterBase, db: AsyncSession = Depends(get_db)):
-    res = await db.execute(select(Parameter))
-    params = res.scalars().first()
-    if not params:
-        params = Parameter(**data.model_dump())
+
+@router.put(
+    "/", response_model=ParameterResponse, dependencies=[Depends(require_staff)]
+)
+async def update_params(data: ParameterUpdate, db: AsyncSession = Depends(get_db)):
+    params = (
+        (await db.execute(select(Parameter).order_by(Parameter.id).with_for_update()))
+        .scalars()
+        .first()
+    )
+    if params is None:
+        params = Parameter(
+            **ParameterBase(**data.model_dump(exclude_unset=True)).model_dump()
+        )
         db.add(params)
     else:
-        for k,v in data.model_dump().items(): setattr(params,k,v)
-    await db.commit()
-    await db.refresh(params)
-    return params
+        validated_patch(params, data, ParameterBase)
+    return await save(db, params)

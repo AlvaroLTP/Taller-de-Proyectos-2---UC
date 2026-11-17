@@ -35,7 +35,6 @@ La rúbrica referencia prácticas MERN. Este proyecto no usa MongoDB, por lo que
 ## Guía de desarrollo verde
 
 Frontend: reducir JS inicial, diferir rutas, evitar transferencia innecesaria y conservar navegación por teclado. Backend: limitar páginas, validar filtros, probar autorización y no añadir índices sin perfil. Datos: registrar fuente, método y período de cada factor. Métricas: separar dato medido, ficha técnica y simulación. Seguridad: mantener tokens fuera de VITE, autorización backend y RLS validado antes de remoto.
-
 ## Matriz de estándares
 
 | Estándar/principio | Práctica | Componente | Evidencia | Estado |

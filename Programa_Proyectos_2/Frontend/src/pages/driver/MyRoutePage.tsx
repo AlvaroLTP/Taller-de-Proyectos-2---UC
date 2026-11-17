@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { RouteMap } from '@/components/ui/RouteMap';
 import { orderStatusConfig, formatMinutes } from '@/utils/formatters';
-import { MapPin, Flag, CheckCircle2, Clock, Navigation, ArrowRight } from 'lucide-react';
+import { MapPin, CheckCircle2, Clock, Navigation, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export function MyRoutePage() {

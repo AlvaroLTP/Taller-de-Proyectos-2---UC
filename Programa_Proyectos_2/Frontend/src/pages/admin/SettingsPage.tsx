@@ -1,4 +1,3 @@
-import { useApp } from '@/store/AppContext';
 import { PageHeader, useToast, Toast } from '@/components/ui';
 import { Card, CardHeader } from '@/components/ui/Charts';
 import { Button } from '@/components/ui/Button';
@@ -7,7 +6,6 @@ import { Save, Building, Bell, Map } from 'lucide-react';
 import { useState } from 'react';
 
 export function SettingsPage() {
-  const { currentUser } = useApp();
   const { toast, showToast } = useToast();
   const [companyName, setCompanyName] = useState('DistriRápido S.A.C.');
   const [companyRuc, setCompanyRuc] = useState('20512345678');
@@ -15,7 +13,7 @@ export function SettingsPage() {
   const [companyEmail, setCompanyEmail] = useState('contacto@distrirapido.pe');
 
   const handleSave = () => {
-    showToast('Configuración guardada correctamente');
+    showToast('La persistencia de la configuración de empresa está pendiente', 'info');
   };
 
   return (
@@ -24,7 +22,7 @@ export function SettingsPage() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
-          <CardHeader title="Información de la empresa" subtitle="Datos generales" />
+          <CardHeader title="Información de la empresa" subtitle="Vista previa: la persistencia de estos datos está pendiente" />
           <div className="space-y-4 p-5">
             <div className="flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-teal-50 text-teal-600">
@@ -39,7 +37,7 @@ export function SettingsPage() {
             <Input label="RUC" value={companyRuc} onChange={(e) => setCompanyRuc(e.target.value)} />
             <Input label="Teléfono" value={companyPhone} onChange={(e) => setCompanyPhone(e.target.value)} />
             <Input label="Email" value={companyEmail} onChange={(e) => setCompanyEmail(e.target.value)} />
-            <Button icon={<Save size={16} />} onClick={handleSave}>Guardar cambios</Button>
+            <Button icon={<Save size={16} />} disabled onClick={handleSave}>Guardado pendiente</Button>
           </div>
         </Card>
 
@@ -80,9 +78,9 @@ export function SettingsPage() {
                 <Bell size={20} className="text-slate-400" />
                 <div className="flex-1">
                   <p className="text-sm font-medium text-slate-700">Backend FastAPI</p>
-                  <p className="text-xs text-slate-400">API real y motor de optimización</p>
+                  <p className="text-xs text-slate-400">Operaciones mediante API y planificación con restricciones</p>
                 </div>
-                <span className="rounded bg-slate-100 px-2 py-0.5 text-xs text-slate-500">Pendiente</span>
+                <span className="rounded bg-slate-100 px-2 py-0.5 text-xs text-slate-500">Integrado</span>
               </div>
             </div>
           </Card>

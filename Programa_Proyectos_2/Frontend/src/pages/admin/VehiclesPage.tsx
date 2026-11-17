@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
 import { Badge } from '@/components/ui/Badge';
 import { DataTable } from '@/components/ui/DataTable';
-import { Input, Select, Textarea } from '@/components/ui/Form';
+import { Input, Select } from '@/components/ui/Form';
 import { vehicleStatusConfig, fuelTypeConfig } from '@/utils/formatters';
 import { Truck, Plus, Eye, Edit, Trash2, ToggleLeft, ToggleRight } from 'lucide-react';
 

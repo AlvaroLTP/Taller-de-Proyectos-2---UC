@@ -1,12 +1,14 @@
-﻿# Shared validation helpers
+import re
+
+
 class ValidationService:
     @staticmethod
     def validate_time_window(start: str, end: str):
-        try:
-            h1, m1 = map(int, start.split(':'))
-            h2, m2 = map(int, end.split(':'))
-            t1 = h1*60+m1
-            t2 = h2*60+m2
-            return t2 > t1
-        except Exception:
-            return False
+        pattern = r"([01]\d|2[0-3]):[0-5]\d"
+        return bool(
+            isinstance(start, str)
+            and isinstance(end, str)
+            and re.fullmatch(pattern, start)
+            and re.fullmatch(pattern, end)
+            and start < end
+        )

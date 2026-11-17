@@ -1,5 +1,5 @@
 import type { RouteStop } from '@/types';
-import { MapPin, Flag, Navigation, Truck } from 'lucide-react';
+import { MapPin, Truck } from 'lucide-react';
 
 interface RouteMapProps {
   stops: RouteStop[];
@@ -17,8 +17,6 @@ export function RouteMap({ stops, driverName, vehicleCode, totalDistance }: Rout
     );
   }
 
-  const allLats = [0, ...stops.map((s) => s.lat)];
-  const allLngs = [0, ...stops.map((s) => s.lng)];
   const minLat = Math.min(...stops.map((s) => s.lat));
   const maxLat = Math.max(...stops.map((s) => s.lat));
   const minLng = Math.min(...stops.map((s) => s.lng));

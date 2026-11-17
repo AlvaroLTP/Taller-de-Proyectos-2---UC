@@ -59,7 +59,6 @@ La rúbrica contiene ejemplos MERN y SWDM v4. EcoLogística usa React/Vite/FastA
 Comparativo verificable de carga de páginas: antes se importaban páginas de forma estática; después se usa lazy y Suspense por ruta. El build local redujo el JS inicial de 592,456 bytes a 444,576 bytes y de 152,678 a 126,863 bytes gzip. Este resultado no equivale a Lighthouse ni a consumo energético.
 
 Comparativo verificable de pedidos: antes el listado retornaba todos los registros; después la API valida limit de 1 a 200, offset, estado y fecha antes de retornar una página. Las pruebas locales verifican límite, filtro y conteo, sin afirmar mejora de latencia o SQL.
-
 ## Impacto digital
 
 | Área | Diagnóstico | Cambio | Evidencia | Estado |
@@ -170,7 +169,6 @@ Como contexto de tiempo, los escenarios pueden contrastarse con velocidades de L
 | Git | Rama actualizacion-sprint-3; sin commit/push por instrucción | Observado |
 
 La secuencia de entrega propuesta, no ejecutada por no contar con aprobación para cambios remotos, es: mkdir, git add, git commit y git push.
-
 ## Resultados de pruebas, limitaciones y pendientes
 
 Las pruebas locales utilizan SQLite en memoria y un proveedor de identidad simulado. Las pruebas API no sustituyen una prueba de red o de Supabase real. RLS, Lighthouse y migración PostgreSQL no se ejecutaron por ausencia de Supabase CLI/Docker activo. No se aplicaron migraciones ni cambios remotos.

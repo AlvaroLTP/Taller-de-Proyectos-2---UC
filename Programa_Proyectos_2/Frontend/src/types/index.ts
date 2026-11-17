@@ -24,6 +24,8 @@ export interface Vehicle {
   consumptionKmPerL: number;
   fuelType: FuelType;
   emissionsPerKm: number;
+  energyKwhPerKm?: number;
+  emissionFactorSource?: string;
   status: VehicleStatus;
   available: boolean;
   driverId?: string;
@@ -143,6 +145,12 @@ export interface Route {
   departureTime: string;
   estimatedArrivalTime: string;
   emissionsKgCO2: number;
+  outboundDistanceKm?: number;
+  returnDistanceKm?: number;
+  payloadTonneKm?: number;
+  energyKwh?: number;
+  emissionsMethod?: string;
+  emissionsSource?: string;
   status: RouteStatus;
   completedDeliveries: number;
   totalDeliveries: number;
@@ -159,6 +167,9 @@ export interface OperationalParameters {
   fuelType: FuelType;
   maxDistanceKm: number;
   maxDeliveriesPerRoute: number;
+  depotLat?: number;
+  depotLng?: number;
+  electricityEmissionFactorKgCO2ePerKwh?: number;
 }
 
 export interface DriverSchedule {

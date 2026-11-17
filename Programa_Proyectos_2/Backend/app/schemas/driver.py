@@ -1,47 +1,44 @@
-﻿from pydantic import BaseModel, Field, field_validator
-from typing import Optional
-import uuid
+from typing import Literal
+from uuid import UUID
 
-class DriverBase(BaseModel):
-    name: str
-    dni: str
-    phone: str
-    license: str
-    license_type: str = 'B-II'
-    status: str = 'available'
+from pydantic import Field, model_validator
+
+from app.schemas.base import InputModel, TimeString, partial_model
+from app.services.validation_service import ValidationService
+
+
+class DriverBase(InputModel):
+    name: str = Field(min_length=1)
+    dni: str = Field(pattern=r"^\d{8}$")
+    phone: str = Field(min_length=1)
+    license: str = Field(min_length=1)
+    license_type: str = "B-II"
+    status: Literal["available", "in_route", "unavailable", "resting"] = "available"
     available: bool = True
-    vehicle_id: Optional[uuid.UUID] = None
-    shift_start: str = '08:00'
-    shift_end: str = '16:00'
-    avatar_initials: str = 'XX'
+    vehicle_id: UUID | None = None
+    shift_start: TimeString = "08:00"
+    shift_end: TimeString = "16:00"
+    avatar_initials: str = "XX"
 
-    @field_validator('dni')
-    def dni_not_empty(cls, v):
-        if not v or not v.strip():
-            raise ValueError('dni required')
-        return v.strip()
+    @model_validator(mode="after")
+    def coherent_shift(self):
+        if (
+            self.shift_start is not None
+            and self.shift_end is not None
+            and not ValidationService.validate_time_window(
+                self.shift_start, self.shift_end
+            )
+        ):
+            raise ValueError("El fin del turno debe ser posterior al inicio")
+        return self
 
-    @field_validator('license')
-    def license_not_empty(cls, v):
-        if not v or not v.strip():
-            raise ValueError('license required')
-        return v.strip()
-
-    @field_validator('status')
-    def status_valid(cls, v):
-        allowed = {'available', 'in_route', 'unavailable', 'resting'}
-        if v not in allowed:
-            raise ValueError('invalid status')
-        return v
 
 class DriverCreate(DriverBase):
     pass
 
-class DriverUpdate(DriverBase):
-    pass
+
+DriverUpdate = partial_model("DriverUpdate", DriverBase)
+
 
 class DriverResponse(DriverBase):
-    id: uuid.UUID
-
-    class Config:
-        from_attributes = True
+    id: UUID

@@ -1,6 +1,7 @@
-﻿from typing import Protocol, Optional
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Optional, Protocol
+
 
 @dataclass
 class TrafficStatus:
@@ -9,6 +10,6 @@ class TrafficStatus:
     updated_at: Optional[datetime] = None
     source: Optional[str] = None
 
+
 class TrafficProvider(Protocol):
-    async def get_status(self, **kwargs) -> TrafficStatus:
-        ...
+    async def get_status(self, **kwargs) -> TrafficStatus: ...
